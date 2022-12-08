@@ -1,21 +1,13 @@
 from src.algos.Algorithm import Algorithm
-
-def time_it(func):
-    import time
-    def wrapper(*args, **kwargs):
-        tic = time.time()
-        result = func(*args, **kwargs)
-        toc = time.time()
-        print(f"Time elapsed: {toc-tic}")
-        return result
-    return wrapper
+from src.utils.time_it import time_it
 
 @time_it 
 class NearestNeighbour(Algorithm):
+    " Nearest Neighbour Algorithm"
     def __init__(self, distance_matrix, start):
         super().__init__(distance_matrix, start)
 
-    def run(self):
+    def solve(self):
         self.end = self.start
         self.unvisited = list(range(1, len(self.distance_matrix) + 1))
         self.unvisited.remove(self.start)
@@ -40,11 +32,10 @@ class NearestNeighbour(Algorithm):
                 self.unvisited.remove(current)
             except ValueError:
                 return self.distance
-            self.path += str(current)
+            self.path += '-' + str(current)
             self.distance += nearest_distance
             self.end = current
-        # return self.distance
-    
+        
     def get_path(self):
         return self.path
 
