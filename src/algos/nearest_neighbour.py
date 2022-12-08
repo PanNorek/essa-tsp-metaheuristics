@@ -1,41 +1,49 @@
 from .algorithm import Algorithm
 from ..utils import time_it
-
+from typing import Tuple
+import pandas as pd
 
 @time_it
 class NearestNeighbour(Algorithm):
     " Nearest Neighbour Algorithm"
-    def __init__(self, distance_matrix, start):
-        super().__init__(distance_matrix, start)
+    def __init__(self, neigh_type: str = None):
+        super().__init__(neigh_type)
 
-    def solve(self):
-        self.end = self.start
-        self.unvisited = list(range(1, len(self.distance_matrix) + 1))
-        self.unvisited.remove(self.start)
-        self.distance = 0
-        self.path = str(self.start)
+    def solve(self, distance_matrix: pd.DataFrame, start: int) -> Tuple[int, str]:
+        """Solve TSP problem with Nearest Neighbour Algorithm
 
-        while self.unvisited:
+        Args:
+            distance_matrix (pd.DataFrame): Distance matrix
+            start (int): Start node
+        
+        Returns:
+            distance (int): Total distance
+            path (str): Path 
+        """
+        end = start
+        unvisited = list(range(1, len(distance_matrix) + 1))
+        unvisited.remove(start)
+        distance = 0
+        path = str(start)
 
-            current = self.end
+        while unvisited:
 
-            nearest_distance = self.distance_matrix.iloc[current-1, self.unvisited[0]-1]
+            current = end
 
-            for neighbour in self.unvisited:
+            nearest_distance = distance_matrix.iloc[current-1, unvisited[0]-1]
+
+            for neighbour in unvisited:
 
                 try:
-                    if self.distance_matrix.iloc[current-1, self.unvisited[neighbour]-1] < nearest_distance:
+                    if distance_matrix.iloc[current-1, unvisited[neighbour]-1] < nearest_distance:
                         current = neighbour
                 except IndexError:
                     pass
 
             try:
-                self.unvisited.remove(current)
+                unvisited.remove(current)
             except ValueError:
-                return self.distance
-            self.path += '-' + str(current)
-            self.distance += nearest_distance
-            self.end = current
-
-    def get_path(self):
-        return self.path
+                return (distance, path)
+            path += '-' + str(current)
+            distance += nearest_distance
+            end = current
