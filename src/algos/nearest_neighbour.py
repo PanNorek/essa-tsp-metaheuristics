@@ -1,41 +1,48 @@
 from .algorithm import Algorithm
 from ..utils import time_it
+import pandas as pd
+import numpy as np
+from typing import Union
+import random
 
 
 @time_it
 class NearestNeighbour(Algorithm):
-    " Nearest Neighbour Algorithm"
-    def __init__(self, distance_matrix, start):
-        super().__init__(distance_matrix, start)
+    """ Nearest Neighbour Algorithm """
 
-    def solve(self):
-        self.end = self.start
-        self.unvisited = list(range(1, len(self.distance_matrix) + 1))
-        self.unvisited.remove(self.start)
-        self.distance = 0
-        self.path = str(self.start)
-
-        while self.unvisited:
-
-            current = self.end
-
-            nearest_distance = self.distance_matrix.iloc[current-1, self.unvisited[0]-1]
-
-            for neighbour in self.unvisited:
-
-                try:
-                    if self.distance_matrix.iloc[current-1, self.unvisited[neighbour]-1] < nearest_distance:
-                        current = neighbour
-                except IndexError:
-                    pass
-
-            try:
-                self.unvisited.remove(current)
-            except ValueError:
-                return self.distance
-            self.path += '-' + str(current)
-            self.distance += nearest_distance
-            self.end = current
-
-    def get_path(self):
-        return self.path
+    def solve(self,
+              distances: Union[pd.DataFrame, np.ndarray],
+              start: Union[int, None] = None
+              ) -> int:
+        # if starting point is None, choose it randomly from indices
+        if start is None:
+            start = random.choice(list(distances.index))
+        # checks if starting point was properly defined
+        assert start in list(distances.index), 'starting point not in distance matix'
+        # checks if columns are the equal to indices
+        self._distance_matrix_check(distances=distances)
+        # sets unvisited list to all cities
+        unvisited = list(distances.index)
+        # first visited city is starting point
+        unvisited.remove(start)
+        # distance at the beginning
+        distance = 0
+        # _path attribute is the travelled path between cities
+        self._path.append(start)
+        # while there are still cities to visit
+        while unvisited:
+            # city salesman is currently in
+            current = self._path[-1]
+            # all possible distances between current city and unvisited ones
+            possibilities = distances.loc[current, unvisited]
+            # index of the nearest city
+            nearest_city = possibilities.idxmin()
+            # distance between current and nearest cities
+            distance += possibilities.min()
+            # goes to the nearest city
+            self._path.append(nearest_city)
+            # removes newly visited city from unvisited list
+            unvisited.remove(nearest_city)
+        # return to the first city
+        distance += distances.loc[current, start]
+        return distance
