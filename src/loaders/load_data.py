@@ -1,14 +1,23 @@
 import pandas as pd
 import numpy as np
+from typing import Union
 
+def load_data(path: str, to_numpy: bool = False) -> Union[pd.DataFrame, np.ndarray]:
+    """Load data from given path
 
-def load_data(path: str, triu=False):
+    Args:
+        path (str): Path to data
+
+    Returns:
+        data : pd.DataFrame or np.ndarray
+    """
+
     # Load data from path with first column as index
-    data = pd.read_excel(path, index_col=0, header=[0])
+    data = pd.read_excel(path, index_col=0)
 
-    if triu:
-        # Get upper triangle of data
-        return pd.np.triu(data.to_numpy())
-
+    
+    if to_numpy:
+        return data.to_numpy()
+    
     return data
-    # return data.to_numpy()
+    
