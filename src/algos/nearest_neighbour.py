@@ -44,5 +44,5 @@ class NearestNeighbour(Algorithm):
             # removes newly visited city from unvisited list
             unvisited.remove(nearest_city)
         # return to the first city
-        distance += distances.loc[current, start]
+        distance += distances.loc[self._path[-1], start]
         return distance
