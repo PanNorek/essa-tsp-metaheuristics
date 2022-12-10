@@ -24,9 +24,12 @@ class TabuSearch(SwappingAlgorithm):
                        distances: pd.DataFrame,
                        swaps: List[tuple]
                        ) -> Union[int, None]:
-
-        best_distance, best_swap = super()._iterate_steps(distances=distances,
-                                                          swaps=swaps)
+        # start new iteration
+        self._i += 1
+        best_swap, best_distance = self._find_best_swap(swaps=swaps,
+                                                        distances=distances)
+        # new path that minimizes distance
+        self._path = self._swap_elements(swap=best_swap)
         # removing first swap from tabu list only if list is full
         self._tabu_list.dequeue()
         # adding new swap to tabu list
