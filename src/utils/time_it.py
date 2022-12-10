@@ -6,6 +6,6 @@ def time_it(func):
         tic = time.time()
         result = func(*args, **kwargs)
         toc = time.time()
-        print(f"Time elapsed: {toc-tic:.2f}")
+        result.time = toc-tic
         return result
     return wrapper

@@ -10,7 +10,7 @@ import random
 class NearestNeighbour(Algorithm):
     """ Nearest Neighbour Algorithm """
     NAME = 'NEAREST NEIGHBOUR'
-    
+
     @time_it
     def solve(self,
               distances: pd.DataFrame,
@@ -47,9 +47,11 @@ class NearestNeighbour(Algorithm):
             unvisited.remove(nearest_city)
         # return to the first city
         distance += distances.loc[self._path[-1], start]
+
         return Result(algorithm=self.NAME,
                         path=self._path,
                         best_distance=distance,
                         distance_history=[distance],
                         solving_time=0 # TODO: add solving time method
         )
+
