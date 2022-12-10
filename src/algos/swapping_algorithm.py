@@ -2,6 +2,7 @@ from .algorithm import Algorithm
 from typing import Union, List
 import pandas as pd
 from ..utils import StopAlgorithm
+from abc import abstractmethod
 
 
 class SwappingAlgorithm(Algorithm):
@@ -49,17 +50,12 @@ class SwappingAlgorithm(Algorithm):
                 break
         return best_distance
 
+    @abstractmethod
     def _iterate_steps(self,
                        distances: pd.DataFrame,
                        swaps: List[tuple]
                        ) -> Union[int, None]:
-        # start new iteration
-        self._i += 1
-        best_swap, best_distance = self._find_best_swap(swaps=swaps,
-                                                        distances=distances)
-        # new path that minimizes distance
-        self._path = self._swap_elements(swap=best_swap)
-        return best_distance, best_swap
+        pass
 
     def _swap_elements(self, swap: tuple) -> list:
         """ Returns copy of the current path with swapped indices """

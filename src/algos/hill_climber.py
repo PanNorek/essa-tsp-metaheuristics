@@ -18,8 +18,10 @@ class HillClimber(SwappingAlgorithm):
                        distances: pd.DataFrame,
                        swaps: List[tuple]
                        ) -> Union[int, None]:
-        best_distance, best_swap = super()._iterate_steps(distances=distances,
-                                                          swaps=swaps)
+        # start new iteration
+        self._i += 1
+        best_swap, best_distance = self._find_best_swap(swaps=swaps,
+                                                        distances=distances)
         # distance gain
         gain = self.history[-1] - best_distance
         # break condition
@@ -29,14 +31,15 @@ class HillClimber(SwappingAlgorithm):
             print(f'best swap: {best_swap} - gain: {gain}')
             print(f'step {self._i}: distance: {best_distance}')
 
+        # new path that shortens the distance
+        self._path = self._swap_elements(swap=best_swap)
         # adding new best distance to distances history
         self.history.append(best_distance)
         return best_distance, best_swap
 
     def solve_multistart(self,
-                         distance_matrix: pd.DataFrame,
-                         num_iter: int = 20,
-                         num_starts: int = 10
+                         distances: pd.DataFrame,
+                         n_iter: int = 20,
                          ) -> Tuple[int, str]:
         """Solve TSP problem with Hill Climber Algorithm with multiple starts
 
@@ -51,10 +54,11 @@ class HillClimber(SwappingAlgorithm):
         """
 
         # TODO: add multiprocessing
+        # TODO: solve will always return Result object
         results = []
-        for i in range(num_starts):
-            results.append(self.solve(distance_matrix,
-                                      num_iter=num_iter,
+        for i in range(n_iter):
+            results.append(self.solve(distances,
+                                      num_iter=self._n_iter,
                                       return_tuple=True))
             print(f"Start {i}")
 
