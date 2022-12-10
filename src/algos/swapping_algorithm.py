@@ -24,7 +24,7 @@ class SwappingAlgorithm(Algorithm):
               distances: pd.DataFrame,
               random_seed: Union[int, None] = None,
               start_order: Union[list, None] = None
-              ) -> int:
+              ) -> Result:
         # checks if columns are the equal to indices
         self._distance_matrix_check(distances=distances)
         self._set_random_seed(random_seed=random_seed)
