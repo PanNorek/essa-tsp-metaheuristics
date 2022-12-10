@@ -1,7 +1,6 @@
 from .algorithm import Algorithm
 from ..utils import time_it, Result
 import pandas as pd
-import numpy as np
 from typing import Union
 import random
 
@@ -46,6 +45,7 @@ class NearestNeighbour(Algorithm):
             unvisited.remove(nearest_city)
         # return to the first city
         distance += distances.loc[self._path[-1], start]
-        # return result object
-        result = Result(algorithm=self, path=self._path, best_distance=distance)
+        result = Result(algorithm=self,
+                        path=self._path,
+                        best_distance=distance)
         return result
