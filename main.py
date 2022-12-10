@@ -1,16 +1,47 @@
 from src.algos import SimulatedAnnealing, NearestNeighbour, TabuSearch, HillClimber
-from src.utils import load_data
+from src.utils import load_data, PathPlotter, BenchmarkPlotter
 from src.algos import MultistartAlgorithm
 
+if __name__ == "__main__":
 
-if __name__ == '__main__':
+    df = load_data("data\TSP_29.xlsx")
+    NUM_STARTS = 5
 
-    df = load_data('data\TSP_29.xlsx')
-    NUM_STARTS = 10
+    algorithms = [SimulatedAnnealing, NearestNeighbour, TabuSearch, HillClimber]
 
+    results = []
+    results.append(min([NearestNeighbour().solve(df, start=x + 1) for x in range(29)]))
+    results.append(
+        MultistartAlgorithm()(
+            SimulatedAnnealing,
+            df,
+            n_starts=NUM_STARTS,
+            temp=1000,
+            alpha=0.9,
+            n_iter=100,
+            verbose=False,
+        )
+    )
+    results.append(
+        MultistartAlgorithm()(
+            TabuSearch, df, n_starts=NUM_STARTS, verbose=False, tabu_length=3, n_iter=30
+        )
+    )
+    results.append(
+        MultistartAlgorithm()(
+            HillClimber, df, n_starts=NUM_STARTS, verbose=False, n_iter=25
+        )
+    )
 
-    results1 = MultistartAlgorithm()(SimulatedAnnealing, df, n_starts=NUM_STARTS, temp=1000, alpha=.9, n_iter=100, verbose=False)
-    results2 = MultistartAlgorithm()(TabuSearch, df, n_starts=NUM_STARTS, verbose=False, tabu_length=3 , n_iter=30)
-    results3 = MultistartAlgorithm()(HillClimber, df, n_starts=NUM_STARTS, verbose=False, n_iter=25)
+    # Example of plotting the path
+    pp = PathPlotter()
+    pp.plot(results[0])
 
-    
+    # Example of plotting the benchmark
+    bp = BenchmarkPlotter()
+    bp.plot(results)
+
+    # Example of plotting the benchmark with custom labels and palette
+    bp.plot(
+        results, labels=["RAZ", "DWA", "TRZY", "CZTERY"], palette="Purples_d"
+    )  # Reds_d, Blues_d, Greens_d, Purples_d, Oranges_d, Greys_d
