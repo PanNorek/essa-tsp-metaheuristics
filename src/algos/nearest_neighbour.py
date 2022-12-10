@@ -6,19 +6,17 @@ import random
 
 
 class NearestNeighbour(Algorithm):
-    """ Nearest Neighbour Algorithm """
-    NAME = 'NEAREST NEIGHBOUR'
+    """Nearest Neighbour Algorithm"""
+
+    NAME = "NEAREST NEIGHBOUR"
 
     @time_it
-    def solve(self,
-              distances: pd.DataFrame,
-              start: Union[int, None] = None
-              ) -> int:
+    def solve(self, distances: pd.DataFrame, start: Union[int, None] = None) -> int:
         # if starting point is None, choose it randomly from indices
         if start is None:
             start = random.choice(list(distances.index))
         # checks if starting point was properly defined
-        assert start in list(distances.index), 'starting point not in distance matix'
+        assert start in list(distances.index), "starting point not in distance matix"
         # checks if columns are the equal to indices
         self._distance_matrix_check(distances=distances)
         # sets unvisited list to all cities
@@ -45,7 +43,5 @@ class NearestNeighbour(Algorithm):
             unvisited.remove(nearest_city)
         # return to the first city
         distance += distances.loc[self._path[-1], start]
-        result = Result(algorithm=self,
-                        path=self._path,
-                        best_distance=distance)
+        result = Result(algorithm=self, path=self._path, best_distance=distance)
         return result

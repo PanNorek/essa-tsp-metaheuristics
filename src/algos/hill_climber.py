@@ -7,13 +7,13 @@ from ..utils import StopAlgorithm
 
 
 class HillClimber(SwappingAlgorithm):
-    """ Hill Climber Algorithm """
-    NAME = 'HILL CLIMBER'
+    """Hill Climber Algorithm"""
 
-    def _iterate_steps(self,
-                       distances: pd.DataFrame,
-                       swaps: List[tuple]
-                       ) -> Union[int, None]:
+    NAME = "HILL CLIMBER"
+
+    def _iterate_steps(
+        self, distances: pd.DataFrame, swaps: List[tuple]
+    ) -> Union[int, None]:
         """Iterate steps in Hill Climber Algorithm
 
         Args:
@@ -27,16 +27,17 @@ class HillClimber(SwappingAlgorithm):
 
         # start new iteration
         self._i += 1
-        best_swap, best_distance = self._find_best_swap(swaps=swaps,
-                                                        distances=distances)
+        best_swap, best_distance = self._find_best_swap(
+            swaps=swaps, distances=distances
+        )
         # distance gain
         gain = self.history[-1] - best_distance
         # break condition
         if gain <= 0:
             raise StopAlgorithm(iter=self._i, distance=best_distance)
         if self._verbose:
-            print(f'best swap: {best_swap} - gain: {gain}')
-            print(f'step {self._i}: distance: {best_distance}')
+            print(f"best swap: {best_swap} - gain: {gain}")
+            print(f"step {self._i}: distance: {best_distance}")
 
         # new path that shortens the distance
         self._path = self._swap_elements(swap=best_swap)
@@ -90,4 +91,3 @@ class HillClimber(SwappingAlgorithm):
 #         best_result = min(results, key=lambda x: x.best_distance)
 #         best_result.no_starts = num_starts
 #         return best_result
-         

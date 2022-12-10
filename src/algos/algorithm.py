@@ -7,13 +7,11 @@ from ..utils import Result
 
 
 class Algorithm(ABC):
-    """ Traveling Salesman Problem (TSP) solver """
-    NAME = ''
+    """Traveling Salesman Problem (TSP) solver"""
 
-    def __init__(self,
-                 neigh_type: str = None,
-                 verbose: bool = False
-                 ) -> None:
+    NAME = ""
+
+    def __init__(self, neigh_type: str = None, verbose: bool = False) -> None:
         self.neigh_type = neigh_type
         self._verbose = verbose
         self._path = []
@@ -48,7 +46,7 @@ class Algorithm(ABC):
         assert distances.index.to_list() == distances.columns.to_list(), mes
 
     def _get_path_distance(self, distances: pd.DataFrame, path: list) -> int:
-        """ Calculate distance of the path based on distances matrix """
+        """Calculate distance of the path based on distances matrix"""
         path_length = sum([distances.loc[x, y] for x, y in zip(path, path[1:])])
         # add distance back to the starting point
         path_length += distances.loc[path[0], path[-1]]
@@ -56,7 +54,7 @@ class Algorithm(ABC):
 
     @property
     def path(self) -> list:
-        """ Returns the most optimal graph's path that was found """
+        """Returns the most optimal graph's path that was found"""
         return self._path
 
     def __str__(self) -> str:
