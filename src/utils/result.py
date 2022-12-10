@@ -2,18 +2,22 @@ from dataclasses import dataclass
 from typing import Any
 
 
-class Result(dataclass):
+@dataclass
+class Result:
     algorithm: Any
     path: list
     best_distance: int
-    distance_history: list
-    solving_time: float
+    time: float = None
+    distance_history: list = None
 
     def __str__(self) -> str:
-        return f"""best distance: {self.best_distance}
-                   algorithm: {self.algorithm}
-                   solving time: {self.solving_time}
-                """
+        mes = f"""best distance: {self.best_distance}
+                  algorithm: {self.algorithm}
+                  solving time: {self.time:.3f} s
+                """.replace('  ', '')
+        if self.distance_history:
+            mes += f"""history: {self.distance_history}"""
+        return mes
 
     def __repr__(self) -> str:
         return str(self)

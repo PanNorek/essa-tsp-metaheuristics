@@ -3,11 +3,12 @@ import pandas as pd
 import numpy as np
 import random
 from typing import Union, List
+from ..utils import Result
 
 
 class Algorithm(ABC):
     """ Traveling Salesman Problem (TSP) solver """
-    NAME = None
+    NAME = ''
 
     def __init__(self,
                  neigh_type: str = None,
@@ -18,7 +19,7 @@ class Algorithm(ABC):
         self._path = []
 
     @abstractmethod
-    def solve(self, distances: pd.DataFrame) -> int:
+    def solve(self, distances: pd.DataFrame) -> Result:
         """
         Uses specific algorithm to solve Traveling Salesman Problem
 
@@ -57,3 +58,6 @@ class Algorithm(ABC):
     def path(self) -> list:
         """ Returns the most optimal graph's path that was found """
         return self._path
+
+    def __str__(self) -> str:
+        return self.NAME
