@@ -11,6 +11,10 @@ def reduce(temp: float, alpha: float = ALPHA):
     return alpha * temp
 
 
+def slowly_descend(temp: float, alpha: float = ALPHA) -> float:
+    return temp/(1 + alpha * temp)
+
+
 class SimulatedAnnealing(SwappingAlgorithm):
     """Simulated Annealing Algorithm"""
 
