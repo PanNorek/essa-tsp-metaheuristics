@@ -6,10 +6,6 @@ from multiprocessing import Pool
 from ..utils import StopAlgorithm
 
 
-def unwrap_self_f(arg, **kwarg):
-    return HillClimber.solve_multistart_parallel(*arg, **kwarg)
-
-
 class HillClimber(SwappingAlgorithm):
     """ Hill Climber Algorithm """
     NAME = 'HILL CLIMBER'
@@ -67,15 +63,31 @@ class HillClimberMultistart(HillClimber):
             num_starts (int): Number of starts
 
         Returns:
-            distance (int): Total distance
-            path (str): Salesman path
+            Result: Result object
         """
         results = []
-        for _ in range(num_starts):
+        history = []
+
+        # both methods are equivalent in time, the second one is more readable
+        # tic = time.time()
+        # list(map(lambda x: self.solve(distances, **kwargs), range(num_starts)))
+        # toc = time.time()
+
+        for i in range(1, num_starts + 1):
             results.append(self.solve(distances,
                                       **kwargs
                                       ))
+            if len(history) == 0:
+                history.append(results[-1].best_distance)
+            else:
+                if results[-1].best_distance < history[-1]:
+                    history.append(results[-1].best_distance)
+                # else:
+                #     history.append(history[-1])
+            print(f'No. of start: {i}')
+
+        self.history = history
         best_result = min(results, key=lambda x: x.best_distance)
         best_result.no_starts = num_starts
         return best_result
-        
+         
