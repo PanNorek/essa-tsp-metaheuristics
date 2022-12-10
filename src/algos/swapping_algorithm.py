@@ -20,7 +20,7 @@ class SwappingAlgorithm(Algorithm):
 
     def solve(self,
               distances: pd.DataFrame,
-              random_seed: int = None,
+              random_seed: int = None
               ) -> int:
         # checks if columns are the equal to indices
         self._distance_matrix_check(distances=distances)
@@ -53,14 +53,12 @@ class SwappingAlgorithm(Algorithm):
                        distances: pd.DataFrame,
                        swaps: List[tuple]
                        ) -> Union[int, None]:
+        # start new iteration
+        self._i += 1
         best_swap, best_distance = self._find_best_swap(swaps=swaps,
                                                         distances=distances)
         # new path that minimizes distance
         self._path = self._swap_elements(swap=best_swap)
-        # adding new best distance to distances history
-        self.history.append(best_distance)
-        # start new iteration
-        self._i += 1
         return best_distance, best_swap
 
     def _swap_elements(self, swap: tuple) -> list:

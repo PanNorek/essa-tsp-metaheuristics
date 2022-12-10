@@ -18,11 +18,10 @@ class HillClimber(SwappingAlgorithm):
                        distances: pd.DataFrame,
                        swaps: List[tuple]
                        ) -> Union[int, None]:
-
         best_distance, best_swap = super()._iterate_steps(distances=distances,
                                                           swaps=swaps)
         # distance gain
-        gain = self.history[-2] - self.history[-1]
+        gain = self.history[-1] - best_distance
         # break condition
         if gain <= 0:
             raise StopAlgorithm(iter=self._i, distance=best_distance)
@@ -30,6 +29,8 @@ class HillClimber(SwappingAlgorithm):
             print(f'best swap: {best_swap} - gain: {gain}')
             print(f'step {self._i}: distance: {best_distance}')
 
+        # adding new best distance to distances history
+        self.history.append(best_distance)
         return best_distance, best_swap
 
     def solve_multistart(self,
