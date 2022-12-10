@@ -8,6 +8,7 @@ import random
 
 class NearestNeighbour(Algorithm):
     """ Nearest Neighbour Algorithm """
+    NAME = 'NEAREST NEIGHBOUR'
 
     @time_it
     def solve(self,

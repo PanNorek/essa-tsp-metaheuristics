@@ -8,7 +8,7 @@ from ..utils import Result
 
 class Algorithm(ABC):
     """ Traveling Salesman Problem (TSP) solver """
-    NAME = None
+    NAME = ''
 
     def __init__(self,
                  neigh_type: str = None,

@@ -6,6 +6,6 @@ def time_it(func):
         tic = time.time()
         result = func(*args, **kwargs)
         toc = time.time()
-        result.solving_time = toc-tic
+        result.time = toc-tic
         return result
     return wrapper
