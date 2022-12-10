@@ -1,7 +1,7 @@
 from .algorithm import Algorithm
 from typing import Union, List
 import pandas as pd
-from ..utils import StopAlgorithm
+from ..utils import StopAlgorithm, Result, time_it
 from abc import abstractmethod
 
 
@@ -19,6 +19,7 @@ class SwappingAlgorithm(Algorithm):
         # current iteration
         self._i = 0
 
+    @time_it
     def solve(self,
               distances: pd.DataFrame,
               random_seed: int = None
@@ -48,7 +49,12 @@ class SwappingAlgorithm(Algorithm):
                 if self._verbose:
                     print(exc.message)
                 break
-        return best_distance
+        # return result object
+        result = Result(algorithm=self,
+                        path=self._path,
+                        best_distance=self.history[-1],
+                        distance_history=self.history)
+        return result
 
     @abstractmethod
     def _iterate_steps(self,
@@ -97,3 +103,8 @@ class SwappingAlgorithm(Algorithm):
                  for y in range(1, index)
                  if (x != y) and (y > x)]
         return swaps
+
+    def __str__(self) -> str:
+        mes = super().__str__()
+        mes += f"""\nn_iter: {self._n_iter}"""
+        return mes

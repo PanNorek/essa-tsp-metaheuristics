@@ -1,5 +1,4 @@
 from .swapping_algorithm import SwappingAlgorithm
-from ..utils import time_it
 import pandas as pd
 from typing import Union, Callable, List
 import random
@@ -12,7 +11,6 @@ def reduce(temp: float, alpha: float = ALPHA):
     return alpha * temp
 
 
-@time_it
 class SimulatedAnnealing(SwappingAlgorithm):
     """ Simulated Annealing Algorithm """
     NAME = 'SIMULATED ANNEALING'
