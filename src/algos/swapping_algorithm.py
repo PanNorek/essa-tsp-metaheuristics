@@ -22,13 +22,18 @@ class SwappingAlgorithm(Algorithm):
     @time_it
     def solve(self,
               distances: pd.DataFrame,
-              random_seed: int = None
+              random_seed: Union[int, None] = None,
+              start_order: Union[list, None] = None
               ) -> int:
         # checks if columns are the equal to indices
         self._distance_matrix_check(distances=distances)
         self._set_random_seed(random_seed=random_seed)
-        # random path at the beginning
-        self._path = self._get_random_path(indices=distances.index)
+        if start_order:
+            # start with a specified path
+            self._path = start_order
+        else:
+            # random path at the beginning
+            self._path = self._get_random_path(indices=distances.index)
         # getting all posible swaps
         swaps = self._get_all_swaps(indices=distances.index)
         # distance of the path at the beginning
