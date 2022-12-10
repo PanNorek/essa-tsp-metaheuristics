@@ -11,7 +11,7 @@ class NearestNeighbour(Algorithm):
     """ Nearest Neighbour Algorithm """
 
     def solve(self,
-              distances: Union[pd.DataFrame, np.ndarray],
+              distances: pd.DataFrame,
               start: Union[int, None] = None
               ) -> int:
         # if starting point is None, choose it randomly from indices

@@ -31,18 +31,20 @@ class TabuSearch(SwappingAlgorithm):
         self._tabu_list.dequeue()
         # adding new swap to tabu list
         self._tabu_list.enqueue(best_swap)
-        gain = self.history[-2] - self.history[-1]
+        gain = self.history[-1] - best_distance
         if self._verbose:
             print(f'best swap: {best_swap} - gain: {gain}')
             print(f'step {self._i}: distance: {best_distance}')
             print(f'tabu list: {self._tabu_list}')
 
+        # adding new best distance to distances history
+        self.history.append(best_distance)
         return best_distance, best_swap
 
     def _find_best_swap(self,
                         swaps: List[tuple],
                         distances: pd.DataFrame
-                        ) -> pd.DataFrame:
+                        ) -> pd.Series:
         distances_df = self._get_swaps_df(swaps=swaps, distances=distances)
         # dropping all swaps that are in tabu list
         distances_df = distances_df[~distances_df[self.SWAP].isin(self._tabu_list)]
