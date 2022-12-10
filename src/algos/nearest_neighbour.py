@@ -1,13 +1,8 @@
 from .algorithm import Algorithm
 from ..utils import time_it, Result
 import pandas as pd
-<<<<<<< HEAD
-=======
-
->>>>>>> f231566cbd9dc595146ac251a323ff5b8a64fba3
 from typing import Union
 import random
-
 
 
 class NearestNeighbour(Algorithm):
