@@ -1,5 +1,5 @@
 from .swapping_algorithm import SwappingAlgorithm
-from ..utils import time_it
+from ..utils import time_it, Result
 from typing import Tuple, Union, List
 import pandas as pd
 from multiprocessing import Pool
@@ -18,6 +18,17 @@ class HillClimber(SwappingAlgorithm):
                        distances: pd.DataFrame,
                        swaps: List[tuple]
                        ) -> Union[int, None]:
+        """Iterate steps in Hill Climber Algorithm
+
+        Args:
+            distances (pd.DataFrame): Distance matrix
+            swaps (List[tuple]): List of possible swaps
+
+        Returns:
+            distance (int): Total distance
+            swap (tuple): Swap
+        """
+
         # start new iteration
         self._i += 1
         best_swap, best_distance = self._find_best_swap(swaps=swaps,
@@ -37,10 +48,17 @@ class HillClimber(SwappingAlgorithm):
         self.history.append(best_distance)
         return best_distance, best_swap
 
+
+class HillClimberMultistart(HillClimber):
+    """ Hill Climber Algorithm with multiple starts """
+    NAME = 'HILL CLIMBER MULTISTART'
+
+    @time_it
     def solve_multistart(self,
-                         distances: pd.DataFrame,
-                         n_iter: int = 20,
-                         ) -> Tuple[int, str]:
+              distances: pd.DataFrame,
+              num_starts: int = 10,
+              **kwargs
+              ) -> Result:
         """Solve TSP problem with Hill Climber Algorithm with multiple starts
 
         Args:
@@ -52,34 +70,12 @@ class HillClimber(SwappingAlgorithm):
             distance (int): Total distance
             path (str): Salesman path
         """
-
-        # TODO: add multiprocessing
-        # TODO: solve will always return Result object
         results = []
-        for i in range(n_iter):
+        for _ in range(num_starts):
             results.append(self.solve(distances,
-                                      num_iter=self._n_iter,
-                                      return_tuple=True))
-            print(f"Start {i}")
-
-        return min(results, key=lambda x: x[0])
-        # return results
-
-    def solve_multistart_parallel(self,
-                                  distance_matrix: pd.DataFrame,
-                                  num_iter: int = 20,
-                                  num_starts: int = 0
-                                  ) -> Tuple[int, str]:
-        """Solve TSP problem with Hill Climber Algorithm with multiple starts
-
-        Args:
-            distance_matrix (pd.DataFrame): Distance matrix
-            num_iter (int): Number of iterations
-            num_starts (int): Number of starts
-
-        Returns:
-            distance (int): Total distance
-            path (str): Salesman path
-        """
-        pool = Pool(processes=2)
-        pool.map(unwrap_self_f, [(self, distance_matrix, num_iter, num_starts)])
+                                      **kwargs
+                                      ))
+        best_result = min(results, key=lambda x: x.best_distance)
+        best_result.no_starts = num_starts
+        return best_result
+        
