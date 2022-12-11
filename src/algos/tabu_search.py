@@ -6,7 +6,19 @@ import random
 
 
 class TabuSearch(SwappingAlgorithm):
-    """Tabu Search Algorithm"""
+    """Tabu Search Algorithm
+    
+    Parameters
+    ----------
+    tabu_length: int
+        length of tabu list, default is 3
+    neigh_type: str
+        type of neighbourhood, default is None
+    n_iter: int
+        number of iterations, default is 100
+    verbose: bool
+        print progress, default is False
+    """
 
     NAME = "TABU SEARCH"
 

@@ -16,7 +16,24 @@ def slowly_descend(temp: float, alpha: float = ALPHA) -> float:
 
 
 class SimulatedAnnealing(SwappingAlgorithm):
-    """Simulated Annealing Algorithm"""
+    """
+    Simulated Annealing Algorithm
+    
+    Parameters
+    ----------
+    temp: int
+        initial temperature
+    alpha: float
+        cooling factor
+    reduce_func: Callable
+        function to reduce temperature, default is reduce
+    neigh_type: str
+        type of neighbourhood, default is None
+    n_iter: int
+        number of iterations, default is 30
+    verbose: bool
+        print progress, default is False
+    """
 
     NAME = "SIMULATED ANNEALING"
 

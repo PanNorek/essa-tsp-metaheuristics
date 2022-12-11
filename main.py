@@ -1,5 +1,5 @@
 from src.algos import SimulatedAnnealing, NearestNeighbour, TabuSearch, HillClimber
-from src.utils import load_data, PathPlotter, BenchmarkPlotter
+from src.utils import load_data, PathPlotter, BenchmarkPlotter, DistanceHistoryPlotter
 from src.algos import MultistartAlgorithm
 
 if __name__ == "__main__":
@@ -45,3 +45,6 @@ if __name__ == "__main__":
     bp.plot(
         results, labels=["RAZ", "DWA", "TRZY", "CZTERY"], palette="Purples_d"
     )  # Reds_d, Blues_d, Greens_d, Purples_d, Oranges_d, Greys_d
+
+    dhp = DistanceHistoryPlotter()
+    dhp.plot(results[1:]) #results[1:] to exclude NearestNeighbour - it has no distance history

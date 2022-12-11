@@ -7,7 +7,17 @@ from ..utils import StopAlgorithm
 
 
 class HillClimber(SwappingAlgorithm):
-    """Hill Climber Algorithm"""
+    """Hill Climber Algorithm
+    
+    Parameters
+    ----------
+    neigh_type : str, optional
+        Type of neighborhood, by default None
+    n_iter : int, optional
+        Number of iterations, by default 30
+    verbose : bool, optional
+        Print progress, by default False
+    """
 
     NAME = "HILL CLIMBER"
 
@@ -44,50 +54,3 @@ class HillClimber(SwappingAlgorithm):
         # adding new best distance to distances history
         self.history.append(best_distance)
         return best_distance, best_swap
-
-
-# class HillClimberMultistart(HillClimber):
-#     """ Hill Climber Algorithm with multiple starts """
-#     NAME = 'HILL CLIMBER MULTISTART'
-
-#     @time_it
-#     def solve_multistart(self,
-#               distances: pd.DataFrame,
-#               num_starts: int = 10,
-#               **kwargs
-#               ) -> Result:
-#         """Solve TSP problem with Hill Climber Algorithm with multiple starts
-
-#         Args:
-#             distance_matrix (pd.DataFrame): Distance matrix
-#             num_iter (int): Number of iterations
-#             num_starts (int): Number of starts
-
-#         Returns:
-#             Result: Result object
-#         """
-#         results = []
-#         history = []
-
-#         # both methods are equivalent in time, the second one is more readable
-#         # tic = time.time()
-#         # list(map(lambda x: self.solve(distances, **kwargs), range(num_starts)))
-#         # toc = time.time()
-
-#         for i in range(1, num_starts + 1):
-#             results.append(self.solve(distances,
-#                                       **kwargs
-#                                       ))
-#             if len(history) == 0:
-#                 history.append(results[-1].best_distance)
-#             else:
-#                 if results[-1].best_distance < history[-1]:
-#                     history.append(results[-1].best_distance)
-#                 # else:
-#                 #     history.append(history[-1])
-#             print(f'No. of start: {i}')
-
-#         self.history = history
-#         best_result = min(results, key=lambda x: x.best_distance)
-#         best_result.no_starts = num_starts
-#         return best_result

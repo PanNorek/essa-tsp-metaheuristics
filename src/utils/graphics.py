@@ -12,8 +12,9 @@ class PathPlotter:
         df = pd.DataFrame(zip(result.path, result.path[1:] + [result.path[0]]), columns=['from', 'to'])
         G = nx.from_pandas_edgelist(df, 'from', 'to', create_using=nx.DiGraph)
 
-        nx.draw(G, with_labels=True)
+        plt.figure(figsize=(10, 6))
         plt.title(f"Salesman Path, Distance: {result.best_distance}")
+        nx.draw(G, with_labels=True)
         plt.show()
 
 class BenchmarkPlotter:
@@ -31,4 +32,20 @@ class BenchmarkPlotter:
         plt.title(f"Algorithms Benchmark")
         plt.xlabel("Algorithm")
         plt.ylabel("Distance")
+        plt.show()
+
+class DistanceHistoryPlotter:
+    """Plot the distance history of the algorithm"""
+
+    def plot(self, results: List[Result], labels: List[str] = None):
+        plt.figure(figsize=(10, 6))
+        if labels is None:
+            labels = [result.algorithm.NAME for result in results]
+        for result, label in zip(results, labels):
+            plt.plot(result.distance_history, label=label)
+        plt.title(f"Distance History")
+        plt.xlabel("Iteration")
+        plt.ylabel("Distance")
+        #show legend in the best location
+        plt.legend(loc='best')
         plt.show()
