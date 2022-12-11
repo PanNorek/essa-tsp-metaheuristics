@@ -41,7 +41,7 @@ class HillClimber(SwappingAlgorithm):
         gain = self.history[-1] - best_distance
         # break condition
         if gain <= 0:
-            raise StopAlgorithm(iter=self._i, distance=best_distance)
+            raise StopAlgorithm(iteration=self._i, distance=best_distance)
         if self._verbose:
             print(f"best swap: {best_swap} - gain: {gain}")
             print(f"step {self._i}: distance: {best_distance}")
