@@ -7,11 +7,13 @@ class Queue:
         self._limit = length
         self._queue = []
 
-    def enqueue(self, object: object):
+    def enqueue(self, object_: object):
+        """ Adds object to the end of the queue """
         assert len(self) < self._limit, 'Queue overflow!'
-        self._queue.append(object)
+        self._queue.append(object_)
 
     def dequeue(self):
+        """ Removes object from the beginning of the queue """
         if len(self) == 3:
             self._queue.pop(0)
 

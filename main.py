@@ -2,9 +2,10 @@ from src.algos import SimulatedAnnealing, NearestNeighbour, TabuSearch, HillClim
 from src.utils import load_data, PathPlotter, BenchmarkPlotter, DistanceHistoryPlotter
 from src.algos import MultistartAlgorithm
 
+
 if __name__ == "__main__":
 
-    df = load_data("data\TSP_29.xlsx")
+    df = load_data(r"data\TSP_29.xlsx")
     NUM_STARTS = 5
 
     algorithms = [SimulatedAnnealing, NearestNeighbour, TabuSearch, HillClimber]
@@ -47,4 +48,6 @@ if __name__ == "__main__":
     )  # Reds_d, Blues_d, Greens_d, Purples_d, Oranges_d, Greys_d
 
     dhp = DistanceHistoryPlotter()
-    dhp.plot(results[1:]) #results[1:] to exclude NearestNeighbour - it has no distance history
+    dhp.plot(
+        results[1:]
+    )  # results[1:] to exclude NearestNeighbour - it has no distance history

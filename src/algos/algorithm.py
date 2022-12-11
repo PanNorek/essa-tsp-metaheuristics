@@ -1,8 +1,7 @@
-from abc import ABC, abstractmethod
-import pandas as pd
-import numpy as np
 import random
-from typing import Union, List
+from abc import ABC, abstractmethod
+from typing import Union
+import pandas as pd
 from ..utils import Result
 
 
@@ -26,7 +25,6 @@ class Algorithm(ABC):
                 Matrix od distances between cities,
                 cities numbers or id names as indices and columns
         """
-        pass
 
     def _get_random_path(self, indices: Union[list, pd.Index]):
         # indices of the cities

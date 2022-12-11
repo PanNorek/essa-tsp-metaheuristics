@@ -1,9 +1,10 @@
+from typing import List
 import matplotlib.pyplot as plt
 import seaborn as sns
 import networkx as nx
 import pandas as pd
 from . import Result
-from typing import List
+
 
 class PathPlotter:
     """Plot the path of the salesman"""
@@ -29,7 +30,7 @@ class BenchmarkPlotter:
         for p in ax.containers:
             ax.bar_label(p, label_type='edge')
 
-        plt.title(f"Algorithms Benchmark")
+        plt.title("Algorithms Benchmark")
         plt.xlabel("Algorithm")
         plt.ylabel("Distance")
         plt.show()
@@ -43,7 +44,7 @@ class DistanceHistoryPlotter:
             labels = [result.algorithm.NAME for result in results]
         for result, label in zip(results, labels):
             plt.plot(result.distance_history, label=label)
-        plt.title(f"Distance History")
+        plt.title("Distance History")
         plt.xlabel("Iteration")
         plt.ylabel("Distance")
         #show legend in the best location

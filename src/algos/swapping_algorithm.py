@@ -1,11 +1,13 @@
-from .algorithm import Algorithm
+from abc import abstractmethod
 from typing import Union, List
 import pandas as pd
+from .algorithm import Algorithm
 from ..utils import StopAlgorithm, Result, time_it
-from abc import abstractmethod
 
 
 class SwappingAlgorithm(Algorithm):
+    """Swapping Algorithm"""
+
     DISTANCE = "distance"
     SWAP = "swap"
 

@@ -1,18 +1,20 @@
+import time
+import pandas as pd
 from joblib import Parallel, delayed
 from .swapping_algorithm import SwappingAlgorithm
 from ..utils import Result
-import pandas as pd
-import time
 
 
 def solver(algo, distances, **kwargs):
+    """Solver function for parallel processing"""
     return algo(**kwargs).solve(distances)
 
 
 class MultistartAlgorithm:
     """Multistart Algorithm
 
-    Call this class with algorithm and distance matrix to run algorithm with multiple starts in parallel.
+    Call this class with algorithm and distance matrix
+    to run algorithm with multiple starts in parallel.
     """
 
     def __call__(
@@ -48,6 +50,6 @@ class MultistartAlgorithm:
         if only_best:
             return min(results_parallel)
         else:
-            df = pd.DataFrame().from_dict([x.__dict__ for x in results_parallel])
-            df["algorithm"] = df["algorithm"].apply(lambda x: x.NAME)
-            return df
+            results_df = pd.DataFrame().from_dict([x.__dict__ for x in results_parallel])
+            results_df["algorithm"] = results_df["algorithm"].apply(lambda x: x.NAME)
+            return results_df

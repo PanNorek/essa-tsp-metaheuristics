@@ -1,5 +1,6 @@
 
 class StopAlgorithm(Exception):
-    def __init__(self, iter: int, distance: int, *args: object) -> None:
+    """Exception raised when algorithm stops."""
+    def __init__(self, iteration: int, distance: int, *args: object) -> None:
         super().__init__(*args)
-        self.message = f'Algorithm stopped at {iter} iteration\nBest distance: {distance}'
+        self.message = f'Algorithm stopped at {iteration} iteration\nBest distance: {distance}'

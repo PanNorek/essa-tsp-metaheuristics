@@ -1,13 +1,12 @@
+from typing import Union, List
+import pandas as pd
 from .swapping_algorithm import SwappingAlgorithm
 from ..utils import Queue
-import pandas as pd
-from typing import Union, List
-import random
 
 
 class TabuSearch(SwappingAlgorithm):
     """Tabu Search Algorithm
-    
+
     Parameters
     ----------
     tabu_length: int

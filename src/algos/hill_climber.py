@@ -1,14 +1,11 @@
-from .swapping_algorithm import SwappingAlgorithm
-from ..utils import time_it, Result
-from typing import Tuple, Union, List
+from typing import Union, List
 import pandas as pd
-from multiprocessing import Pool
 from ..utils import StopAlgorithm
-
+from .swapping_algorithm import SwappingAlgorithm
 
 class HillClimber(SwappingAlgorithm):
     """Hill Climber Algorithm
-    
+
     Parameters
     ----------
     neigh_type : str, optional

@@ -1,8 +1,8 @@
+import random
+from typing import Union
+import pandas as pd
 from .algorithm import Algorithm
 from ..utils import time_it, Result
-import pandas as pd
-from typing import Union
-import random
 
 
 class NearestNeighbour(Algorithm):
