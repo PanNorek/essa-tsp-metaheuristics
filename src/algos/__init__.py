@@ -5,3 +5,4 @@ from .hill_climber import HillClimber
 from .simulated_annealing import SimulatedAnnealing
 from .multistart_algorithm import MultistartAlgorithm
 from .swapping_algorithm import SwappingAlgorithm
+from .genetic_algorithm import GeneticAlgorithm

@@ -1,6 +1,6 @@
 import pandas as pd
 from typing import Union, List
-
+import numpy as np
 
 class Individual:
     PATH = 'path'
@@ -14,23 +14,26 @@ class Individual:
 
     @property
     def fitness(self) -> float:
-        return 1/self.distance
+        return 1 / self.distance
+
+    def mutate(self, mutation_rate: int = 0) -> None:
+        q = 1 - mutation_rate  # 1 - probability of mutation
+        n = len(self.path)
+        for swapped in range(n):
+            if np.random.choice((True, False), p=[mutation_rate, q]):
+                swap_with = np.random.choice(range(n))
+                self.path[swapped], self.path[swap_with] = self.path[swap_with], self.path[swapped]
 
     def to_df(self):
         dic = {self.INDIVIDUAL: [self],
                self.PATH: [self.path],
                self.DISTANCE: [self.distance],
                self.FITNESS: [self.fitness]}
-        df = pd.DataFrame(dic)
-        df = df.sort_values(self.FITNESS, ascending=False)
+        df = pd.DataFrame(dic).sort_values(self.FITNESS, ascending=False)
         return df
 
-    def mate(self, object):
-        self.__assert_type(object)
-        pass
-
-    def __assert_type(self, object) -> None:
-        assert isinstance(object, Individual), f"Cannot compare with {type(object)} type"
+    def __assert_type(self, object_) -> None:
+        assert isinstance(object_, Individual), f"Cannot compare with {type(object_)} type"
 
     def __gt__(self, object) -> bool:
         self.__assert_type(object)
