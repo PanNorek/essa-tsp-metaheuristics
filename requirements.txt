@@ -16,6 +16,7 @@ entrypoints==0.4
 et-xmlfile==1.1.0
 executing==1.2.0
 filelock==3.8.2
+flake8==6.0.0
 fonttools==4.38.0
 identify==2.5.9
 ipykernel==6.19.2
@@ -47,6 +48,8 @@ pre-commit==2.20.0
 prompt-toolkit==3.0.36
 psutil==5.9.4
 pure-eval==0.2.2
+pycodestyle==2.10.0
+pyflakes==3.0.1
 Pygments==2.13.0
 pylint==2.15.8
 pyparsing==3.0.9
