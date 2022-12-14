@@ -2,6 +2,7 @@ import random
 import pandas as pd
 from typing import Union, List
 from .individual import Individual
+from .mutable import Mutable, SimpleSwap
 
 
 class Population:
@@ -34,7 +35,7 @@ class Population:
         )
 
     def _get_path_distance(self, distances: pd.DataFrame, path: list) -> int:
-        """ Get the distance of a given path"""
+        """Get the distance of a given path"""
         path_length = sum([distances.loc[x, y] for x, y in zip(path, path[1:])])
         # add distance back to the starting point
         path_length += distances.loc[path[0], path[-1]]
@@ -52,29 +53,42 @@ class Population:
             self._select_elitism()
 
     def crossover(
-        self, distances: pd.DataFrame, method: str = "ordered"
+        self,
+        distances: pd.DataFrame,
+        crossover_method: str = "ordered",
+        crossover_rate: float = 0.9,
     ) -> List[Individual]:
         # at this point, the population is 1/2 of the original size
         assert len(self.population) == self._pop_size // 2
-        
+
         individuals_to_create = self._pop_size - len(
             self.population
         )  # Individuals to create
 
-        if method == "ordered":
+        if crossover_method == "ordered":
             for _ in range(individuals_to_create):
+                # select two parents
                 parent1 = self._select_roulette()
                 parent2 = self._select_roulette()
-                child1 = self._crossover1(distances, parent1.path, parent2.path)
-                # child2 = self._crossover1(distances, parent2.path, parent1.path)
-                self._population.append(child1)
-                # self._population.extend([child1, child2])
+
+                # crossover
+                child = self._crossover1(distances, parent1.path, parent2.path)
+
+                # add child to population
+                self._population.append(child)
+
+                # reorder population
                 self._order_population()
 
-    def mutate(self, distances: pd.DataFrame, mutation_rate: int = 0.9) -> None:
+    def mutate(
+        self,
+        distances: pd.DataFrame,
+        mutation_type: Mutable,
+        mutation_rate: float = 0.5,
+    ) -> None:
 
         for individual in self.population:
-            individual.mutate(mutation_rate)
+            individual.mutate(mutation_type, mutation_rate)
             individual.distance = self._get_path_distance(distances, individual.path)
 
     def _order_population(self):
