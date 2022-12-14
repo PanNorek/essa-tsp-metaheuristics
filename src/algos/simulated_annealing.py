@@ -9,13 +9,13 @@ ALPHA = 0.9
 
 
 def reduce(temp: float, alpha: float = ALPHA):
-    """ Reduces temperature by multiplying it by alpha"""
+    """Reduces temperature by multiplying it by alpha"""
     return alpha * temp
 
 
 def slowly_descend(temp: float, alpha: float = ALPHA) -> float:
-    """ Reduces temperature by dividing it by 1 + alpha * temp"""
-    return temp/(1 + alpha * temp)
+    """Reduces temperature by dividing it by 1 + alpha * temp"""
+    return temp / (1 + alpha * temp)
 
 
 class SimulatedAnnealing(SwappingAlgorithm):

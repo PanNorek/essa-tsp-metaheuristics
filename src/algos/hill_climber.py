@@ -3,6 +3,7 @@ import pandas as pd
 from ..utils import StopAlgorithm
 from .swapping_algorithm import SwappingAlgorithm
 
+
 class HillClimber(SwappingAlgorithm):
     """Hill Climber Algorithm
 
