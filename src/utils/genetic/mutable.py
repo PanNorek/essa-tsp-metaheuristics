@@ -1,9 +1,13 @@
 from abc import ABC, abstractmethod
 import numpy as np
+import random
 
 
 class Mutable(ABC):
     """Abstract class for mutable"""
+
+    def __init__(self):
+        super().__init__()
 
     @abstractmethod
     def mutate(self, mutation_rate: float) -> None:
@@ -21,7 +25,7 @@ class SimpleSwap(Mutable):
     def mutate(self, mutation_rate: float = 0) -> None:
 
         # decide if mutation will occur
-        if np.random.choice((True, False), p=[mutation_rate, 1 - mutation_rate]):
+        if random.random() < mutation_rate:
             # select two random cities to swap
             swapped, swap_with = np.random.choice(len(self.path), 2, replace=False)
             # swap
@@ -36,7 +40,7 @@ class Inversion(Mutable):
 
     def mutate(self, mutation_rate: float = 0) -> None:
         # decide if mutation will occur
-        if np.random.choice((True, False), p=[mutation_rate, 1 - mutation_rate]):
+        if random.random() < mutation_rate:
             n = len(self.path)
             # select city to start and end inversion
             start = np.random.randint(0, n)
@@ -50,7 +54,7 @@ class Insertion(Mutable):
 
     def mutate(self, mutation_rate: float = 0) -> None:
         # decide if mutation will occur
-        if np.random.choice((True, False), p=[mutation_rate, 1 - mutation_rate]):
+        if random.random() < mutation_rate:
             n = len(self.path)
             # select city to insert
             insert = np.random.randint(0, n)

@@ -1,6 +1,6 @@
 import random
 import pandas as pd
-from typing import Union, List
+from typing import Union, List, Tuple
 from .individual import Individual
 from .mutable import Mutable, SimpleSwap
 
@@ -23,20 +23,15 @@ class Population:
         """
         indices = distances.index.to_list()
         paths = [random.sample(indices, len(indices)) for _ in range(self._pop_size)]
-        distances = [
-            self._get_path_distance(distances=distances, path=path) for path in paths
-        ]
+        distances = [self._get_path_distance(distances=distances, path=path) for path in paths]
         self._population = [
-            Individual(path=path, distance=distance)
-            for path, distance in zip(paths, distances)
+            Individual(path=path, distance=distance) for path, distance in zip(paths, distances)
         ]
-        self._population = sorted(
-            self._population, key=lambda x: x.fitness, reverse=True
-        )
+        self._population = sorted(self._population, key=lambda x: x.fitness, reverse=True)
 
     def _get_path_distance(self, distances: pd.DataFrame, path: list) -> int:
         """Get the distance of a given path"""
-        path_length = sum([distances.loc[x, y] for x, y in zip(path, path[1:])])
+        path_length = sum(distances.loc[x, y] for x, y in zip(path, path[1:]))
         # add distance back to the starting point
         path_length += distances.loc[path[0], path[-1]]
         return path_length
@@ -46,39 +41,33 @@ class Population:
         return self._population
 
     def select(self, method: str = "elitism") -> List[Individual]:
-        if method == "roulette":
-            self._select_roulette()
         if method == "elitism":
             # select the best half of the population
             self._select_elitism()
+        elif method == "roulette":
+            self._select_roulette()
 
     def crossover(
         self,
         distances: pd.DataFrame,
-        crossover_method: str = "ordered",
         crossover_rate: float = 0.9,
-    ) -> List[Individual]:
-        # at this point, the population is 1/2 of the original size
+    ) -> None:
+        # at this point, the population is 1/2 of the original size (selection worked)
         assert len(self.population) == self._pop_size // 2
-
-        individuals_to_create = self._pop_size - len(
-            self.population
-        )  # Individuals to create
-
-        if crossover_method == "ordered":
-            for _ in range(individuals_to_create):
+        # order the population by fitness
+        self._order_population()  # TODO: is this necessary?
+        # create a copy of the population
+        generation = self.population.copy()
+        # while the population is not full
+        while len(self.population) < self._pop_size:
+            # check if crossover should occur
+            if random.random() < crossover_rate:
                 # select two parents
-                parent1 = self._select_roulette()
-                parent2 = self._select_roulette()
-
-                # crossover
-                child = self._crossover1(distances, parent1.path, parent2.path)
-
+                parent1, parent2 = random.sample(generation, 2)
+                # crossing-over
+                child = self._crossover(distances, parent1.path, parent2.path)
                 # add child to population
                 self._population.append(child)
-
-                # reorder population
-                self._order_population()
 
     def mutate(
         self,
@@ -90,13 +79,12 @@ class Population:
         for individual in self.population:
             individual.mutate(mutation_type, mutation_rate)
             individual.distance = self._get_path_distance(distances, individual.path)
+        self._order_population()
 
     def _order_population(self):
-        self._population = sorted(
-            self.population, key=lambda x: x.fitness, reverse=True
-        )
+        self._population = sorted(self.population, key=lambda x: x.fitness, reverse=True)
 
-    def _crossover1(
+    def _crossover(
         self, distances: pd.DataFrame, parent1: Individual, parent2: Individual
     ) -> Individual:
         """Order 1 crossover
@@ -117,24 +105,25 @@ class Population:
         for gene in parent2:
             if gene not in subset:
                 child.append(gene)
-        return Individual(
-            path=child, distance=self._get_path_distance(distances, child)
-        )
+        return Individual(path=child, distance=self._get_path_distance(distances, child))
 
-    def _select_roulette(self):
+    def _select_roulette(self, generation: List[Individual]) -> Individual:
+        """Select an individual using roulette wheel selection"""
+        # define random threshold
         pick = random.random()
-        df = self._to_df()
-        mask = df[self.DIST_FITNESS] >= pick
-        parent = df.loc[mask, Individual.INDIVIDUAL].iloc[0]
-        return parent
+        mask = generation[self.DIST_FITNESS] >= pick
+        return generation.loc[mask, Individual.INDIVIDUAL].iloc[0]
 
     def _select_elitism(self):
         self._population = self._population[: (len(self.population) // 2)]
 
-    def _to_df(self) -> pd.DataFrame:
-        df = pd.concat([ind.to_df() for ind in self], ignore_index=True)
+    def _add_weights(self, generation: List[Individual]) -> pd.DataFrame:
+        """Add weights to the population (shorter paths have higher weights)"""
+        # convert to dataframe
+        df = pd.concat([ind.to_df() for ind in generation], ignore_index=True)
+        # add weights
         cum_fit = df[Individual.FITNESS].cumsum()
-        df[self.DIST_FITNESS] = cum_fit.div(df[Individual.FITNESS].sum())
+        df[self.DIST_FITNESS] = cum_fit.div(df[Individual.FITNESS].sum())  # FIXME: CHECK THIS
         return df
 
     def __str__(self) -> str:
@@ -164,9 +153,8 @@ class Population:
         return self
 
     def __next__(self):
-        if self.__i < len(self.population):
-            element = self.population[self.__i]
-            self.__i += 1
-            return element
-        else:
+        if self.__i >= len(self.population):
             raise StopIteration
+        element = self.population[self.__i]
+        self.__i += 1
+        return element

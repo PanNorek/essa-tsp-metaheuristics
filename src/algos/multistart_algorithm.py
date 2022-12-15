@@ -49,9 +49,6 @@ class MultistartAlgorithm:
 
         if only_best:
             return min(results_parallel)
-        else:
-            results_df = pd.DataFrame().from_dict(
-                [x.__dict__ for x in results_parallel]
-            )
-            results_df["algorithm"] = results_df["algorithm"].apply(lambda x: x.NAME)
-            return results_df
+        results_df = pd.DataFrame().from_dict([x.__dict__ for x in results_parallel])
+        results_df["algorithm"] = results_df["algorithm"].apply(lambda x: x.NAME)
+        return results_df

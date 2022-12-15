@@ -18,7 +18,7 @@ class Individual:
     def fitness(self) -> float:
         return 1 / self.distance
 
-    def mutate(self, neigh_type: Mutable, mutation_rate: float) -> None:
+    def mutate(self, mutation_type: Mutable, mutation_rate: float) -> None:
         """Mutate individual
 
         Args:
@@ -26,7 +26,7 @@ class Individual:
             neigh_type (str, optional): _description_. Defaults to "simple".
         """
 
-        neigh_type.mutate(self, mutation_rate)
+        mutation_type.mutate(self, mutation_rate)
 
     def to_df(self):
         dic = {
@@ -35,20 +35,17 @@ class Individual:
             self.DISTANCE: [self.distance],
             self.FITNESS: [self.fitness],
         }
-        df = pd.DataFrame(dic).sort_values(self.FITNESS, ascending=False)
-        return df
+        return pd.DataFrame(dic).sort_values(self.FITNESS, ascending=False)
 
     def __assert_type(self, object_) -> None:
-        assert isinstance(
-            object_, Individual
-        ), f"Cannot compare with {type(object_)} type"
+        assert isinstance(object_, Individual), f"Cannot compare with {type(object_)} type"
 
     def __gt__(self, object) -> bool:
         self.__assert_type(object)
         return self.fitness > object.fitness
 
     def __str__(self) -> str:
-        return f"Individual(path: {self.path[0]}...{self.path[-1]}, distance: {self.distance})"
+        return f"Individual(path: {self.path[0]}...{self.path[-1]}, distance: {self.distance:.2f})"
 
     def __repr__(self) -> str:
         return str(self)
