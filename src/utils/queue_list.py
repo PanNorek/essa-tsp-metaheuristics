@@ -1,19 +1,17 @@
-
-
 class Queue:
-    """ Implementation of queue for Tabu List """
+    """Implementation of queue for Tabu List"""
 
     def __init__(self, length: int = 3) -> None:
         self._limit = length
         self._queue = []
 
     def enqueue(self, object_: object):
-        """ Adds object to the end of the queue """
-        assert len(self) < self._limit, 'Queue overflow!'
+        """Adds object to the end of the queue"""
+        assert len(self) < self._limit, "Queue overflow!"
         self._queue.append(object_)
 
     def dequeue(self):
-        """ Removes object from the beginning of the queue """
+        """Removes object from the beginning of the queue"""
         if len(self) == 3:
             self._queue.pop(0)
 
@@ -28,10 +26,10 @@ class Queue:
             if key < 0:  # Handle negative indices
                 key += len(self)
             if key < 0 or key >= len(self):
-                raise IndexError(f'The index {key} is out of range')
+                raise IndexError(f"The index {key} is out of range")
             return self._queue[key]
         else:
-            raise TypeError('Invalid argument type')
+            raise TypeError("Invalid argument type")
 
     def __iter__(self):
         self.__i = 0

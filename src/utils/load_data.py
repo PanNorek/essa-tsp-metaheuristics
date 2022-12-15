@@ -3,11 +3,9 @@ import pandas as pd
 import numpy as np
 
 
-
-def load_data(path: str,
-              triu: bool = False,
-              as_array: bool = False
-              ) -> Union[pd.DataFrame, np.array]:
+def load_data(
+    path: str, triu: bool = False, as_array: bool = False
+) -> Union[pd.DataFrame, np.array]:
     """
     Load data from given path
 
