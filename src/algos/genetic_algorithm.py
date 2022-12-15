@@ -2,6 +2,7 @@ from typing import Union, List, Callable
 import pandas as pd
 from . import Algorithm
 from ..utils.genetic import Population, SimpleSwap, Inversion, Insertion, Mutable
+from ..utils import ResultManager
 import random
 import numpy as np
 import time
@@ -10,6 +11,7 @@ import time
 class GeneticAlgorithm(Algorithm):
     """Genetic algorithm for solving TSP problem"""
 
+    NAME = "GENETIC ALGORITHM"
     PARAM_REFERENCE = {
         "simple": SimpleSwap,
         "inversion": Inversion,
@@ -57,6 +59,7 @@ class GeneticAlgorithm(Algorithm):
             tic = time.perf_counter()
             # I: Select parents
             population.select(method=self._selection_method)
+
             # II: Crossover - choose whether to give birth to a child or two
             population.crossover(
                 distances,
@@ -75,3 +78,4 @@ class GeneticAlgorithm(Algorithm):
                 )
 
         print(f"Final population: {population.population[0]}")
+        ResultManager.save_result(self.__dict__, distances.shape[0], population.population[0])

@@ -4,3 +4,4 @@ from .exceptions import StopAlgorithm
 from .result import Result
 from .load_data import load_data
 from .graphics import PathPlotter, BenchmarkPlotter, DistanceHistoryPlotter
+from .result_manager import ResultManager

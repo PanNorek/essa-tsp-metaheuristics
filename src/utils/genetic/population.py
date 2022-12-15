@@ -50,7 +50,7 @@ class Population:
     def crossover(
         self,
         distances: pd.DataFrame,
-        crossover_rate: float = 0.9,
+        crossover_rate: float,
     ) -> None:
         # at this point, the population is 1/2 of the original size (selection worked)
         assert len(self.population) == self._pop_size // 2
@@ -107,14 +107,20 @@ class Population:
                 child.append(gene)
         return Individual(path=child, distance=self._get_path_distance(distances, child))
 
-    def _select_roulette(self, generation: List[Individual]) -> Individual:
+    def _select_roulette(self) -> Individual:
         """Select an individual using roulette wheel selection"""
         # define random threshold
         pick = random.random()
-        mask = generation[self.DIST_FITNESS] >= pick
-        return generation.loc[mask, Individual.INDIVIDUAL].iloc[0]
+        # add weights to the population
+        df = self._add_weights(self.population)
+        mask = df[self.DIST_FITNESS] > pick
+        # select the first individual that has a higher weight than the threshold
+        return df[mask].iloc[0]
 
-    def _select_elitism(self):
+    def _select_elitism(self) -> None:
+        """Select the best half of the population"""
+        # sort the population by fitness
+        self._order_population()
         self._population = self._population[: (len(self.population) // 2)]
 
     def _add_weights(self, generation: List[Individual]) -> pd.DataFrame:
