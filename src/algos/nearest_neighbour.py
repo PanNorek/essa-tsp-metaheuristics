@@ -11,14 +11,17 @@ class NearestNeighbour(Algorithm):
     NAME = "NEAREST NEIGHBOUR"
 
     @time_it
-    def solve(self, distances: pd.DataFrame, start: Union[int, None] = None) -> int:
+    def solve(self,
+              distances: pd.DataFrame,
+              start: Union[int, None] = None,
+              random_seed: Union[int, None] = None,
+              ) -> int:
+        super().solve(distances=distances, random_seed=random_seed)
         # if starting point is None, choose it randomly from indices
         if start is None:
             start = random.choice(list(distances.index))
         # checks if starting point was properly defined
         assert start in list(distances.index), "starting point not in distance matix"
-        # checks if columns are the equal to indices
-        self._distance_matrix_check(distances=distances)
         # sets unvisited list to all cities
         unvisited = list(distances.index)
         # first visited city is starting point

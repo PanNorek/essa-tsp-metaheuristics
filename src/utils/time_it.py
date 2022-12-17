@@ -1,7 +1,8 @@
 import time
+from typing import Callable
 
 
-def time_it(func):
+def time_it(func: Callable):
     """Decorator to measure time of function execution"""
 
     def wrapper(*args, **kwargs):

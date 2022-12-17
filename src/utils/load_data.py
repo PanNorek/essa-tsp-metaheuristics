@@ -3,9 +3,10 @@ import pandas as pd
 import numpy as np
 
 
-def load_data(
-    path: str, triu: bool = False, as_array: bool = False
-) -> Union[pd.DataFrame, np.array]:
+def load_data(path: str,
+              triu: bool = False,
+              as_array: bool = False
+              ) -> Union[pd.DataFrame, np.array]:
     """
     Load data from given path
 
@@ -19,6 +20,4 @@ def load_data(
     if triu:
         # Get upper triangle of data
         return pd.np.triu(data.to_numpy())
-    if as_array:
-        return data.to_numpy()
-    return data
+    return data.to_numpy() if as_array else data

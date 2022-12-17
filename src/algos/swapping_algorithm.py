@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import Union, List
 import pandas as pd
 from .algorithm import Algorithm
-from ..utils import StopAlgorithm, Result, time_it
+from ..utils import StopAlgorithm, Result, time_it, get_path_distance
 
 
 class SwappingAlgorithm(Algorithm):
@@ -11,34 +11,29 @@ class SwappingAlgorithm(Algorithm):
     DISTANCE = "distance"
     SWAP = "swap"
 
-    def __init__(
-        self, neigh_type: str = None, n_iter: int = 30, verbose: bool = False
-    ) -> None:
-        super().__init__(neigh_type=neigh_type, verbose=verbose)
+    def __init__(self,
+                 neigh_type: str = "swap",
+                 n_iter: int = 30,
+                 verbose: bool = False,
+                 inversion_window: int | None = None
+                 ) -> None:
+        super().__init__(neigh_type=neigh_type,
+                         verbose=verbose,
+                         inversion_window=inversion_window)
         self._n_iter = n_iter
         # current iteration
         self._i = 0
 
     @time_it
-    def solve(
-        self,
-        distances: pd.DataFrame,
-        random_seed: Union[int, None] = None,
-        start_order: Union[list, None] = None,
-    ) -> Result:
-        # checks if columns are the equal to indices
-        self._distance_matrix_check(distances=distances)
-        self._set_random_seed(random_seed=random_seed)
-        if start_order:
-            # start with a specified path
-            self._path = start_order
-        else:
-            # random path at the beginning
-            self._path = self._get_random_path(indices=distances.index)
-        # getting all posible swaps
-        swaps = self._get_all_swaps(indices=distances.index)
+    def solve(self,
+              distances: pd.DataFrame,
+              random_seed: Union[int, None] = None,
+              start_order: Union[list, None] = None
+              ) -> Result:
+        super().solve(distances=distances, random_seed=random_seed)
+        self._path = start_order or self._get_random_path(indices=distances.index)
         # distance of the path at the beginning
-        distance = self._get_path_distance(distances=distances, path=self._path)
+        distance = get_path_distance(path=self._path, distances=distances)
         # list of distances at i iteration
         self.history = [distance]
 
@@ -48,7 +43,7 @@ class SwappingAlgorithm(Algorithm):
 
         for _ in range(self._n_iter):
             try:
-                best_distance, _ = self._iterate_steps(distances=distances, swaps=swaps)
+                self._iterate_steps(distances=distances)
             except StopAlgorithm as exc:
                 if self._verbose:
                     print(exc.message)
@@ -57,60 +52,14 @@ class SwappingAlgorithm(Algorithm):
         result = Result(
             algorithm=self,
             path=self._path,
-            best_distance=self.history[-1],
+            best_distance=min(self.history),
             distance_history=self.history,
         )
         return result
 
     @abstractmethod
-    def _iterate_steps(
-        self, distances: pd.DataFrame, swaps: List[tuple]
-    ) -> Union[int, None]:
+    def _iterate_steps(self, distances: pd.DataFrame) -> None:
         pass
-
-    def _swap_elements(self, swap: tuple) -> list:
-        """Returns copy of the current path with swapped indices"""
-        path = self._path.copy()
-        pos1 = path.index(swap[0])
-        pos2 = path.index(swap[1])
-        path[pos1], path[pos2] = path[pos2], path[pos1]
-        return path
-
-    def _find_best_swap(self, swaps: List[tuple], distances: pd.DataFrame) -> pd.Series:
-        distances_df = self._get_swaps_df(swaps=swaps, distances=distances)
-        # taking row of the best swaps
-        best_swap = distances_df.iloc[0]
-        return best_swap
-
-    def _get_swaps_df(
-        self, swaps: List[tuple], distances: pd.DataFrame
-    ) -> pd.DataFrame:
-        # new paths with swapped order
-        new_paths = list(map(lambda x: self._swap_elements(swap=x), swaps))
-        # distances of all possible new paths
-        paths_distances = list(
-            map(
-                lambda x: self._get_path_distance(distances=distances, path=x),
-                new_paths,
-            )
-        )
-        # DataFrame of all swaps and distances of formed paths
-        distances_df = pd.DataFrame({self.SWAP: swaps, self.DISTANCE: paths_distances})
-        # sorting distances in ascending order
-        distances_df = distances_df.sort_values(self.DISTANCE)
-        return distances_df
-
-    def _get_all_swaps(self, indices: list) -> List[tuple]:
-        """Returns all possible swaps of indices"""
-        index = len(indices) + 1
-        # unique combination
-        swaps = [
-            (x, y)
-            for x in range(1, index)
-            for y in range(1, index)
-            if (x != y) and (y > x)
-        ]
-        return swaps
 
     def __str__(self) -> str:
         mes = super().__str__()
