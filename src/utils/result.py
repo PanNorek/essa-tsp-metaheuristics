@@ -11,6 +11,7 @@ class Result:
     best_distance: int
     time: float = None
     distance_history: list = None
+    mean_distance: list = None
 
     def __str__(self) -> str:
         mes = f"""best distance: {self.best_distance}
@@ -27,7 +28,5 @@ class Result:
         return str(self)
 
     def __gt__(self, object_) -> bool:
-        assert isinstance(
-            object_, Result
-        ), f"can't compare result with {type(object_)} type"
+        assert isinstance(object_, Result), f"can't compare result with {type(object_)} type"
         return self.best_distance > object_.best_distance

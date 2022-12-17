@@ -1,9 +1,9 @@
 import random
 import pandas as pd
-from typing import Union, List, Tuple
+from typing import List
 from .individual import Individual
-from .mutable import Mutable, SimpleSwap
-from .parent_selection import ParentSelection, Elitism, Tournament, Roulette
+from .mutable import Mutable
+from .parent_selection import ParentSelection
 
 
 class Population:
@@ -98,6 +98,10 @@ class Population:
         # sort the population by fitness
         self._order_population()
         self._population = self._population[: self._init_pop_size]
+
+    def calculate_mean_distance(self) -> float:
+        """Calculate the mean distance of the population"""
+        return sum(individual.distance for individual in self.population) / len(self.population)
 
     def _order_population(self):
         self._population = sorted(self.population, key=lambda x: x.fitness, reverse=True)

@@ -22,7 +22,7 @@ class Algorithm(ABC):
         Uses specific algorithm to solve Traveling Salesman Problem
 
         Params:
-            distances: pd.DataFrame | np.ndarray
+            distances: pd.DataFrame
                 Matrix od distances between cities,
                 cities numbers or id names as indices and columns
         """
