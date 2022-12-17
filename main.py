@@ -10,8 +10,7 @@ if __name__ == "__main__":
 
     algorithms = [SimulatedAnnealing, NearestNeighbour, TabuSearch, HillClimber]
 
-    results = []
-    results.append(min([NearestNeighbour().solve(df, start=x + 1) for x in range(29)]))
+    results = [min(NearestNeighbour().solve(df, start=x + 1) for x in range(29))]
     results.append(
         MultistartAlgorithm()(
             SimulatedAnnealing,
@@ -29,9 +28,7 @@ if __name__ == "__main__":
         )
     )
     results.append(
-        MultistartAlgorithm()(
-            HillClimber, df, n_starts=NUM_STARTS, verbose=False, n_iter=25
-        )
+        MultistartAlgorithm()(HillClimber, df, n_starts=NUM_STARTS, verbose=False, n_iter=25)
     )
 
     # Example of plotting the path
@@ -48,6 +45,4 @@ if __name__ == "__main__":
     )  # Reds_d, Blues_d, Greens_d, Purples_d, Oranges_d, Greys_d
 
     dhp = DistanceHistoryPlotter()
-    dhp.plot(
-        results[1:]
-    )  # results[1:] to exclude NearestNeighbour - it has no distance history
+    dhp.plot(results[1:])  # results[1:] to exclude NearestNeighbour - it has no distance history

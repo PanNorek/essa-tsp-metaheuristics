@@ -19,13 +19,12 @@ class Individual:
         return 1 / self.distance
 
     def mutate(self, mutation_type: Mutable, mutation_rate: float) -> None:
-        """Mutate individual
+        """Mutate the individual
 
         Args:
-            mutation_rate (int, optional): _description_. Defaults to 0.
-            neigh_type (str, optional): _description_. Defaults to "simple".
+            mutation_type (Mutable): Type of mutation. Possible values: SimpleSwap, Inversion, Scramble
+            mutation_rate (float): Probability of mutation
         """
-
         mutation_type.mutate(self, mutation_rate)
 
     def to_df(self):

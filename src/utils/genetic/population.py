@@ -3,31 +3,31 @@ import pandas as pd
 from typing import Union, List, Tuple
 from .individual import Individual
 from .mutable import Mutable, SimpleSwap
+from .parent_selection import ParentSelection, Elitism, Tournament, Roulette
 
 
 class Population:
-    DIST_FITNESS = "cum_fitness"
-    # TODO: Implement init method
-
-    def __init__(self, pop_size: int = 500) -> None:
+    def __init__(self, init_pop_size: int, pop_size: int) -> None:
+        self._init_pop_size = init_pop_size
         self._pop_size = pop_size
 
     def generate_population(self, distances: pd.DataFrame) -> List[Individual]:
         """Generate a population of individuals
 
         Args:
-            distances (pd.DataFrame): _description_
+            distances (pd.DataFrame): matrix of distances between cities
 
         Returns:
-            List[Individual]: _description_
+            List[Individual]: list of sampled individuals
         """
         indices = distances.index.to_list()
-        paths = [random.sample(indices, len(indices)) for _ in range(self._pop_size)]
+        paths = [random.sample(indices, len(indices)) for _ in range(self._init_pop_size)]
         distances = [self._get_path_distance(distances=distances, path=path) for path in paths]
         self._population = [
             Individual(path=path, distance=distance) for path, distance in zip(paths, distances)
         ]
         self._population = sorted(self._population, key=lambda x: x.fitness, reverse=True)
+        print(len(self._population))
 
     def _get_path_distance(self, distances: pd.DataFrame, path: list) -> int:
         """Get the distance of a given path"""
@@ -40,32 +40,37 @@ class Population:
     def population(self) -> List[Individual]:
         return self._population
 
-    def select(self, method: str = "elitism") -> List[Individual]:
-        if method == "elitism":
-            # select the best half of the population
-            self._select_elitism()
-        elif method == "roulette":
-            self._select_roulette()
-
     def crossover(
         self,
         distances: pd.DataFrame,
+        crossover_method: ParentSelection,
         crossover_rate: float,
+        **kwargs,
     ) -> None:
-        # at this point, the population is 1/2 of the original size (selection worked)
-        assert len(self.population) == self._pop_size // 2
-        # order the population by fitness
-        self._order_population()  # TODO: is this necessary?
+        """Crossover the population.
+        Function uses PMX (Partially Matched Crossover) algorithm.
+
+        Args:
+            distances (pd.DataFrame): matrix of distances between cities
+            crossover_rate (float): probability of crossover
+        """
+
+        assert len(self.population) < self._pop_size, "Population is full."
+
+        # sort the population by fitness
+        self._order_population()
+
         # create a copy of the population
         generation = self.population.copy()
+
         # while the population is not full
         while len(self.population) < self._pop_size:
             # check if crossover should occur
             if random.random() < crossover_rate:
                 # select two parents
-                parent1, parent2 = random.sample(generation, 2)
+                parent1, parent2 = crossover_method.select(generation, **kwargs)
                 # crossing-over
-                child = self._crossover(distances, parent1.path, parent2.path)
+                child = self._crossover(distances, parent1, parent2)
                 # add child to population
                 self._population.append(child)
 
@@ -75,11 +80,24 @@ class Population:
         mutation_type: Mutable,
         mutation_rate: float = 0.5,
     ) -> None:
+        """Mutate the population
+
+        Args:
+            distances (pd.DataFrame): matrix of distances between cities
+            mutation_type (Mutable): mutation type. Possible values: SimpleSwap, Inversion, Insertion.
+            mutation_rate (float, optional): probability of mutation. Defaults to 0.5.
+        """
 
         for individual in self.population:
             individual.mutate(mutation_type, mutation_rate)
             individual.distance = self._get_path_distance(distances, individual.path)
         self._order_population()
+
+    def select(self) -> None:
+        """Select the better half of the population"""
+        # sort the population by fitness
+        self._order_population()
+        self._population = self._population[: self._init_pop_size]
 
     def _order_population(self):
         self._population = sorted(self.population, key=lambda x: x.fitness, reverse=True)
@@ -87,50 +105,31 @@ class Population:
     def _crossover(
         self, distances: pd.DataFrame, parent1: Individual, parent2: Individual
     ) -> Individual:
-        """Order 1 crossover
+        """PMX (Partially Matched Crossover) algorithm for TSP problem.
 
         Args:
-            parent1 (Individual): _description_
-            parent2 (Individual): _description_
+            parent1 (Individual): First parent
+            parent2 (Individual): Second parent
 
         Returns:
-            Individual: _description_
+            Individual: Child
         """
         # select a random subset of parent1
-        start = random.randint(0, len(parent1) - 1)
-        end = random.randint(start, len(parent1) - 1)
-        subset = parent1[start:end]
+        start = random.randint(0, len(parent1.path) - 1)
+        end = random.randint(start, len(parent1.path) - 1)
+        subset = parent1.path[start:end]
         # create a child from the subset
         child = subset
-        for gene in parent2:
+        # add the remaining genes from parent2
+        for gene in parent2.path:
             if gene not in subset:
                 child.append(gene)
-        return Individual(path=child, distance=self._get_path_distance(distances, child))
+        # at this point we have parent1 genes at the beginning and the rest from parent2
 
-    def _select_roulette(self) -> Individual:
-        """Select an individual using roulette wheel selection"""
-        # define random threshold
-        pick = random.random()
-        # add weights to the population
-        df = self._add_weights(self.population)
-        mask = df[self.DIST_FITNESS] > pick
-        # select the first individual that has a higher weight than the threshold
-        return df[mask].iloc[0]
+        # recombine the child - put parent1 genes in the middle
+        recombined_child = child[start:end] + child[:start] + child[end:]
 
-    def _select_elitism(self) -> None:
-        """Select the best half of the population"""
-        # sort the population by fitness
-        self._order_population()
-        self._population = self._population[: (len(self.population) // 2)]
-
-    def _add_weights(self, generation: List[Individual]) -> pd.DataFrame:
-        """Add weights to the population (shorter paths have higher weights)"""
-        # convert to dataframe
-        df = pd.concat([ind.to_df() for ind in generation], ignore_index=True)
-        # add weights
-        cum_fit = df[Individual.FITNESS].cumsum()
-        df[self.DIST_FITNESS] = cum_fit.div(df[Individual.FITNESS].sum())  # FIXME: CHECK THIS
-        return df
+        return Individual(path=recombined_child, distance=self._get_path_distance(distances, child))
 
     def __str__(self) -> str:
         return str(self.population)

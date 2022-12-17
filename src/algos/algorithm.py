@@ -2,6 +2,7 @@ import random
 from abc import ABC, abstractmethod
 from typing import Union
 import pandas as pd
+import numpy as np
 from ..utils import Result
 
 
@@ -36,6 +37,7 @@ class Algorithm(ABC):
     def _set_random_seed(self, random_seed: int = None) -> None:
         # sets random seed
         random.seed(random_seed)
+        np.random.seed(random_seed)
 
     def _distance_matrix_check(self, distances: pd.DataFrame) -> None:
         if not isinstance(distances, pd.DataFrame):
