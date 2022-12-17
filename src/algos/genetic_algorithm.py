@@ -1,8 +1,9 @@
 from typing import Union, List, Callable
 import pandas as pd
+
 from . import Algorithm
 from ..utils.genetic import Population, SimpleSwap, Inversion, Insertion, Mutable
-from ..utils import ResultManager
+from ..utils import ResultManager, Result
 import random
 import numpy as np
 import time
@@ -35,7 +36,8 @@ class GeneticAlgorithm(Algorithm):
         self._selection_method = selection_method
         self._crossover_rate = crossover_rate
         self._mutation_rate = mutation_rate
-
+        self._history = []
+        self._mean_distance = []
         assert (
             0 < crossover_rate <= 1
         ), "Crossing-over  must in (0,1>"  # not zero, because while loop will never end
@@ -49,6 +51,7 @@ class GeneticAlgorithm(Algorithm):
         np.random.seed(random_state)
 
     def solve(self, distances: pd.DataFrame) -> pd.DataFrame:
+        start = time.perf_counter()
         # 1st stage: Create random population population
         population = Population(self._pop_size)
         population.generate_population(distances)
@@ -76,6 +79,15 @@ class GeneticAlgorithm(Algorithm):
                 print(
                     f"Generation {generation}: {population.population[0]} took {toc - tic:0.4f} seconds"
                 )
-
+            self._history.append(population.population[0].distance)
+            # self._mean_distance.append(population.mean_distance)
+        self._time = time.perf_counter() - start
         print(f"Final population: {population.population[0]}")
         ResultManager.save_result(self.__dict__, distances.shape[0], population.population[0])
+        return Result(
+            GeneticAlgorithm.NAME,
+            population.population[0].path,
+            population.population[0].distance,
+            self._time,
+            self._history,
+        )
