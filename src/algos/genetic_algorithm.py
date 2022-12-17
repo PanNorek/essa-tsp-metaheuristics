@@ -71,7 +71,7 @@ class GeneticAlgorithm(Algorithm):
             # III: Mutation
             population.mutate(
                 distances,
-                mutation_type=GeneticAlgorithm.PARAM_REFERENCE[self.neigh_type],
+                mutation_type=self.PARAM_REFERENCE[self.neigh_type],
                 mutation_rate=self._mutation_rate,
             )
             toc = time.perf_counter()
@@ -83,9 +83,12 @@ class GeneticAlgorithm(Algorithm):
             # self._mean_distance.append(population.mean_distance)
         self._time = time.perf_counter() - start
         print(f"Final population: {population.population[0]}")
+        # write to file
         ResultManager.save_result(self.__dict__, distances.shape[0], population.population[0])
+        # Return the best path
+
         return Result(
-            GeneticAlgorithm.NAME,
+            self.NAME,
             population.population[0].path,
             population.population[0].distance,
             self._time,

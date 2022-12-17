@@ -52,12 +52,19 @@ class Population:
         distances: pd.DataFrame,
         crossover_rate: float,
     ) -> None:
-        # at this point, the population is 1/2 of the original size (selection worked)
-        assert len(self.population) == self._pop_size // 2
-        # order the population by fitness
-        self._order_population()  # TODO: is this necessary?
+        """Crossover the population.
+        Function uses PMX (Partially Matched Crossover) algorithm.
+
+        Args:
+            distances (pd.DataFrame): matrix of distances between cities
+            crossover_rate (float): probability of crossover
+        """
+        # at this point, the population is smaller than the original size (selection worked)
+        assert len(self.population) < self._pop_size, "Population is full."
+
         # create a copy of the population
         generation = self.population.copy()
+
         # while the population is not full
         while len(self.population) < self._pop_size:
             # check if crossover should occur
@@ -65,7 +72,7 @@ class Population:
                 # select two parents
                 parent1, parent2 = random.sample(generation, 2)
                 # crossing-over
-                child = self._crossover(distances, parent1.path, parent2.path)
+                child = self._crossover(distances, parent1, parent2)
                 # add child to population
                 self._population.append(child)
 
@@ -75,6 +82,13 @@ class Population:
         mutation_type: Mutable,
         mutation_rate: float = 0.5,
     ) -> None:
+        """Mutate the population
+
+        Args:
+            distances (pd.DataFrame): matrix of distances between cities
+            mutation_type (Mutable): mutation type. Possible values: SimpleSwap, Inversion, Insertion.
+            mutation_rate (float, optional): probability of mutation. Defaults to 0.5.
+        """
 
         for individual in self.population:
             individual.mutate(mutation_type, mutation_rate)
@@ -87,25 +101,31 @@ class Population:
     def _crossover(
         self, distances: pd.DataFrame, parent1: Individual, parent2: Individual
     ) -> Individual:
-        """Order 1 crossover
+        """PMX (Partially Matched Crossover) algorithm for TSP problem.
 
         Args:
-            parent1 (Individual): _description_
-            parent2 (Individual): _description_
+            parent1 (Individual): First parent
+            parent2 (Individual): Second parent
 
         Returns:
-            Individual: _description_
+            Individual: Child
         """
         # select a random subset of parent1
-        start = random.randint(0, len(parent1) - 1)
-        end = random.randint(start, len(parent1) - 1)
-        subset = parent1[start:end]
+        start = random.randint(0, len(parent1.path) - 1)
+        end = random.randint(start, len(parent1.path) - 1)
+        subset = parent1.path[start:end]
         # create a child from the subset
         child = subset
-        for gene in parent2:
+        # add the remaining genes from parent2
+        for gene in parent2.path:
             if gene not in subset:
                 child.append(gene)
-        return Individual(path=child, distance=self._get_path_distance(distances, child))
+        # at this point we have parent1 genes at the beginning and the rest from parent2
+
+        # recombine the child - put parent1 genes in the middle
+        recombined_child = child[start:end] + child[:start] + child[end:]
+
+        return Individual(path=recombined_child, distance=self._get_path_distance(distances, child))
 
     def _select_roulette(self) -> Individual:
         """Select an individual using roulette wheel selection"""
