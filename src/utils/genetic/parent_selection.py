@@ -10,6 +10,7 @@ class ParentSelection(ABC):
     Abstract class for offspring selection
     """
 
+    @staticmethod
     @abstractmethod
     def select(generation: List[Individual], **kwargs):
         """
