@@ -41,3 +41,6 @@ class Individual:
 
     def __repr__(self) -> str:
         return str(self)
+
+    def __len__(self) -> int:
+        return len(self.path)

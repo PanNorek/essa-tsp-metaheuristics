@@ -4,7 +4,8 @@ from typing import Union, List, Tuple
 from ..distance import get_path_distance
 from .individual import Individual
 from ..neighbourhood_type import NeighbourhoodType
-from .parent_selection import ParentSelection, TruncationSelection, Tournament, Roulette
+from .parent_selection import ParentSelection
+from .crossover import CrossoverMethod
 
 
 class Population:
@@ -42,8 +43,8 @@ class Population:
     def crossover(self,
                   distances: pd.DataFrame,
                   sample_size: int | float,
-                  crossover_method: ParentSelection,
-                  crossover_rate: float,
+                  selection_method: ParentSelection,
+                  crossover_method: CrossoverMethod,
                   elite_size: int = 0
                   ) -> None:
         """Crossover the population.
@@ -57,16 +58,23 @@ class Population:
         # while the population is not full
         while len(new_population) < self._pop_size:
             # check if crossover should occur
-            # TODO: what is that?!
-            if random.random() < crossover_rate:
-                # select two parents
-                # TODO: idk
-                parent1, parent2 = crossover_method.select(
-                    self._population[elite_size:], size=sample_size)
-                # crossing-over
-                child = self._crossover(distances, parent1, parent2)
-                # add child to population
-                new_population.append(child)
+            parent_1, parent_2 = selection_method.select(
+                self._population[elite_size:], size=sample_size)
+
+            # crossing-over
+            child_1, child_2 = crossover_method.crossover(
+                parent_1=parent_1.path, parent_2=parent_2.path)
+            child_1, child_2 = (
+                Individual(path=child_1,
+                           distance=get_path_distance(path=child_1, distances=distances)),
+                Individual(path=child_2,
+                           distance=get_path_distance(path=child_2, distances=distances))
+            )
+
+            # add child to population
+            new_population.append(child_1)
+            if len(new_population) < self._pop_size:
+                new_population.append(child_2)
 
         self._population = new_population
         self.sort()
@@ -94,38 +102,6 @@ class Population:
             individual.distance = get_path_distance(path=individual.path,
                                                     distances=distances)
         self.sort()
-
-    def _crossover(self,
-                   distances: pd.DataFrame,
-                   parent1: Individual,
-                   parent2: Individual
-                   ) -> Individual:
-        """PMX (Partially Matched Crossover) algorithm for TSP problem.
-
-        Args:
-            parent1 (Individual): First parent
-            parent2 (Individual): Second parent
-
-        Returns:
-            Individual: Child
-        """
-        # select a random subset of parent1
-        start = random.randint(0, len(parent1.path) - 1)
-        end = random.randint(start, len(parent1.path) - 1)
-        subset = parent1.path[start:end]
-        # create a child from the subset
-        child = subset
-        # add the remaining genes from parent2
-        for gene in parent2.path:
-            if gene not in subset:
-                child.append(gene)
-        # at this point we have parent1 genes at the beginning and the rest from parent2
-
-        # recombine the child - put parent1 genes in the middle
-        recombined_child = child[start:end] + child[:start] + child[end:]
-
-        return Individual(path=recombined_child,
-                          distance=get_path_distance(path=child, distances=distances))
 
     # magic methods
     # --------------
