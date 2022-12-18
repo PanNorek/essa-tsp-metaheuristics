@@ -27,7 +27,6 @@ class Population:
             Individual(path=path, distance=distance) for path, distance in zip(paths, distances)
         ]
         self._population = sorted(self._population, key=lambda x: x.fitness, reverse=True)
-        print(len(self._population))
 
     def _get_path_distance(self, distances: pd.DataFrame, path: list) -> int:
         """Get the distance of a given path"""

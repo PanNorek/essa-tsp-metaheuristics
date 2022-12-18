@@ -91,11 +91,14 @@ class GeneticAlgorithm(Algorithm):
 
             if self._verbose:
                 print(f"Generation {generation}: {population.population[0]}")
+
             # story only better results
             # if population.population[0].distance < self.history[-1]:
             #     self.history.append(population.population[0].distance)
 
+            # or all results
             self.history.append(population.population[0].distance)
+
             self._mean_distance.append(population.calculate_mean_distance())
 
         print(f"Final population: {population.population[0]}")

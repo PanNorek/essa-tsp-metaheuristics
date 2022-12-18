@@ -52,7 +52,7 @@ class DistanceHistoryPlotter:
                 labels = [f"Algorithm {i}" for i in range(1, len(results) + 1)]
 
             for result, label in zip(results, labels):
-                plt.plot(result.distance_history, label=label)
+                plt.plot(result.distance_history, label=label + " - best distance")
                 plt.plot(result.mean_distance, label=label + " - mean distance", linestyle="--")
             # for result, label in zip(results, labels):
             #     axs[0].plot(result.distance_history, label=label)
