@@ -2,13 +2,55 @@ from typing import Union, List, Callable
 import pandas as pd
 import numpy as np
 from . import Algorithm
-from ..utils.genetic import Population, SimpleSwap, Inversion, Insertion, Mutable
+from ..utils.genetic import Population, SimpleSwap, Inversion, Insertion, Mutable, ParentSelection
 from ..utils import ResultManager, Result, time_it
 from ..utils.genetic import Elitism, Roulette, Tournament
 
 
 class GeneticAlgorithm(Algorithm):
-    """Genetic algorithm for solving TSP problem"""
+    """Genetic algorithm for solving TSP problem
+
+    Parameters
+    ----------
+    init_pop_size : int, optional
+        Initial population size, by default 50.
+    pop_size : int, optional
+        Population size, by default 100
+    no_generations : int, optional
+        Number of generations, by default 10
+    selection_method : str, optional
+        Parents selection method, user can choose between
+        ["elitism", "roulette", "tournament"],
+        by default "elitism".
+    crossover_rate : float, optional
+        Crossing-over probability rate, by default 1.0
+    elite_size : Union[int, None], optional
+        Elite size is only used when selection_method is "elitism",
+        it means the number of best individuals that will be selected to crossing over,
+        by default None(None means 1/5 of population size)
+    tournament_size : Union[int, None], optional
+        Tournament size is only used when selection_method is "tournament",
+        it means the number of random individuals that will be selected to tournament,
+        in which the best individual will be selected to crossing over,
+        by default None(None means 2)
+    mutation_rate : float, optional
+        Probability of mutation , by default 0.5
+    neigh_type : str, optional
+        Mutation type, user can choose between
+        ["simple", "inversion", "insertion"],
+        by default "simple"
+    random_state : int, optional
+        Random state, by default None
+    verbose : bool, optional
+        Verbose, by default False
+
+
+
+    Methods
+    -------
+    solve(distances: pd.DataFrame) -> Result
+        Solve TSP problem by given hyperparameters.
+    """
 
     NAME = "GENETIC ALGORITHM"
     PARAM_REFERENCE = {
@@ -54,6 +96,9 @@ class GeneticAlgorithm(Algorithm):
         assert issubclass(
             GeneticAlgorithm.PARAM_REFERENCE[neigh_type], Mutable
         ), "Wrong mutation type."
+        assert issubclass(
+            GeneticAlgorithm.PARAM_REFERENCE[selection_method], ParentSelection
+        ), "Wrong selection method."
         assert 0 <= mutation_rate <= 1, "Mutation rate must be between 0 and 1."
 
         self._set_random_seed(random_state)
