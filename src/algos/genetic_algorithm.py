@@ -3,9 +3,8 @@ import pandas as pd
 import numpy as np
 from . import Algorithm
 from ..utils.genetic import Population, SimpleSwap, Inversion, Insertion, Mutable
-from ..utils import ResultManager, Result
+from ..utils import ResultManager, Result, time_it
 from ..utils.genetic import Elitism, Roulette, Tournament
-import time
 
 
 class GeneticAlgorithm(Algorithm):
@@ -42,8 +41,8 @@ class GeneticAlgorithm(Algorithm):
         self._selection_method = selection_method
         self._crossover_rate = crossover_rate
         self._mutation_rate = mutation_rate
-        self._history = [np.inf]
-        self._mean_distance = []
+        self.history = [np.inf]
+        self._mean_distance = [np.inf]
 
         self._elite_size = int(pop_size * 0.2) if elite_size is None else elite_size
         self._tournament_size = int(pop_size * 0.1) if tournament_size is None else tournament_size
@@ -59,8 +58,8 @@ class GeneticAlgorithm(Algorithm):
 
         self._set_random_seed(random_state)
 
-    def solve(self, distances: pd.DataFrame) -> pd.DataFrame:
-        start = time.perf_counter()
+    @time_it
+    def solve(self, distances: pd.DataFrame) -> Result:
 
         # 1st stage: Create random population
         population = Population(self._init_pop_size, self._pop_size)
@@ -70,7 +69,6 @@ class GeneticAlgorithm(Algorithm):
         # 2nd stage: Loop for each generation
 
         for generation in range(self.no_generations):
-            tic = time.perf_counter()
 
             # I: Crossover - make children
             population.crossover(
@@ -91,26 +89,27 @@ class GeneticAlgorithm(Algorithm):
             # III: Selection - select the best half of the population
             population.select()
 
-            toc = time.perf_counter()
             if self._verbose:
-                print(
-                    f"Generation {generation}: {population.population[0]} took {toc - tic:0.4f} seconds"
-                )
-            # story only better results
-            if population.population[0].distance < self._history[-1]:
-                self._history.append(population.population[0].distance)
+                print(f"Generation {generation}: {population.population[0]}")
 
-            # self._mean_distance.append(population.mean_distance)
-        self._time = time.perf_counter() - start
+            # story only better results
+            # if population.population[0].distance < self.history[-1]:
+            #     self.history.append(population.population[0].distance)
+
+            # or all results
+            self.history.append(population.population[0].distance)
+
+            self._mean_distance.append(population.calculate_mean_distance())
+
         print(f"Final population: {population.population[0]}")
         # write to file
         ResultManager.save_result(self.__dict__, distances.shape[0], population.population[0])
         # Return the best path
 
         return Result(
-            self.NAME,
-            population.population[0].path,
-            population.population[0].distance,
-            self._time,
-            self._history,
+            algorithm=self,
+            path=population.population[0].path,
+            best_distance=self.history[-1],
+            distance_history=self.history,
+            mean_distance=self._mean_distance,
         )

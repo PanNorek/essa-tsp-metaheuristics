@@ -63,7 +63,8 @@ class Roulette(ParentSelection):
 
     @staticmethod
     def select(generation: List[Individual], **kwargs) -> Tuple[Individual, Individual]:
-        df = pd.concat([ind.to_df() for ind in generation], ignore_index=True)
+        df = pd.DataFrame.from_records(vars(o) for o in generation)
+        df[Individual.FITNESS] = (1 / df[Individual.DISTANCE]).astype("float64")
         cum_fit = df[Individual.FITNESS].cumsum()
         df[Roulette.DIST_FITNESS] = cum_fit.div(df[Individual.FITNESS].sum())
         mask1 = df[Roulette.DIST_FITNESS] > random.random()

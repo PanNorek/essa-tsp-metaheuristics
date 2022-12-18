@@ -13,6 +13,7 @@ class Individual:
     def __init__(self, path: list, distance: Union[int, float]) -> None:
         self.path = path
         self.distance = distance
+        # self.fitness = 1 / self.distance
 
     @property
     def fitness(self) -> float:
