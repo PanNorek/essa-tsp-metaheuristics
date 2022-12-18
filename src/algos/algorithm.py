@@ -68,11 +68,11 @@ class Algorithm(ABC):
                                   exclude=exclude)
 
     @property
-    def last_switch(self) -> tuple:
+    def _last_switch(self) -> tuple:
         return self._neigh.last_switch
 
     @property
-    def last_switch_comment(self) -> str:
+    def _last_switch_comment(self) -> str:
         return self._neigh.last_switch_comment
 
     def _get_path_distance(self, path: list, distances: pd.DataFrame) -> int:
@@ -103,7 +103,7 @@ class Algorithm(ABC):
         return self._path
 
     def __str__(self) -> str:
-        return self.NAME
+        return f"{self.NAME}\nNeighbourhood type: {self._neigh}"
 
     def __repr__(self) -> str:
         return str(self)

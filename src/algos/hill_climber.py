@@ -41,7 +41,7 @@ class HillClimber(SwappingAlgorithm):
         if gain <= 0:
             raise StopAlgorithm(iteration=self._i, distance=new_distance)
         if self._verbose:
-            print(f"best switch: {self.last_switch_comment} - gain: {gain}")
+            print(f"best switch: {self._last_switch_comment} - gain: {gain}")
             print(f"step {self._i}: distance: {new_distance}")
 
         # new path that shortens the distance

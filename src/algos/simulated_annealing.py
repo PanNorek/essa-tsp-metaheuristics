@@ -37,13 +37,16 @@ class SimulatedAnnealing(SwappingAlgorithm):
     verbose: bool
         print progress, default is False
     """
-
     NAME = "SIMULATED ANNEALING"
+    _REDUCE_FUNC = {
+        "reduce": reduce,
+        "descend": slowly_descend
+    }
 
     def __init__(self,
                  temp: int,
                  alpha: float = ALPHA,
-                 reduce_func: Callable = reduce,
+                 reduce_func: Callable | str = "reduce",
                  neigh_type: str = "swap",
                  n_iter: int = 30,
                  verbose: bool = False,
@@ -53,6 +56,11 @@ class SimulatedAnnealing(SwappingAlgorithm):
                          n_iter=n_iter,
                          verbose=verbose,
                          inversion_window=inversion_window)
+        if not callable(reduce_func):
+            assert (
+                reduce_func in self._REDUCE_FUNC
+            ), f"reduce_func must be one of {list(self._REDUCE_FUNC.keys())} or a function"
+            reduce_func = self._REDUCE_FUNC[reduce_func]
         self._reduce_func: Callable = reduce_func
         self._alpha = alpha
         self._temp = temp
@@ -82,4 +90,4 @@ class SimulatedAnnealing(SwappingAlgorithm):
         # reduce temperature
         self._temp = self._reduce_func(temp=self._temp, alpha=self._alpha)
         if self._verbose:
-            print(f"switch: {self.last_switch_comment} - gain: {diff}")
+            print(f"switch: {self._last_switch_comment} - gain: {diff}")

@@ -9,6 +9,7 @@ from .queue_list import Queue
 
 class NeighbourhoodType(ABC):
     """Abstract class for mutable"""
+    NAME = ''
     _SWITCH_OPTIONS = ['best', 'random']
 
     def __init__(self, path_length: int) -> None:
@@ -16,7 +17,6 @@ class NeighbourhoodType(ABC):
 
     @property
     def last_switch(self):
-        # TODO: unclear comments in algorithms across neigh types
         return self._last_switch
 
     @abstractproperty
@@ -35,18 +35,18 @@ class NeighbourhoodType(ABC):
         path = path[:]
         assert how in self._SWITCH_OPTIONS, f'how must be one of {self._SWITCH_OPTIONS}'
         if how == 'best':
-            swap = self._find_best_switch(path=path,
-                                          distances=distances,
-                                          exclude=exclude)
+            switch = self._find_best_switch(path=path,
+                                            distances=distances,
+                                            exclude=exclude)
         elif how == 'random':
             rnd_idx = random.randint(0, len(self._switches) - 1)
-            swap = self._switches[rnd_idx]
+            switch = self._switches[rnd_idx]
 
-        self._last_switch = swap
+        self._last_switch = switch
         self._last_path = path
         new_path = self._switch(path=path,
-                                index_1=swap[0],
-                                index_2=swap[1])
+                                index_1=switch[0],
+                                index_2=switch[1])
         return new_path
 
     def _find_best_switch(self,
@@ -75,8 +75,16 @@ class NeighbourhoodType(ABC):
     def _switch(self, path: list, index_1: int, index_2: int) -> list:
         pass
 
+    def __str__(self) -> str:
+        return self.NAME
+
+    def __repr__(self) -> str:
+        return str(self)
+
 
 class Swap(NeighbourhoodType):
+    NAME = 'Swap'
+
     def _switch(self, path: list, index_1: int, index_2: int) -> list:
         path = path[:]
         path[index_1], path[index_2] = path[index_2], path[index_1]
@@ -95,11 +103,15 @@ class Swap(NeighbourhoodType):
 
     @property
     def last_switch_comment(self) -> str:
-        swapped_1, swapped_2 = [self._last_path[index] for index in self.last_switch]
+        if not hasattr(self, '_last_path') or not hasattr(self, '_last_switch'):
+            return ''
+        swapped_1, swapped_2 = [self._last_path[index] for index in self._last_switch]
         return f"{swapped_1} swapped with {swapped_2}"
 
 
 class Insertion(NeighbourhoodType):
+    NAME = 'Insertion'
+
     def _switch(self, path: list, index_1: int, index_2: int) -> list:
         path = path[:]
         path.insert(index_1, path.pop(index_2))
@@ -117,13 +129,16 @@ class Insertion(NeighbourhoodType):
 
     @property
     def last_switch_comment(self) -> str:
-        element = self._last_path[self.last_switch[1]]
-        index = self.last_switch[0]
-        return f"{element} at index {self.last_switch[1]} inserted at index {index}"
+        if not hasattr(self, '_last_path') or not hasattr(self, '_last_switch'):
+            return ''
+        element = self._last_path[self._last_switch[1]]
+        index = self._last_switch[0]
+        return f"{element} at index {self._last_switch[1]} inserted at index {index}"
 
 
 class Inversion(NeighbourhoodType):
     """Inversion mutation"""
+    NAME = 'Inversion'
 
     def __init__(self,
                  path_length: int,
@@ -153,5 +168,7 @@ class Inversion(NeighbourhoodType):
 
     @property
     def last_switch_comment(self) -> str:
-        elements = [self._last_path[index] for index in range(*self.last_switch)]
-        return f"Elements {elements} at indices {self.last_switch} inversed"
+        if not hasattr(self, '_last_path') or not hasattr(self, '_last_switch'):
+            return ''
+        elements = [self._last_path[index] for index in range(*self._last_switch)]
+        return f"Elements {elements} at indices {self._last_switch} inversed"

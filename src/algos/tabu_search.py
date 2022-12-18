@@ -47,10 +47,10 @@ class TabuSearch(SwappingAlgorithm):
         # removing first swap from tabu list only if list is full
         self._tabu_list.dequeue()
         # adding new swap to tabu list
-        self._tabu_list.enqueue(self.last_switch)
+        self._tabu_list.enqueue(self._last_switch)
         if self._verbose:
             gain = self.history[-1] - new_distance
-            print(f"best switch: {self.last_switch_comment} - gain: {gain}")
+            print(f"best switch: {self._last_switch_comment} - gain: {gain}")
             print(f"step {self._i}: distance: {new_distance}")
             print(f"tabu list: {self._tabu_list}")
 
