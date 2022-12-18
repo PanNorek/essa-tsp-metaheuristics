@@ -25,11 +25,13 @@ class NeighbourhoodType(ABC):
 
     def switch(self,
                path: list,
-               distances: pd.DataFrame,
+               distances: pd.DataFrame = None,
                how: str = 'best',
                exclude: Queue | None = None
                ) -> list:
         """Returns copy of the current path with swapped indices"""
+        if distances is None and how == 'best':
+            raise ValueError('Cannot find best switch without distances matrix')
         path = path[:]
         assert how in self._SWITCH_OPTIONS, f'how must be one of {self._SWITCH_OPTIONS}'
         if how == 'best':

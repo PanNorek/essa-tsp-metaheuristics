@@ -1,6 +1,5 @@
 import pandas as pd
-from typing import Union, List
-import numpy as np
+from typing import Union
 from ..neighbourhood_type import NeighbourhoodType
 
 
@@ -18,14 +17,8 @@ class Individual:
     def fitness(self) -> float:
         return 1 / self.distance
 
-    def mutate(self, mutation_type: NeighbourhoodType, mutation_rate: float) -> None:
-        """Mutate the individual
-
-        Args:
-            mutation_type (Mutable): Type of mutation. Possible values: SimpleSwap, Inversion, Scramble
-            mutation_rate (float): Probability of mutation
-        """
-        mutation_type.switch(self, mutation_rate)
+    def mutate(self, neigh_type: NeighbourhoodType) -> None:
+        self.path = neigh_type.switch(path=self.path, how='random')
 
     def to_df(self):
         dic = {

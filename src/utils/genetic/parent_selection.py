@@ -1,8 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple
+from typing import List, Tuple, NewType
 from .individual import Individual
 import random
 import pandas as pd
+
+
+Parents = NewType('Parents', Tuple[Individual, Individual])
 
 
 class ParentSelection(ABC):
@@ -12,7 +15,7 @@ class ParentSelection(ABC):
 
     @staticmethod
     @abstractmethod
-    def select(generation: List[Individual], **kwargs):
+    def select(generation: List[Individual], size: int | float = 0.5) -> Parents:
         """
         Selects the next generation from the current population
 
@@ -22,18 +25,22 @@ class ParentSelection(ABC):
         """
         pass
 
+    @staticmethod
+    def _get_size(generation: List[Individual], size: int | float = 0.5) -> int:
+        if isinstance(size, float):
+            size = int(len(generation) * size)
+        return size
 
-class Elitism(ParentSelection):
+
+class TruncationSelection(ParentSelection):
     """
     Elitism offspring selection
     """
 
     @staticmethod
-    def select(generation: List[Individual], **kwargs) -> Tuple[Individual, Individual]:
-        if "elite_size" in kwargs:
-            return random.sample(generation[: kwargs.get("elite_size")], 2)
-        else:
-            raise ValueError("Elite size not specified.")
+    def select(generation: List[Individual], size: int | float = 0.5) -> Parents:
+        size = ParentSelection._get_size(generation=generation, size=size)
+        return random.sample(generation[:size], 2)
 
 
 class Tournament(ParentSelection):
@@ -42,16 +49,13 @@ class Tournament(ParentSelection):
     """
 
     @staticmethod
-    def select(generation: List[Individual], **kwargs) -> Tuple[Individual, Individual]:
-
-        if "tournament_size" not in kwargs:
-            raise ValueError("Tournament size not specified.")
-
-        tournament_participants1 = random.sample(generation, kwargs.get("tournament_size"))
-        tournament_participants1.sort(key=lambda x: x.fitness, reverse=True)
-        tournament_participants2 = random.sample(generation, kwargs.get("tournament_size"))
-        tournament_participants2.sort(key=lambda x: x.fitness, reverse=True)
-        return tournament_participants1[0], tournament_participants2[0]
+    def select(generation: List[Individual], size: int | float = 0.5) -> Parents:
+        size = ParentSelection._get_size(generation=generation, size=size)
+        batch_1 = random.sample(generation, size)
+        parent_1 = sorted(batch_1, reverse=True)[0]
+        batch_2 = random.sample(generation, size)
+        parent_2 = sorted(batch_2, reverse=True)[0]
+        return parent_1, parent_2
 
 
 class Roulette(ParentSelection):
@@ -62,7 +66,7 @@ class Roulette(ParentSelection):
     DIST_FITNESS = "cum_fitness"
 
     @staticmethod
-    def select(generation: List[Individual], **kwargs) -> Tuple[Individual, Individual]:
+    def select(generation: List[Individual], size: None = None) -> Parents:
         df = pd.concat([ind.to_df() for ind in generation], ignore_index=True)
         cum_fit = df[Individual.FITNESS].cumsum()
         df[Roulette.DIST_FITNESS] = cum_fit.div(df[Individual.FITNESS].sum())
