@@ -1,7 +1,7 @@
 import random
 import pandas as pd
 from typing import Union, List, Tuple
-from ..distance import get_path_distance
+from ..tools import get_path_distance
 from .individual import Individual
 from ..neighbourhood_type import NeighbourhoodType
 from .parent_selection import ParentSelection
@@ -23,9 +23,11 @@ class Population:
         """
         indices = distances.index.to_list()
         paths = [random.sample(indices, len(indices)) for _ in range(self._pop_size)]
-        distances = [get_path_distance(path=path, distances=distances) for path in paths]
+        distances = [get_path_distance(path=path, distances=distances)
+                     for path in paths]
         self._population = [
-            Individual(path=path, distance=distance) for path, distance in zip(paths, distances)
+            Individual(path=path, distance=distance)
+            for path, distance in zip(paths, distances)
         ]
         self.sort()
 
@@ -42,7 +44,7 @@ class Population:
 
     def crossover(self,
                   distances: pd.DataFrame,
-                  sample_size: int | float,
+                  sample_size: Union[int, float],
                   selection_method: ParentSelection,
                   crossover_method: CrossoverMethod,
                   elite_size: int = 0
@@ -70,7 +72,6 @@ class Population:
                 Individual(path=child_2,
                            distance=get_path_distance(path=child_2, distances=distances))
             )
-
             # add child to population
             new_population.append(child_1)
             if len(new_population) < self._pop_size:
@@ -82,7 +83,7 @@ class Population:
     def mutate(self,
                distances: pd.DataFrame,
                neigh_type: NeighbourhoodType,
-               skip: int | float = 0,
+               skip: Union[int, float] = 0,
                mutation_rate: float = 0.5
                ) -> None:
         """Mutate the population

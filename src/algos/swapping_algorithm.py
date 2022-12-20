@@ -15,7 +15,7 @@ class SwappingAlgorithm(Algorithm):
                  neigh_type: str = "swap",
                  n_iter: int = 30,
                  verbose: bool = False,
-                 inversion_window: int | None = None
+                 inversion_window: Union[int, None] = None
                  ) -> None:
         super().__init__(neigh_type=neigh_type,
                          verbose=verbose,
@@ -49,13 +49,12 @@ class SwappingAlgorithm(Algorithm):
                     print(exc.message)
                 break
         # return result object
-        result = Result(
+        return Result(
             algorithm=self,
             path=self._path,
             best_distance=min(self.history),
             distance_history=self.history,
         )
-        return result
 
     @abstractmethod
     def _iterate_steps(self, distances: pd.DataFrame) -> None:

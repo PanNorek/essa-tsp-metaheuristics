@@ -1,6 +1,5 @@
-from typing import Union, List, Callable
+from typing import Union
 import pandas as pd
-import numpy as np
 from . import Algorithm
 from ..utils.genetic import (
     Population,
@@ -15,8 +14,8 @@ from ..utils import Result, time_it
 
 class GeneticAlgorithm(Algorithm):
     """Genetic algorithm for solving TSP problem"""
-
     NAME = "GENETIC ALGORITHM"
+
     _SELECTION_METHODS = {
         "truncation": TruncationSelection,
         "roulette": Roulette,
@@ -34,23 +33,22 @@ class GeneticAlgorithm(Algorithm):
         selection_method: str = "truncation",
         crossover_method: str = "pmx",
         elite_size: Union[int, float] = 0,
-        mating_pool_size: Union[int, None] = None,
+        mating_pool_size: Union[int, float] = 0.5,
         mutation_rate: float = 0.5,
         neigh_type: str = "swap",
         verbose: bool = False,
-        inversion_window: int | None = None
-    ):
+        inversion_window: Union[int, None] = None
+    ) -> None:
         super().__init__(neigh_type=neigh_type,
                          verbose=verbose,
                          inversion_window=inversion_window)
         self._pop_size = pop_size
-        self.no_generations = no_generations
+        self._no_generations = no_generations
         self._selection_method = selection_method
         self._crossover_method = crossover_method
         self._mutation_rate = mutation_rate
-        self._history = [np.inf]
-        self._mean_distance = []
         self._elite_size = elite_size
+        self._mating_pool_size = mating_pool_size
         self.__check_params()
 
     def __check_params(self):
@@ -74,13 +72,11 @@ class GeneticAlgorithm(Algorithm):
         population.generate_population(distances=distances)
 
         # 2nd stage: Loop for each generation
-        for _ in range(self.no_generations):
-            print(_)
+        for _ in range(self._no_generations):
             # I: Crossover - make children
             population.crossover(
                 distances=distances,
-                # TODO adjust - mating_pool_size
-                sample_size=0.5,
+                sample_size=self._mating_pool_size,
                 selection_method=self._SELECTION_METHODS[self._selection_method],
                 crossover_method=self._crossover,
                 elite_size=self._elite_size
@@ -92,13 +88,23 @@ class GeneticAlgorithm(Algorithm):
                 skip=self._elite_size,
                 mutation_rate=self._mutation_rate,
             )
-            # story only better results
-            if population.best.distance < self._history[-1]:
-                self._history.append(population.population[0].distance)
+            self.history.append(population.best.distance)
 
-        return Result(
+        result = Result(
             algorithm=self,
             path=population.best.path,
             best_distance=population.best.distance,
             distance_history=self.history
         )
+        return result
+
+    def __str__(self) -> str:
+        mes = super().__str__()
+        mes += f"""pop_size: {self._pop_size}\n\
+        generations: {self._no_generations}\n\
+        selection_method: {self._selection_method}\n\
+        crossover_method: {self._crossover}\n\
+        elite_size: {self._elite_size}\n\
+        mating_pool_size: {self._mating_pool_size}\n\
+        mutation_rate: {self._mutation_rate}\n"""
+        return mes

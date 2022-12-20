@@ -46,11 +46,11 @@ class SimulatedAnnealing(SwappingAlgorithm):
     def __init__(self,
                  temp: int,
                  alpha: float = ALPHA,
-                 reduce_func: Callable | str = "reduce",
+                 reduce_func: Union[Callable, str] = "reduce",
                  neigh_type: str = "swap",
                  n_iter: int = 30,
                  verbose: bool = False,
-                 inversion_window: int | None = None
+                 inversion_window: Union[int, None] = None
                  ) -> None:
         super().__init__(neigh_type=neigh_type,
                          n_iter=n_iter,
@@ -91,3 +91,10 @@ class SimulatedAnnealing(SwappingAlgorithm):
         self._temp = self._reduce_func(temp=self._temp, alpha=self._alpha)
         if self._verbose:
             print(f"switch: {self._last_switch_comment} - gain: {diff}")
+
+    def __str__(self) -> str:
+        mes = super().__str__()
+        mes += f"""reduction function: {self._reduce_func}\n\
+            alpha: {self._alpha}\n\
+            start temperatute: {self._temp}"""
+        return mes

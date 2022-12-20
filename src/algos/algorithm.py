@@ -8,7 +8,8 @@ from ..utils import (
     Swap,
     Insertion,
     NeighbourhoodType,
-    Result
+    Result,
+    ResultManager
 )
 from ..utils import get_path_distance, Queue
 
@@ -25,7 +26,7 @@ class Algorithm(ABC):
     def __init__(self,
                  neigh_type: str = "swap",
                  verbose: bool = False,
-                 inversion_window: int | None = None
+                 inversion_window: Union[int, None] = None
                  ) -> None:
         self._verbose = verbose
         self._inversion_window = inversion_window
@@ -59,7 +60,7 @@ class Algorithm(ABC):
     def _switch(self,
                 distances: pd.DataFrame,
                 how: str = 'best',
-                exclude: Queue | None = None
+                exclude: Union[Queue, None] = None
                 ) -> list:
         """Wraps NeighbourhoodType switch method"""
         return self._neigh.switch(path=self._path,
@@ -92,18 +93,16 @@ class Algorithm(ABC):
         np.random.seed(random_seed)
 
     def _distance_matrix_check(self, distances: pd.DataFrame) -> None:
-        if not isinstance(distances, pd.DataFrame):
-            return
         mes = "indices and columns of distances matrix should be equal"
         assert distances.index.to_list() == distances.columns.to_list(), mes
 
     @property
-    def path(self) -> list:
+    def best_path(self) -> list:
         """Returns the most optimal graph's path that was found"""
         return self._path
 
     def __str__(self) -> str:
-        return f"{self.NAME}\nNeighbourhood type: {self._neigh}"
+        return f"{self.NAME}\nNeighbourhood type: {self._neigh}\n"
 
     def __repr__(self) -> str:
         return str(self)

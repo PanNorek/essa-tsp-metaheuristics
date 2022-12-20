@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple, NewType
+from typing import List, Tuple, NewType, Union
 from .individual import Individual
 import random
 import pandas as pd
@@ -15,7 +15,7 @@ class ParentSelection(ABC):
 
     @staticmethod
     @abstractmethod
-    def select(generation: List[Individual], size: int | float = 0.5) -> Parents:
+    def select(generation: List[Individual], size: Union[int, float] = 0.5) -> Parents:
         """
         Selects the next generation from the current population
 
@@ -26,7 +26,7 @@ class ParentSelection(ABC):
         pass
 
     @staticmethod
-    def _get_size(generation: List[Individual], size: int | float = 0.5) -> int:
+    def _get_size(generation: List[Individual], size: Union[int, float] = 0.5) -> int:
         if isinstance(size, float):
             size = int(len(generation) * size)
         return size
@@ -38,7 +38,7 @@ class TruncationSelection(ParentSelection):
     """
 
     @staticmethod
-    def select(generation: List[Individual], size: int | float = 0.5) -> Parents:
+    def select(generation: List[Individual], size: Union[int, float] = 0.5) -> Parents:
         size = ParentSelection._get_size(generation=generation, size=size)
         return random.sample(generation[:size], 2)
 
@@ -49,7 +49,7 @@ class Tournament(ParentSelection):
     """
 
     @staticmethod
-    def select(generation: List[Individual], size: int | float = 0.5) -> Parents:
+    def select(generation: List[Individual], size: Union[int, float] = 0.5) -> Parents:
         size = ParentSelection._get_size(generation=generation, size=size)
         batch_1 = random.sample(generation, size)
         parent_1 = sorted(batch_1, reverse=True)[0]
