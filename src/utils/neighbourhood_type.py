@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod, abstractproperty
-import numpy as np
 import random
-from typing import List
+from typing import List, Union
 import pandas as pd
-from .distance import get_path_distance
+from .tools import get_path_distance
 from .queue_list import Queue
 
 
@@ -27,7 +26,7 @@ class NeighbourhoodType(ABC):
                path: list,
                distances: pd.DataFrame = None,
                how: str = 'best',
-               exclude: Queue | None = None
+               exclude: Union[Queue, None] = None
                ) -> list:
         """Returns copy of the current path with swapped indices"""
         if distances is None and how == 'best':
@@ -52,7 +51,7 @@ class NeighbourhoodType(ABC):
     def _find_best_switch(self,
                           path: list,
                           distances: pd.DataFrame,
-                          exclude: Queue | None = None
+                          exclude: Union[Queue, None] = None
                           ) -> tuple:
         assert len(path) == len(distances), 'path and distances df must have the same length'
         legal_switches = self._exclude_switches(exclude=exclude)
@@ -63,7 +62,7 @@ class NeighbourhoodType(ABC):
         new_paths.sort(key=lambda x: get_path_distance(path=x[0], distances=distances))
         return new_paths[0][1]
 
-    def _exclude_switches(self, exclude: Queue | None = None) -> List[tuple]:
+    def _exclude_switches(self, exclude: Union[Queue, None] = None) -> List[tuple]:
         return list(set(self._switches) - set(exclude))
 
     @abstractmethod
@@ -142,7 +141,7 @@ class Inversion(NeighbourhoodType):
 
     def __init__(self,
                  path_length: int,
-                 window_length: int | None = None
+                 window_length: Union[int, None] = None
                  ) -> None:
         if window_length is None:
             window_length = path_length//10

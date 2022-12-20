@@ -14,7 +14,6 @@ class PathPlotter:
             zip(result.path, result.path[1:] + [result.path[0]]), columns=["from", "to"]
         )
         G = nx.from_pandas_edgelist(df, "from", "to", create_using=nx.DiGraph)
-
         plt.figure(figsize=(10, 6))
         plt.title(f"Salesman Path, Distance: {result.best_distance}")
         nx.draw(G, with_labels=True)
