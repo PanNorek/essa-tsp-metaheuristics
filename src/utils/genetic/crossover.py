@@ -32,7 +32,7 @@ class CrossoverMethod(ABC):
                       parent_1: list,
                       parent_2: list
                       ) -> tuple[list]:
-        return parent_1, parent_2
+        return parent_1[:], parent_2[:]
 
 
 class PMX(CrossoverMethod):
@@ -41,7 +41,7 @@ class PMX(CrossoverMethod):
                       parent_2: list,
                       ) -> tuple[list]:
         sub = self._subset
-        child_1, child_2 = parent_1, parent_2
+        child_1, child_2 = parent_1[:], parent_2[:]
         child_1[sub], child_2[sub] = child_2[sub], child_1[sub]
         return child_1, child_2
 
