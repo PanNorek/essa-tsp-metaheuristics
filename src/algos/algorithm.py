@@ -3,21 +3,44 @@ from abc import ABC, abstractmethod
 from typing import Union
 import pandas as pd
 import numpy as np
-from ..utils import Result
+from ..utils import (
+    Inversion,
+    Swap,
+    Insertion,
+    NeighbourhoodType,
+    Result,
+    ResultManager
+)
+from ..utils import get_path_distance, Queue
 
 
 class Algorithm(ABC):
     """Traveling Salesman Problem (TSP) solver"""
-
     NAME = ""
+    _NEIGHBOURHOOD_TYPES = {
+        "swap": Swap,
+        "inversion": Inversion,
+        "insertion": Insertion,
+    }
 
-    def __init__(self, neigh_type: str = None, verbose: bool = False) -> None:
-        self.neigh_type = neigh_type
+    def __init__(self,
+                 neigh_type: str = "swap",
+                 verbose: bool = False,
+                 inversion_window: Union[int, None] = None
+                 ) -> None:
         self._verbose = verbose
+        self._inversion_window = inversion_window
         self._path = []
+        self.history = []
+        neigh = self._NEIGHBOURHOOD_TYPES.get(neigh_type)
+        assert neigh, f'neigh_type must be one of {list(self._NEIGHBOURHOOD_TYPES.keys())}'
+        self._neigh_type = neigh
 
     @abstractmethod
-    def solve(self, distances: pd.DataFrame) -> Result:
+    def solve(self,
+              distances: pd.DataFrame,
+              random_seed: Union[int, None] = None
+              ) -> Result:
         """
         Uses specific algorithm to solve Traveling Salesman Problem
 
@@ -26,6 +49,36 @@ class Algorithm(ABC):
                 Matrix od distances between cities,
                 cities numbers or id names as indices and columns
         """
+        self._distance_matrix_check(distances=distances)
+        self._set_random_seed(random_seed=random_seed)
+        if self._neigh_type is Inversion:
+            self._neigh: Inversion = self._neigh_type(path_length=len(distances),
+                                                      window_length=self._inversion_window)
+        else:
+            self._neigh: NeighbourhoodType = self._neigh_type(path_length=len(distances))
+
+    def _switch(self,
+                distances: pd.DataFrame,
+                how: str = 'best',
+                exclude: Union[Queue, None] = None
+                ) -> list:
+        """Wraps NeighbourhoodType switch method"""
+        return self._neigh.switch(path=self._path,
+                                  distances=distances,
+                                  how=how,
+                                  exclude=exclude)
+
+    @property
+    def _last_switch(self) -> tuple:
+        return self._neigh.last_switch
+
+    @property
+    def _last_switch_comment(self) -> str:
+        return self._neigh.last_switch_comment
+
+    def _get_path_distance(self, path: list, distances: pd.DataFrame) -> int:
+        """Wraps get_path_distance function"""
+        return get_path_distance(path=path, distances=distances)
 
     def _get_random_path(self, indices: Union[list, pd.Index]):
         # indices of the cities
@@ -40,22 +93,16 @@ class Algorithm(ABC):
         np.random.seed(random_seed)
 
     def _distance_matrix_check(self, distances: pd.DataFrame) -> None:
-        if not isinstance(distances, pd.DataFrame):
-            return
         mes = "indices and columns of distances matrix should be equal"
         assert distances.index.to_list() == distances.columns.to_list(), mes
 
-    def _get_path_distance(self, distances: pd.DataFrame, path: list) -> int:
-        """Calculate distance of the path based on distances matrix"""
-        path_length = sum(distances.loc[x, y] for x, y in zip(path, path[1:]))
-        # add distance back to the starting point
-        path_length += distances.loc[path[0], path[-1]]
-        return path_length
-
     @property
-    def path(self) -> list:
+    def best_path(self) -> list:
         """Returns the most optimal graph's path that was found"""
         return self._path
 
     def __str__(self) -> str:
-        return self.NAME
+        return f"{self.NAME}\nNeighbourhood type: {self._neigh}\n"
+
+    def __repr__(self) -> str:
+        return str(self)

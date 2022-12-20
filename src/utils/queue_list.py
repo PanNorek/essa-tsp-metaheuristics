@@ -8,6 +8,7 @@ class Queue:
     def enqueue(self, object_: object):
         """Adds object to the end of the queue"""
         assert len(self) < self._limit, "Queue overflow!"
+        assert isinstance(object_, tuple), "object must be a tuple!"
         self._queue.append(object_)
 
     def dequeue(self):
@@ -36,12 +37,11 @@ class Queue:
         return self
 
     def __next__(self):
-        if self.__i < len(self._queue):
-            element = self._queue[self.__i]
-            self.__i += 1
-            return element
-        else:
+        if self.__i >= len(self._queue):
             raise StopIteration
+        element = self._queue[self.__i]
+        self.__i += 1
+        return element
 
     def __str__(self) -> str:
         return str(list(self._queue))

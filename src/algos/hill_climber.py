@@ -19,9 +19,7 @@ class HillClimber(SwappingAlgorithm):
 
     NAME = "HILL CLIMBER"
 
-    def _iterate_steps(
-        self, distances: pd.DataFrame, swaps: List[tuple]
-    ) -> Union[int, None]:
+    def _iterate_steps(self, distances: pd.DataFrame) -> None:
         """Iterate steps in Hill Climber Algorithm
 
         Args:
@@ -35,20 +33,18 @@ class HillClimber(SwappingAlgorithm):
 
         # start new iteration
         self._i += 1
-        best_swap, best_distance = self._find_best_swap(
-            swaps=swaps, distances=distances
-        )
+        new_path = self._switch(distances=distances, how='best')
+        new_distance = self._get_path_distance(path=new_path, distances=distances)
         # distance gain
-        gain = self.history[-1] - best_distance
+        gain = self.history[-1] - new_distance
         # break condition
         if gain <= 0:
-            raise StopAlgorithm(iteration=self._i, distance=best_distance)
+            raise StopAlgorithm(iteration=self._i, distance=new_distance)
         if self._verbose:
-            print(f"best swap: {best_swap} - gain: {gain}")
-            print(f"step {self._i}: distance: {best_distance}")
+            print(f"best switch: {self._last_switch_comment} - gain: {gain}")
+            print(f"step {self._i}: distance: {new_distance}")
 
         # new path that shortens the distance
-        self._path = self._swap_elements(swap=best_swap)
+        self._path = new_path
         # adding new best distance to distances history
-        self.history.append(best_distance)
-        return best_distance, best_swap
+        self.history.append(new_distance)

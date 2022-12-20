@@ -1,14 +1,15 @@
 import random
 import pandas as pd
-from typing import List
+from typing import Union, List, Tuple
+from ..tools import get_path_distance
 from .individual import Individual
-from .mutable import Mutable
+from ..neighbourhood_type import NeighbourhoodType
 from .parent_selection import ParentSelection
+from .crossover import CrossoverMethod
 
 
 class Population:
-    def __init__(self, init_pop_size: int, pop_size: int) -> None:
-        self._init_pop_size = init_pop_size
+    def __init__(self, pop_size: int = 500) -> None:
         self._pop_size = pop_size
 
     def generate_population(self, distances: pd.DataFrame) -> List[Individual]:
@@ -21,31 +22,33 @@ class Population:
             List[Individual]: list of sampled individuals
         """
         indices = distances.index.to_list()
-        paths = [random.sample(indices, len(indices)) for _ in range(self._init_pop_size)]
-        distances = [self._get_path_distance(distances=distances, path=path) for path in paths]
+        paths = [random.sample(indices, len(indices)) for _ in range(self._pop_size)]
+        distances = [get_path_distance(path=path, distances=distances)
+                     for path in paths]
         self._population = [
-            Individual(path=path, distance=distance) for path, distance in zip(paths, distances)
+            Individual(path=path, distance=distance)
+            for path, distance in zip(paths, distances)
         ]
-        self._population = sorted(self._population, key=lambda x: x.fitness, reverse=True)
-
-    def _get_path_distance(self, distances: pd.DataFrame, path: list) -> int:
-        """Get the distance of a given path"""
-        path_length = sum(distances.loc[x, y] for x, y in zip(path, path[1:]))
-        # add distance back to the starting point
-        path_length += distances.loc[path[0], path[-1]]
-        return path_length
+        self.sort()
 
     @property
     def population(self) -> List[Individual]:
         return self._population
 
-    def crossover(
-        self,
-        distances: pd.DataFrame,
-        crossover_method: ParentSelection,
-        crossover_rate: float,
-        **kwargs,
-    ) -> None:
+    @property
+    def best(self) -> Individual:
+        return max(self._population)
+
+    def sort(self):
+        self._population.sort(reverse=True)
+
+    def crossover(self,
+                  distances: pd.DataFrame,
+                  sample_size: Union[int, float],
+                  selection_method: ParentSelection,
+                  crossover_method: CrossoverMethod,
+                  elite_size: int = 0
+                  ) -> None:
         """Crossover the population.
         Function uses PMX (Partially Matched Crossover) algorithm.
 
@@ -53,89 +56,59 @@ class Population:
             distances (pd.DataFrame): matrix of distances between cities
             crossover_rate (float): probability of crossover
         """
-
-        assert len(self.population) < self._pop_size, "Population is full."
-
-        # sort the population by fitness
-        self._order_population()
-
-        # create a copy of the population
-        generation = self.population.copy()
-
+        new_population = self._population[:elite_size]
         # while the population is not full
-        while len(self.population) < self._pop_size:
+        while len(new_population) < self._pop_size:
             # check if crossover should occur
-            if random.random() < crossover_rate:
-                # select two parents
-                parent1, parent2 = crossover_method.select(generation, **kwargs)
-                # crossing-over
-                child = self._crossover(distances, parent1, parent2)
-                # add child to population
-                self._population.append(child)
+            parent_1, parent_2 = selection_method.select(
+                self._population[elite_size:], size=sample_size)
 
-    def mutate(
-        self,
-        distances: pd.DataFrame,
-        mutation_type: Mutable,
-        mutation_rate: float = 0.5,
-    ) -> None:
+            # crossing-over
+            child_1, child_2 = crossover_method.crossover(
+                parent_1=parent_1.path, parent_2=parent_2.path)
+            child_1, child_2 = (
+                Individual(path=child_1,
+                           distance=get_path_distance(path=child_1, distances=distances)),
+                Individual(path=child_2,
+                           distance=get_path_distance(path=child_2, distances=distances))
+            )
+            # add child to population
+            new_population.append(child_1)
+            if len(new_population) < self._pop_size:
+                new_population.append(child_2)
+
+        self._population = new_population
+        self.sort()
+
+    def mutate(self,
+               distances: pd.DataFrame,
+               neigh_type: NeighbourhoodType,
+               skip: Union[int, float] = 0,
+               mutation_rate: float = 0.5
+               ) -> None:
         """Mutate the population
 
         Args:
             distances (pd.DataFrame): matrix of distances between cities
-            mutation_type (Mutable): mutation type. Possible values: SimpleSwap, Inversion, Insertion.
+            mutation_type (Mutable): mutation type. Possible values:
             mutation_rate (float, optional): probability of mutation. Defaults to 0.5.
         """
+        if isinstance(skip, float):
+            skip = int(len(self._population) * skip)
 
-        for individual in self.population:
-            individual.mutate(mutation_type, mutation_rate)
-            individual.distance = self._get_path_distance(distances, individual.path)
-        self._order_population()
+        for individual in self._population[skip:]:
+            if random.random() > mutation_rate:
+                continue
+            individual.mutate(neigh_type=neigh_type)
+            individual.distance = get_path_distance(path=individual.path,
+                                                    distances=distances)
+        self.sort()
 
-    def select(self) -> None:
-        """Select the better half of the population"""
-        # sort the population by fitness
-        self._order_population()
-        self._population = self._population[: self._init_pop_size]
-
-    def calculate_mean_distance(self) -> float:
-        """Calculate the mean distance of the population"""
-        return sum(individual.distance for individual in self.population) / len(self.population)
-
-    def _order_population(self):
-        self._population = sorted(self.population, key=lambda x: x.fitness, reverse=True)
-
-    def _crossover(
-        self, distances: pd.DataFrame, parent1: Individual, parent2: Individual
-    ) -> Individual:
-        """PMX (Partially Matched Crossover) algorithm for TSP problem.
-
-        Args:
-            parent1 (Individual): First parent
-            parent2 (Individual): Second parent
-
-        Returns:
-            Individual: Child
-        """
-        # select a random subset of parent1
-        start = random.randint(0, len(parent1.path) - 1)
-        end = random.randint(start, len(parent1.path) - 1)
-        subset = parent1.path[start:end]
-        # create a child from the subset
-        child = subset
-        # add the remaining genes from parent2
-        for gene in parent2.path:
-            if gene not in subset:
-                child.append(gene)
-        # at this point we have parent1 genes at the beginning and the rest from parent2
-
-        # recombine the child - put parent1 genes in the middle
-        recombined_child = child[start:end] + child[:start] + child[end:]
-
-        return Individual(path=recombined_child, distance=self._get_path_distance(distances, child))
+    # magic methods
+    # --------------
 
     def __str__(self) -> str:
-        return str(self.population)
+        return f"Size: {len(self)}\n best: {self.best}"
 
     def __repr__(self) -> str:
         return str(self)

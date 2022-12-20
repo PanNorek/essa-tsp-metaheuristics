@@ -37,60 +37,64 @@ class SimulatedAnnealing(SwappingAlgorithm):
     verbose: bool
         print progress, default is False
     """
-
     NAME = "SIMULATED ANNEALING"
+    _REDUCE_FUNC = {
+        "reduce": reduce,
+        "descend": slowly_descend
+    }
 
-    def __init__(
-        self,
-        temp: int,
-        alpha: float = ALPHA,
-        reduce_func: Callable = reduce,
-        neigh_type: str = None,
-        n_iter: int = 30,
-        verbose: bool = False,
-    ) -> None:
-
-        super().__init__(neigh_type=neigh_type, n_iter=n_iter, verbose=verbose)
-        self._reduce_func = reduce_func
+    def __init__(self,
+                 temp: int,
+                 alpha: float = ALPHA,
+                 reduce_func: Union[Callable, str] = "reduce",
+                 neigh_type: str = "swap",
+                 n_iter: int = 30,
+                 verbose: bool = False,
+                 inversion_window: Union[int, None] = None
+                 ) -> None:
+        super().__init__(neigh_type=neigh_type,
+                         n_iter=n_iter,
+                         verbose=verbose,
+                         inversion_window=inversion_window)
+        if not callable(reduce_func):
+            assert (
+                reduce_func in self._REDUCE_FUNC
+            ), f"reduce_func must be one of {list(self._REDUCE_FUNC.keys())} or a function"
+            reduce_func = self._REDUCE_FUNC[reduce_func]
+        self._reduce_func: Callable = reduce_func
         self._alpha = alpha
         self._temp = temp
 
-    def _iterate_steps(
-        self, distances: pd.DataFrame, swaps: List[tuple]
-    ) -> Union[int, None]:
+    def _iterate_steps(self, distances: pd.DataFrame) -> None:
         # start new iteration
         self._i += 1
         # find radom neighbouring solution and its distance
-        swap, distance = self._find_random_swap(swaps=swaps, distances=distances)
+        new_path = self._switch(distances=distances, how='random')
+        distance = self._get_path_distance(path=new_path, distances=distances)
         # distance gain
-        gain = distance - self.history[-1]
-        if gain < 0:
+        diff = distance - self.history[-1]
+        if diff < 0:
             # if distance is shorter, swap elements
-            self._path = self._swap_elements(swap=swap)
+            self._path = new_path
             self.history.append(distance)
         else:
             rand = random.random()
-            exp = math.exp(-gain / self._temp)
+            exp = math.exp(-diff / self._temp)
             if rand < exp:
                 # if distance is longer but random [0,1] < exp(-DE/temp) swap elements
-                self._path = self._swap_elements(swap=swap)
+                self._path = new_path
                 self.history.append(distance)
-            else:
-                if self._verbose:
-                    print(f"step {self._i}: path rejected")
+            elif self._verbose:
+                print(f"step {self._i}: path rejected")
 
         # reduce temperature
         self._temp = self._reduce_func(temp=self._temp, alpha=self._alpha)
         if self._verbose:
-            print(f"swap: {swap} - gain: {gain}")
+            print(f"switch: {self._last_switch_comment} - gain: {diff}")
 
-        return self.history[-1], swap
-
-    def _find_random_swap(
-        self, swaps: List[tuple], distances: pd.DataFrame
-    ) -> pd.Series:
-        # purely random in this algorithm
-        swap = random.choice(swaps)
-        new_path = self._swap_elements(swap=swap)
-        path_distance = self._get_path_distance(distances=distances, path=new_path)
-        return swap, path_distance
+    def __str__(self) -> str:
+        mes = super().__str__()
+        mes += f"""reduction function: {self._reduce_func}\n\
+            alpha: {self._alpha}\n\
+            start temperatute: {self._temp}"""
+        return mes
