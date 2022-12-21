@@ -3,19 +3,13 @@ from abc import ABC, abstractmethod
 from typing import Union
 import pandas as pd
 import numpy as np
-from ..utils import (
-    Inversion,
-    Swap,
-    Insertion,
-    NeighbourhoodType,
-    Result,
-    ResultManager
-)
+from ..utils import Inversion, Swap, Insertion, NeighbourhoodType, Result, ResultManager
 from ..utils import get_path_distance, Queue
 
 
 class Algorithm(ABC):
     """Traveling Salesman Problem (TSP) solver"""
+
     NAME = ""
     _NEIGHBOURHOOD_TYPES = {
         "swap": Swap,
@@ -23,24 +17,37 @@ class Algorithm(ABC):
         "insertion": Insertion,
     }
 
-    def __init__(self,
-                 neigh_type: str = "swap",
-                 verbose: bool = False,
-                 inversion_window: Union[int, None] = None
-                 ) -> None:
+    def __init__(
+        self,
+        neigh_type: str = "swap",
+        verbose: bool = False,
+        inversion_window: Union[int, None] = None,
+    ) -> None:
+        """
+        Params:
+            neigh_type: str
+                Type of neighbourhood used in algorithm
+            verbose: bool
+                If True, prints information about algorithm progress
+            inversion_window: Union[int, None]
+                If neighbourhood type is inversion, this parameter
+                determines how many cities are swapped in one step
+        """
         self._verbose = verbose
         self._inversion_window = inversion_window
         self._path = []
         self.history = []
+        self.mean_distances = []
         neigh = self._NEIGHBOURHOOD_TYPES.get(neigh_type)
-        assert neigh, f'neigh_type must be one of {list(self._NEIGHBOURHOOD_TYPES.keys())}'
+        assert (
+            neigh
+        ), f"neigh_type must be one of {list(self._NEIGHBOURHOOD_TYPES.keys())}"
         self._neigh_type = neigh
 
     @abstractmethod
-    def solve(self,
-              distances: pd.DataFrame,
-              random_seed: Union[int, None] = None
-              ) -> Result:
+    def solve(
+        self, distances: pd.DataFrame, random_seed: Union[int, None] = None
+    ) -> Result:
         """
         Uses specific algorithm to solve Traveling Salesman Problem
 
@@ -52,21 +59,24 @@ class Algorithm(ABC):
         self._distance_matrix_check(distances=distances)
         self._set_random_seed(random_seed=random_seed)
         if self._neigh_type is Inversion:
-            self._neigh: Inversion = self._neigh_type(path_length=len(distances),
-                                                      window_length=self._inversion_window)
+            self._neigh: Inversion = self._neigh_type(
+                path_length=len(distances), window_length=self._inversion_window
+            )
         else:
-            self._neigh: NeighbourhoodType = self._neigh_type(path_length=len(distances))
+            self._neigh: NeighbourhoodType = self._neigh_type(
+                path_length=len(distances)
+            )
 
-    def _switch(self,
-                distances: pd.DataFrame,
-                how: str = 'best',
-                exclude: Union[Queue, None] = None
-                ) -> list:
+    def _switch(
+        self,
+        distances: pd.DataFrame,
+        how: str = "best",
+        exclude: Union[Queue, None] = None,
+    ) -> list:
         """Wraps NeighbourhoodType switch method"""
-        return self._neigh.switch(path=self._path,
-                                  distances=distances,
-                                  how=how,
-                                  exclude=exclude)
+        return self._neigh.switch(
+            path=self._path, distances=distances, how=how, exclude=exclude
+        )
 
     @property
     def _last_switch(self) -> tuple:

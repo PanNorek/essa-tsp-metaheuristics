@@ -16,12 +16,15 @@ class Result:
     best_distance: int
     time: float = None
     distance_history: list = None
+    mean_distances: list = None
 
     def __str__(self) -> str:
         mes = f"""best distance: {self.best_distance}
                   algorithm: {self.algorithm}
                   solving time: {self.time:.3f} s
-                """.replace("  ", "")
+                """.replace(
+            "  ", ""
+        )
         if self.distance_history:
             mes += f"""history: {self.distance_history}\n"""
         return mes
@@ -36,10 +39,14 @@ class Result:
         return self.best_distance > object_.best_distance
 
     def to_df(self) -> pd.DataFrame:
-        df = pd.DataFrame(data={'algorithm': [self.algorithm],
-                                'path': [self.path],
-                                'best_distance': [self.best_distance],
-                                'solving_time': [self.time]})
+        df = pd.DataFrame(
+            data={
+                "algorithm": [self.algorithm],
+                "path": [self.path],
+                "best_distance": [self.best_distance],
+                "solving_time": [self.time],
+            }
+        )
         return df
 
 
@@ -53,6 +60,7 @@ def get_path_distance(path: list, distances: pd.DataFrame) -> int:
 
 def time_it(func: Callable):
     """Decorator to measure time of function execution"""
+
     def wrapper(*args, **kwargs):
         tic = time.perf_counter()
         result = func(*args, **kwargs)
@@ -60,6 +68,7 @@ def time_it(func: Callable):
         result.time = toc - tic
         ResultManager.save_result(result=result)
         return result
+
     return wrapper
 
 
@@ -73,10 +82,9 @@ class StopAlgorithm(Exception):
         )
 
 
-def load_data(path: str,
-              triu: bool = False,
-              as_array: bool = False
-              ) -> Union[pd.DataFrame, np.array]:
+def load_data(
+    path: str, triu: bool = False, as_array: bool = False
+) -> Union[pd.DataFrame, np.array]:
     """
     Load data from given path
 
@@ -95,8 +103,8 @@ def load_data(path: str,
 
 class ResultManager:
     @staticmethod
-    def save_result(result: Result, file: str = 'results.csv') -> None:
+    def save_result(result: Result, file: str = "results.csv") -> None:
         res_df = result.to_df()
-        res_df['run_time'] = datetime.now()
+        res_df["run_time"] = datetime.now()
         header = not os.path.exists(file)
-        res_df.to_csv(file, mode='a', index=False, header=header)
+        res_df.to_csv(file, mode="a", index=False, header=header)

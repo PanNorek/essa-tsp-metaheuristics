@@ -7,24 +7,22 @@ from ..utils.genetic import (
     Roulette,
     Tournament,
     PMX,
-    OX
+    OX,
 )
 from ..utils import Result, time_it
 
 
 class GeneticAlgorithm(Algorithm):
     """Genetic algorithm for solving TSP problem"""
+
     NAME = "GENETIC ALGORITHM"
 
     _SELECTION_METHODS = {
         "truncation": TruncationSelection,
         "roulette": Roulette,
-        "tournament": Tournament
+        "tournament": Tournament,
     }
-    _CROSSOVER_METHODS = {
-        "pmx": PMX,
-        "ox": OX
-    }
+    _CROSSOVER_METHODS = {"pmx": PMX, "ox": OX}
 
     def __init__(
         self,
@@ -37,11 +35,11 @@ class GeneticAlgorithm(Algorithm):
         mutation_rate: float = 0.5,
         neigh_type: str = "swap",
         verbose: bool = False,
-        inversion_window: Union[int, None] = None
+        inversion_window: Union[int, None] = None,
     ) -> None:
-        super().__init__(neigh_type=neigh_type,
-                         verbose=verbose,
-                         inversion_window=inversion_window)
+        super().__init__(
+            neigh_type=neigh_type, verbose=verbose, inversion_window=inversion_window
+        )
         self._pop_size = pop_size
         self._no_generations = no_generations
         self._selection_method = selection_method
@@ -62,24 +60,23 @@ class GeneticAlgorithm(Algorithm):
         self._crossover = self._CROSSOVER_METHODS[self._crossover_method]()
 
     @time_it
-    def solve(self,
-              distances: pd.DataFrame,
-              random_seed: Union[int, None] = None
-              ) -> pd.DataFrame:
+    def solve(
+        self, distances: pd.DataFrame, random_seed: Union[int, None] = None
+    ) -> pd.DataFrame:
         super().solve(distances=distances, random_seed=random_seed)
         # 1st stage: Create random population
         population = Population(pop_size=self._pop_size)
         population.generate_population(distances=distances)
 
         # 2nd stage: Loop for each generation
-        for _ in range(self._no_generations):
+        for i in range(self._no_generations):
             # I: Crossover - make children
             population.crossover(
                 distances=distances,
                 sample_size=self._mating_pool_size,
                 selection_method=self._SELECTION_METHODS[self._selection_method],
                 crossover_method=self._crossover,
-                elite_size=self._elite_size
+                elite_size=self._elite_size,
             )
             # II: Mutation - mutate all population
             population.mutate(
@@ -89,12 +86,17 @@ class GeneticAlgorithm(Algorithm):
                 mutation_rate=self._mutation_rate,
             )
             self.history.append(population.best.distance)
+            self.mean_distances.append(population.mean_distance)
+
+            if self._verbose:
+                print(f"Generation {i+1} best distance: {population.best.distance:.2f}")
 
         result = Result(
             algorithm=self,
             path=population.best.path,
             best_distance=population.best.distance,
-            distance_history=self.history
+            distance_history=self.history,
+            mean_distances=self.mean_distances,
         )
         return result
 

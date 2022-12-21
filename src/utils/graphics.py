@@ -23,12 +23,16 @@ class PathPlotter:
 class BenchmarkPlotter:
     """Plot the benchmark of the algorithms"""
 
-    def plot(self, results: List[Result], labels: List[str] = None, palette: str = "Blues_d"):
+    def plot(
+        self, results: List[Result], labels: List[str] = None, palette: str = "Blues_d"
+    ):
         """Plot the benchmark of the algorithms"""
         plt.figure(figsize=(10, 6))
         if labels is None:
             labels = [result.algorithm.NAME for result in results]
-        ax = sns.barplot(x=labels, y=[result.best_distance for result in results], palette=palette)
+        ax = sns.barplot(
+            x=labels, y=[result.best_distance for result in results], palette=palette
+        )
         for p in ax.containers:
             ax.bar_label(p, label_type="edge")
 
@@ -52,7 +56,11 @@ class DistanceHistoryPlotter:
 
             for result, label in zip(results, labels):
                 plt.plot(result.distance_history, label=label + " - best distance")
-                plt.plot(result.mean_distance, label=label + " - mean distance", linestyle="--")
+                plt.plot(
+                    result.mean_distances,
+                    label=label + " - mean distance",
+                    linestyle="--",
+                )
             # for result, label in zip(results, labels):
             #     axs[0].plot(result.distance_history, label=label)
             #     axs[1].plot(result.mean_distance, label=label)

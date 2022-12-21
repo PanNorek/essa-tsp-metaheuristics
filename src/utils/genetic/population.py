@@ -23,13 +23,18 @@ class Population:
         """
         indices = distances.index.to_list()
         paths = [random.sample(indices, len(indices)) for _ in range(self._pop_size)]
-        distances = [get_path_distance(path=path, distances=distances)
-                     for path in paths]
+        distances = [
+            get_path_distance(path=path, distances=distances) for path in paths
+        ]
         self._population = [
             Individual(path=path, distance=distance)
             for path, distance in zip(paths, distances)
         ]
         self.sort()
+
+    @property
+    def mean_distance(self) -> float:
+        return sum(ind.distance for ind in self._population) / len(self._population)
 
     @property
     def population(self) -> List[Individual]:
@@ -42,13 +47,14 @@ class Population:
     def sort(self):
         self._population.sort(reverse=True)
 
-    def crossover(self,
-                  distances: pd.DataFrame,
-                  sample_size: Union[int, float],
-                  selection_method: ParentSelection,
-                  crossover_method: CrossoverMethod,
-                  elite_size: int = 0
-                  ) -> None:
+    def crossover(
+        self,
+        distances: pd.DataFrame,
+        sample_size: Union[int, float],
+        selection_method: ParentSelection,
+        crossover_method: CrossoverMethod,
+        elite_size: int = 0,
+    ) -> None:
         """Crossover the population.
         Function uses PMX (Partially Matched Crossover) algorithm.
 
@@ -61,16 +67,22 @@ class Population:
         while len(new_population) < self._pop_size:
             # check if crossover should occur
             parent_1, parent_2 = selection_method.select(
-                self._population[elite_size:], size=sample_size)
+                self._population[elite_size:], size=sample_size
+            )
 
             # crossing-over
             child_1, child_2 = crossover_method.crossover(
-                parent_1=parent_1.path, parent_2=parent_2.path)
+                parent_1=parent_1.path, parent_2=parent_2.path
+            )
             child_1, child_2 = (
-                Individual(path=child_1,
-                           distance=get_path_distance(path=child_1, distances=distances)),
-                Individual(path=child_2,
-                           distance=get_path_distance(path=child_2, distances=distances))
+                Individual(
+                    path=child_1,
+                    distance=get_path_distance(path=child_1, distances=distances),
+                ),
+                Individual(
+                    path=child_2,
+                    distance=get_path_distance(path=child_2, distances=distances),
+                ),
             )
             # add child to population
             new_population.append(child_1)
@@ -80,12 +92,13 @@ class Population:
         self._population = new_population
         self.sort()
 
-    def mutate(self,
-               distances: pd.DataFrame,
-               neigh_type: NeighbourhoodType,
-               skip: Union[int, float] = 0,
-               mutation_rate: float = 0.5
-               ) -> None:
+    def mutate(
+        self,
+        distances: pd.DataFrame,
+        neigh_type: NeighbourhoodType,
+        skip: Union[int, float] = 0,
+        mutation_rate: float = 0.5,
+    ) -> None:
         """Mutate the population
 
         Args:
@@ -100,8 +113,9 @@ class Population:
             if random.random() > mutation_rate:
                 continue
             individual.mutate(neigh_type=neigh_type)
-            individual.distance = get_path_distance(path=individual.path,
-                                                    distances=distances)
+            individual.distance = get_path_distance(
+                path=individual.path, distances=distances
+            )
         self.sort()
 
     # magic methods
