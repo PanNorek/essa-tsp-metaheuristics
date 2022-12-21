@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import networkx as nx
 import pandas as pd
-from . import Result
+from .tools import Result
 
 
 class PathPlotter:

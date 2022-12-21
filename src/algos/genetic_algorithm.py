@@ -1,6 +1,6 @@
 from typing import Union
 import pandas as pd
-from . import Algorithm
+from .algorithm import Algorithm
 from ..utils.genetic import (
     Population,
     TruncationSelection,
@@ -9,7 +9,7 @@ from ..utils.genetic import (
     PMX,
     OX,
 )
-from ..utils import Result, time_it
+from ..utils import Result, time_solve
 
 
 class GeneticAlgorithm(Algorithm):
@@ -59,7 +59,7 @@ class GeneticAlgorithm(Algorithm):
         ), f"crossover method must be one of {self._CROSSOVER_METHODS}"
         self._crossover = self._CROSSOVER_METHODS[self._crossover_method]()
 
-    @time_it
+    @time_solve
     def solve(
         self, distances: pd.DataFrame, random_seed: Union[int, None] = None
     ) -> pd.DataFrame:
@@ -90,6 +90,7 @@ class GeneticAlgorithm(Algorithm):
 
             if self._verbose:
                 print(f"Generation {i+1} best distance: {population.best.distance:.2f}")
+                print(f"Generation {i+1} mean distance: {population:.2f}")
 
         result = Result(
             algorithm=self,

@@ -48,9 +48,11 @@ class NeighbourhoodType(ABC):
         new_path = self._switch(path=path, index_1=switch[0], index_2=switch[1])
         return new_path
 
-    def _find_best_switch(
-        self, path: list, distances: pd.DataFrame, exclude: Union[Queue, None] = None
-    ) -> tuple:
+    def _find_best_switch(self,
+                          path: list,
+                          distances: pd.DataFrame,
+                          exclude: Union[Queue, None] = None
+                          ) -> tuple:
         assert len(path) == len(
             distances
         ), "path and distances df must have the same length"
@@ -64,7 +66,8 @@ class NeighbourhoodType(ABC):
 
     def _exclude_switches(self, exclude: Union[Queue, None] = None) -> List[tuple]:
         return (
-            list(set(self._switches) - set(exclude)) if exclude else set(self._switches)
+            list(set(self._switches) - set(exclude)) if exclude
+            else list(set(self._switches))
         )
 
     @abstractmethod
@@ -134,9 +137,10 @@ class Inversion(NeighbourhoodType):
 
     NAME = "Inversion"
 
-    def __init__(
-        self, path_length: int, window_length: Union[int, None] = None
-    ) -> None:
+    def __init__(self,
+                 path_length: int,
+                 window_length: Union[int, None] = None
+                 ) -> None:
         if window_length is None:
             window_length = path_length // 10
         window_length = max(window_length, 3)

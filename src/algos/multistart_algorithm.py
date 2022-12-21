@@ -5,9 +5,9 @@ from .swapping_algorithm import SwappingAlgorithm
 from ..utils import Result
 
 
-def solver(algo, distances, **kwargs):
+def solver(algorithm: SwappingAlgorithm, distances: pd.DataFrame):
     """Solver function for parallel processing"""
-    return algo(**kwargs).solve(distances)
+    return algorithm.solve(distances=distances)
 
 
 class MultistartAlgorithm:
@@ -16,6 +16,8 @@ class MultistartAlgorithm:
     Call this class with algorithm and distance matrix
     to run algorithm with multiple starts in parallel.
     """
+    def __init__(self, verbose: bool = False) -> None:
+        self._verbose = verbose
 
     def __call__(
         self,
@@ -23,7 +25,7 @@ class MultistartAlgorithm:
         distances: pd.DataFrame,
         n_starts=10,
         only_best=True,
-        n_jobs: int = -1,
+        n_jobs: int = 1,
         **kwargs,
     ) -> Result:
         """Run algorithm with multiple starts in parallel
@@ -39,16 +41,20 @@ class MultistartAlgorithm:
         Returns:
             Result: Result of algorithm
         """
+        algo: SwappingAlgorithm = algorithm(**kwargs)
+
         tic = time.time()
-        algorithms = [algorithm for _ in range(n_starts)]
-        results_parallel = Parallel(n_jobs=n_jobs)(
-            delayed(solver)(algo, distances, **kwargs) for algo in algorithms
+        results: list[Result] = Parallel(n_jobs=n_jobs)(
+            delayed(solver)(algorithm=algo, distances=distances)
+            for _ in range(n_starts)
         )
         toc = time.time()
-        print(f"Parallel time for {algorithm.NAME}: {toc - tic:.3f} s")
+
+        if self._verbose:
+            print(f"Solving time for {algorithm.NAME}: {toc - tic:.3f} s - Parallel: {n_jobs != 1}")
 
         if only_best:
-            return min(results_parallel)
-        results_df = pd.DataFrame().from_dict([x.__dict__ for x in results_parallel])
-        results_df["algorithm"] = results_df["algorithm"].apply(lambda x: x.NAME)
+            return min(results)
+
+        results_df = pd.DataFrame().from_dict([x.to_dict() for x in results])
         return results_df

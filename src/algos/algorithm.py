@@ -43,6 +43,7 @@ class Algorithm(ABC):
             neigh
         ), f"neigh_type must be one of {list(self._NEIGHBOURHOOD_TYPES.keys())}"
         self._neigh_type = neigh
+        self._neigh = None
 
     @abstractmethod
     def solve(
@@ -112,7 +113,7 @@ class Algorithm(ABC):
         return self._path
 
     def __str__(self) -> str:
-        return f"{self.NAME}\nNeighbourhood type: {self._neigh}\n"
+        return f"{self.NAME}\nNeighbourhood type: {str(self._neigh)}\n"
 
     def __repr__(self) -> str:
         return str(self)

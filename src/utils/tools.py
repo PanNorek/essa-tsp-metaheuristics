@@ -16,15 +16,12 @@ class Result:
     best_distance: int
     time: float = None
     distance_history: list = None
-    mean_distances: list = None
 
     def __str__(self) -> str:
         mes = f"""best distance: {self.best_distance}
                   algorithm: {self.algorithm}
                   solving time: {self.time:.3f} s
-                """.replace(
-            "  ", ""
-        )
+                """.replace("  ", "")
         if self.distance_history:
             mes += f"""history: {self.distance_history}\n"""
         return mes
@@ -49,6 +46,14 @@ class Result:
         )
         return df
 
+    def to_dict(self) -> dict:
+        return {
+            "algorithm": self.algorithm,
+            "path": self.path,
+            "best_distance": self.best_distance,
+            "solving_time": self.time,
+        }
+
 
 def get_path_distance(path: list, distances: pd.DataFrame) -> int:
     """Calculate distance of the path based on distances matrix"""
@@ -58,8 +63,8 @@ def get_path_distance(path: list, distances: pd.DataFrame) -> int:
     return path_length
 
 
-def time_it(func: Callable):
-    """Decorator to measure time of function execution"""
+def time_solve(func: Callable):
+    """Decorator to measure time of solve method of Algorithm"""
 
     def wrapper(*args, **kwargs):
         tic = time.perf_counter()
@@ -75,22 +80,21 @@ def time_it(func: Callable):
 class StopAlgorithm(Exception):
     """Exception raised when algorithm stops."""
 
-    def __init__(self, iteration: int, distance: int, *args: object) -> None:
-        super().__init__(*args)
+    def __init__(self, iteration: int, distance: int) -> None:
         self.message = (
             f"Algorithm stopped at {iteration} iteration\nBest distance: {distance}"
         )
+        super().__init__(self.message)
 
 
-def load_data(
-    path: str, triu: bool = False, as_array: bool = False
-) -> Union[pd.DataFrame, np.array]:
+def load_data(path: str,
+              triu: bool = False,
+              as_array: bool = False
+              ) -> Union[pd.DataFrame, np.array]:
     """
     Load data from given path
-
     Args:
         path (str): Path to data
-
     Returns:
         data : pd.DataFrame or np.ndarray
     """

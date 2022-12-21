@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import Union, List
 import pandas as pd
 from .algorithm import Algorithm
-from ..utils import StopAlgorithm, Result, time_it, get_path_distance
+from ..utils import StopAlgorithm, Result, time_solve, get_path_distance
 
 
 class SwappingAlgorithm(Algorithm):
@@ -24,7 +24,7 @@ class SwappingAlgorithm(Algorithm):
         # current iteration
         self._i = 0
 
-    @time_it
+    @time_solve
     def solve(self,
               distances: pd.DataFrame,
               random_seed: Union[int, None] = None,

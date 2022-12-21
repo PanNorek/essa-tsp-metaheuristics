@@ -11,8 +11,9 @@ from .crossover import CrossoverMethod
 class Population:
     def __init__(self, pop_size: int = 500) -> None:
         self._pop_size = pop_size
+        self._population = []
 
-    def generate_population(self, distances: pd.DataFrame) -> List[Individual]:
+    def generate_population(self, distances: pd.DataFrame):
         """Generate a population of individuals
 
         Args:
@@ -31,6 +32,7 @@ class Population:
             for path, distance in zip(paths, distances)
         ]
         self.sort()
+        return self
 
     @property
     def mean_distance(self) -> float:
