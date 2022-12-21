@@ -72,8 +72,6 @@ class Roulette(ParentSelection):
     def select(generation: List[Individual], size: None = None) -> Parents:
         # load individuals
         df = pd.DataFrame.from_records(vars(o) for o in generation)
-        # calculate fitness
-        df[Individual.FITNESS] = (1 / df[Individual.DISTANCE]).astype("float64")
         # calculate cumulative fitness
         cum_fit = df[Individual.FITNESS].cumsum()
         # divide by total fitness
@@ -81,4 +79,4 @@ class Roulette(ParentSelection):
         # select parents
         mask1 = df[Roulette.DIST_FITNESS] > random.random()
         mask2 = df[Roulette.DIST_FITNESS] > random.random()
-        return df[mask1].iloc[0], df[mask2].iloc[0]
+        return df[mask1].iloc[0, 0], df[mask2].iloc[0, 0]

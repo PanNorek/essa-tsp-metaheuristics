@@ -12,7 +12,6 @@ class Individual:
     def __init__(self, path: list, distance: Union[int, float]) -> None:
         self.path = path
         self.distance = distance
-        # self.fitness = 1 / self.distance
 
     @property
     def fitness(self) -> float:
@@ -20,15 +19,6 @@ class Individual:
 
     def mutate(self, neigh_type: NeighbourhoodType) -> None:
         self.path = neigh_type.switch(path=self.path, how='random')
-
-    def to_df(self):
-        dic = {
-            self.INDIVIDUAL: [self],
-            self.PATH: [self.path],
-            self.DISTANCE: [self.distance],
-            self.FITNESS: [self.fitness],
-        }
-        return pd.DataFrame(dic).sort_values(self.FITNESS, ascending=False)
 
     def __assert_type(self, object_) -> None:
         assert isinstance(object_, Individual), f"Cannot compare with {type(object_)} type"
@@ -45,3 +35,12 @@ class Individual:
 
     def __len__(self) -> int:
         return len(self.path)
+
+    @property
+    def __dict__(self) -> dict:
+        return {
+            self.INDIVIDUAL: self,
+            self.PATH: self.path,
+            self.DISTANCE: self.distance,
+            self.FITNESS: self.fitness,
+        }
