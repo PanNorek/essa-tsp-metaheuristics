@@ -2,7 +2,7 @@ import math
 import random
 from typing import Union, Callable
 import pandas as pd
-from .swapping_algorithm import SwappingAlgorithm
+from .switching_algorithm import SwitchingAlgorithm
 
 
 ALPHA = 0.9
@@ -18,7 +18,7 @@ def slowly_descend(temp: float, alpha: float = ALPHA) -> float:
     return temp / (1 + alpha * temp)
 
 
-class SimulatedAnnealing(SwappingAlgorithm):
+class SimulatedAnnealing(SwitchingAlgorithm):
     """
     Simulated Annealing Algorithm
 

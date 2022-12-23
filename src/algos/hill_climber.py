@@ -1,9 +1,9 @@
 import pandas as pd
 from ..utils import StopAlgorithm
-from .swapping_algorithm import SwappingAlgorithm
+from .switching_algorithm import SwitchingAlgorithm
 
 
-class HillClimber(SwappingAlgorithm):
+class HillClimber(SwitchingAlgorithm):
     """Hill Climber Algorithm
 
     Parameters

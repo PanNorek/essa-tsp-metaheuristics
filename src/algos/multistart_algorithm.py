@@ -1,11 +1,11 @@
 import time
 import pandas as pd
 from joblib import Parallel, delayed
-from .swapping_algorithm import SwappingAlgorithm
+from .switching_algorithm import SwitchingAlgorithm
 from ..utils import Result
 
 
-def solver(algorithm: SwappingAlgorithm, distances: pd.DataFrame):
+def solver(algorithm: SwitchingAlgorithm, distances: pd.DataFrame):
     """Solver function for parallel processing"""
     return algorithm.solve(distances=distances)
 
@@ -21,7 +21,7 @@ class MultistartAlgorithm:
 
     def __call__(
         self,
-        algorithm: SwappingAlgorithm,
+        algorithm: SwitchingAlgorithm,
         distances: pd.DataFrame,
         n_starts=10,
         only_best=True,
@@ -41,7 +41,7 @@ class MultistartAlgorithm:
         Returns:
             Result: Result of algorithm
         """
-        algo: SwappingAlgorithm = algorithm(**kwargs)
+        algo: SwitchingAlgorithm = algorithm(**kwargs)
 
         tic = time.time()
         results: list[Result] = Parallel(n_jobs=n_jobs)(

@@ -1,9 +1,9 @@
 import pandas as pd
-from .swapping_algorithm import SwappingAlgorithm
+from .switching_algorithm import SwitchingAlgorithm
 from ..utils import Queue
 
 
-class TabuSearch(SwappingAlgorithm):
+class TabuSearch(SwitchingAlgorithm):
     """Tabu Search Algorithm
 
     Parameters

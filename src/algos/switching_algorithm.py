@@ -11,7 +11,7 @@ from ..utils import (
 )
 
 
-class SwappingAlgorithm(Algorithm):
+class SwitchingAlgorithm(Algorithm):
     """Swapping Algorithm"""
 
     DISTANCE = "distance"
