@@ -1,6 +1,6 @@
 import math
 import random
-from typing import Union, Callable, List
+from typing import Union, Callable
 import pandas as pd
 from .swapping_algorithm import SwappingAlgorithm
 
@@ -26,14 +26,18 @@ class SimulatedAnnealing(SwappingAlgorithm):
     ----------
     temp: int
         initial temperature
+        The temperature progressively decreases from an initial positive value to zero.
     alpha: float
         cooling factor
+        The cooling factor is a number between 0 and 1 that controls the rate at which the temperature decreases.
     reduce_func: Callable
         function to reduce temperature, default is reduce
+        Available options: reduce, slowly_descend
     neigh_type: str
         type of neighbourhood, default is None
+        Available options: 'swap', 'insert', 'inversion'
     n_iter: int
-        number of iterations, default is 30
+        number of iterations, default is 100
     verbose: bool
         print progress, default is False
     """
@@ -49,7 +53,7 @@ class SimulatedAnnealing(SwappingAlgorithm):
                  alpha: float = ALPHA,
                  reduce_func: Union[Callable, str] = "reduce",
                  neigh_type: str = "swap",
-                 n_iter: int = 30,
+                 n_iter: int = 100,
                  verbose: bool = False,
                  ) -> None:
         super().__init__(

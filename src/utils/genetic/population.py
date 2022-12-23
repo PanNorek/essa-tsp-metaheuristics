@@ -1,6 +1,6 @@
 import random
 import pandas as pd
-from typing import Union, List, Tuple
+from typing import Union, List
 from ..tools import get_path_distance
 from .individual import Individual
 from ..neighbourhood_type import NeighbourhoodType

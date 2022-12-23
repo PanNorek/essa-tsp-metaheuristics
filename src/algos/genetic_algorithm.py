@@ -57,6 +57,7 @@ class GeneticAlgorithm(Algorithm):
         assert (
             self._crossover_method in self._CROSSOVER_METHODS
         ), f"crossover method must be one of {self._CROSSOVER_METHODS}"
+        assert isinstance(self._elite_size, (int, float)), "elite size must be int or float"
         self._crossover = self._CROSSOVER_METHODS[self._crossover_method]()
 
     @solve_it
@@ -99,6 +100,7 @@ class GeneticAlgorithm(Algorithm):
             path=self.best_path,
             best_distance=min(self.history),
             distance_history=self.history,
+            mean_distance_history=self.mean_distances,
         )
         return result
 

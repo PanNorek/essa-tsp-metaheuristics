@@ -1,4 +1,3 @@
-from typing import Union, List
 import pandas as pd
 from ..utils import StopAlgorithm
 from .swapping_algorithm import SwappingAlgorithm
@@ -11,8 +10,10 @@ class HillClimber(SwappingAlgorithm):
     ----------
     neigh_type : str, optional
         Type of neighborhood, by default None
+        Available options: 'swap', 'insert', 'inversion'
     n_iter : int, optional
-        Number of iterations, by default 30
+        Number of iterations to perform, by default 30
+        Algorithm will stop after n_iter iterations or when it reaches local minimum.
     verbose : bool, optional
         Print progress, by default False
     """
@@ -33,7 +34,9 @@ class HillClimber(SwappingAlgorithm):
 
         # start new iteration
         self._i += 1
+        # get new path
         new_path = self._switch(distances=distances, how='best')
+        # get new distance
         new_distance = self._get_path_distance(path=new_path, distances=distances)
         # distance gain
         gain = self.history[-1] - new_distance

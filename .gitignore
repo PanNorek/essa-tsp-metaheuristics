@@ -1,6 +1,8 @@
 test.ipynb
 .vscode
 diary.txt
+
+results.csv
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

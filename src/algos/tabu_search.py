@@ -1,4 +1,3 @@
-from typing import Union, List
 import pandas as pd
 from .swapping_algorithm import SwappingAlgorithm
 from ..utils import Queue
@@ -13,6 +12,7 @@ class TabuSearch(SwappingAlgorithm):
         length of tabu list, default is 3
     neigh_type: str
         type of neighbourhood, default is None
+        Available options: 'swap', 'insert', 'inversion'
     n_iter: int
         number of iterations, default is 100
     verbose: bool

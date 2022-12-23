@@ -13,7 +13,7 @@ class Queue:
 
     def dequeue(self):
         """Removes object from the beginning of the queue"""
-        if len(self) == 3:
+        if len(self) == self._limit:
             self._queue.pop(0)
 
     def __len__(self):
