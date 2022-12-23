@@ -9,7 +9,7 @@ from ..utils.genetic import (
     PMX,
     OX,
 )
-from ..utils import Result, time_solve
+from ..utils import Result, solve_it
 
 
 class GeneticAlgorithm(Algorithm):
@@ -35,10 +35,9 @@ class GeneticAlgorithm(Algorithm):
         mutation_rate: float = 0.5,
         neigh_type: str = "swap",
         verbose: bool = False,
-        inversion_window: Union[int, None] = None,
     ) -> None:
         super().__init__(
-            neigh_type=neigh_type, verbose=verbose, inversion_window=inversion_window
+            neigh_type=neigh_type, verbose=verbose
         )
         self._pop_size = pop_size
         self._no_generations = no_generations
@@ -59,7 +58,7 @@ class GeneticAlgorithm(Algorithm):
         ), f"crossover method must be one of {self._CROSSOVER_METHODS}"
         self._crossover = self._CROSSOVER_METHODS[self._crossover_method]()
 
-    @time_solve
+    @solve_it
     def solve(
         self, distances: pd.DataFrame, random_seed: Union[int, None] = None
     ) -> pd.DataFrame:
@@ -97,16 +96,16 @@ class GeneticAlgorithm(Algorithm):
             path=population.best.path,
             best_distance=population.best.distance,
             distance_history=self.history,
-            mean_distances=self.mean_distances,
         )
         return result
 
     def __str__(self) -> str:
         mes = super().__str__()
+        # replace __class__.__name__ with __str__ methods in crossover
         mes += f"""pop_size: {self._pop_size}\n\
         generations: {self._no_generations}\n\
         selection_method: {self._selection_method}\n\
-        crossover_method: {self._crossover}\n\
+        crossover_method: {self._crossover.__class__.__name__}\n\
         elite_size: {self._elite_size}\n\
         mating_pool_size: {self._mating_pool_size}\n\
         mutation_rate: {self._mutation_rate}\n"""

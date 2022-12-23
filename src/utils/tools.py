@@ -63,7 +63,7 @@ def get_path_distance(path: list, distances: pd.DataFrame) -> int:
     return path_length
 
 
-def time_solve(func: Callable):
+def solve_it(func: Callable):
     """Decorator to measure time of solve method of Algorithm"""
 
     def wrapper(*args, **kwargs):

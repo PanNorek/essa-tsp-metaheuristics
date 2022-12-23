@@ -26,12 +26,12 @@ class TabuSearch(SwappingAlgorithm):
                  neigh_type: str = "swap",
                  n_iter: int = 100,
                  verbose: bool = False,
-                 inversion_window: Union[int, None] = None
                  ) -> None:
-        super().__init__(neigh_type=neigh_type,
-                         n_iter=n_iter,
-                         verbose=verbose,
-                         inversion_window=inversion_window)
+        super().__init__(
+            neigh_type=neigh_type,
+            n_iter=n_iter,
+            verbose=verbose
+        )
         self._tabu_list = Queue(length=tabu_length)
 
     def _iterate_steps(self, distances: pd.DataFrame) -> None:

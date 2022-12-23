@@ -2,7 +2,7 @@ import random
 from typing import Union
 import pandas as pd
 from .algorithm import Algorithm
-from ..utils import time_solve, Result
+from ..utils import solve_it, Result
 
 
 class NearestNeighbour(Algorithm):
@@ -10,7 +10,7 @@ class NearestNeighbour(Algorithm):
 
     NAME = "NEAREST NEIGHBOUR"
 
-    @time_solve
+    @solve_it
     def solve(self,
               distances: pd.DataFrame,
               start: Union[int, None] = None,
@@ -48,3 +48,6 @@ class NearestNeighbour(Algorithm):
         distance += distances.loc[self._path[-1], start]
         result = Result(algorithm=self, path=self._path, best_distance=distance)
         return result
+
+    def __str__(self) -> str:
+        return f"{self.NAME}\n"

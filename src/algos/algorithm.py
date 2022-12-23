@@ -3,8 +3,14 @@ from abc import ABC, abstractmethod
 from typing import Union
 import pandas as pd
 import numpy as np
-from ..utils import Inversion, Swap, Insertion, NeighbourhoodType, Result, ResultManager
-from ..utils import get_path_distance, Queue
+from ..utils import (
+    Inversion,
+    Swap,
+    Insertion,
+    NeighbourhoodType,
+    Result,
+    get_path_distance
+)
 
 
 class Algorithm(ABC):
@@ -17,12 +23,10 @@ class Algorithm(ABC):
         "insertion": Insertion,
     }
 
-    def __init__(
-        self,
-        neigh_type: str = "swap",
-        verbose: bool = False,
-        inversion_window: Union[int, None] = None,
-    ) -> None:
+    def __init__(self,
+                 neigh_type: str = "swap",
+                 verbose: bool = False
+                 ) -> None:
         """
         Params:
             neigh_type: str
@@ -34,7 +38,6 @@ class Algorithm(ABC):
                 determines how many cities are swapped in one step
         """
         self._verbose = verbose
-        self._inversion_window = inversion_window
         self._path = []
         self.history = []
         self.mean_distances = []
@@ -46,9 +49,10 @@ class Algorithm(ABC):
         self._neigh = None
 
     @abstractmethod
-    def solve(
-        self, distances: pd.DataFrame, random_seed: Union[int, None] = None
-    ) -> Result:
+    def solve(self,
+              distances: pd.DataFrame,
+              random_seed: Union[int, None] = None
+              ) -> Result:
         """
         Uses specific algorithm to solve Traveling Salesman Problem
 
@@ -59,33 +63,9 @@ class Algorithm(ABC):
         """
         self._distance_matrix_check(distances=distances)
         self._set_random_seed(random_seed=random_seed)
-        if self._neigh_type is Inversion:
-            self._neigh: Inversion = self._neigh_type(
-                path_length=len(distances), window_length=self._inversion_window
-            )
-        else:
-            self._neigh: NeighbourhoodType = self._neigh_type(
-                path_length=len(distances)
-            )
-
-    def _switch(
-        self,
-        distances: pd.DataFrame,
-        how: str = "best",
-        exclude: Union[Queue, None] = None,
-    ) -> list:
-        """Wraps NeighbourhoodType switch method"""
-        return self._neigh.switch(
-            path=self._path, distances=distances, how=how, exclude=exclude
+        self._neigh: NeighbourhoodType = self._neigh_type(
+            path_length=len(distances)
         )
-
-    @property
-    def _last_switch(self) -> tuple:
-        return self._neigh.last_switch
-
-    @property
-    def _last_switch_comment(self) -> str:
-        return self._neigh.last_switch_comment
 
     def _get_path_distance(self, path: list, distances: pd.DataFrame) -> int:
         """Wraps get_path_distance function"""

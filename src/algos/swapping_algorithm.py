@@ -1,30 +1,36 @@
 from abc import abstractmethod
-from typing import Union, List
+from typing import Union
 import pandas as pd
 from .algorithm import Algorithm
-from ..utils import StopAlgorithm, Result, time_solve, get_path_distance
+from ..utils import (
+    StopAlgorithm,
+    Result,
+    solve_it,
+    get_path_distance,
+    Queue
+)
 
 
 class SwappingAlgorithm(Algorithm):
     """Swapping Algorithm"""
 
     DISTANCE = "distance"
-    SWAP = "swap"
+    SWITCH = "switch"
 
     def __init__(self,
                  neigh_type: str = "swap",
                  n_iter: int = 30,
                  verbose: bool = False,
-                 inversion_window: Union[int, None] = None
                  ) -> None:
-        super().__init__(neigh_type=neigh_type,
-                         verbose=verbose,
-                         inversion_window=inversion_window)
+        super().__init__(
+            neigh_type=neigh_type,
+            verbose=verbose
+        )
         self._n_iter = n_iter
         # current iteration
         self._i = 0
 
-    @time_solve
+    @solve_it
     def solve(self,
               distances: pd.DataFrame,
               random_seed: Union[int, None] = None,
@@ -60,7 +66,25 @@ class SwappingAlgorithm(Algorithm):
     def _iterate_steps(self, distances: pd.DataFrame) -> None:
         pass
 
+    def _switch(self,
+                distances: pd.DataFrame,
+                how: str = "best",
+                exclude: Union[Queue, None] = None,
+                ) -> list:
+        """Wraps NeighbourhoodType switch method"""
+        return self._neigh.switch(
+            path=self._path, distances=distances, how=how, exclude=exclude
+        )
+
+    @property
+    def _last_switch(self) -> tuple:
+        return self._neigh.last_switch
+
+    @property
+    def _last_switch_comment(self) -> str:
+        return self._neigh.last_switch_comment
+
     def __str__(self) -> str:
         mes = super().__str__()
-        mes += f"""\nn_iter: {self._n_iter}"""
+        mes += f"""\nn_iter: {self._n_iter}\n"""
         return mes

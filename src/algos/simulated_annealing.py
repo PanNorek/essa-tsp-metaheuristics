@@ -51,12 +51,12 @@ class SimulatedAnnealing(SwappingAlgorithm):
                  neigh_type: str = "swap",
                  n_iter: int = 30,
                  verbose: bool = False,
-                 inversion_window: Union[int, None] = None
                  ) -> None:
-        super().__init__(neigh_type=neigh_type,
-                         n_iter=n_iter,
-                         verbose=verbose,
-                         inversion_window=inversion_window)
+        super().__init__(
+            neigh_type=neigh_type,
+            n_iter=n_iter,
+            verbose=verbose
+        )
         if not callable(reduce_func):
             assert (
                 reduce_func in self._REDUCE_FUNC
@@ -64,7 +64,7 @@ class SimulatedAnnealing(SwappingAlgorithm):
             reduce_func = self._REDUCE_FUNC[reduce_func]
         self._reduce_func: Callable = reduce_func
         self._alpha = alpha
-        self._temp = temp
+        self._temp = self._start_temp = temp
 
     def _iterate_steps(self, distances: pd.DataFrame) -> None:
         # start new iteration
@@ -98,5 +98,5 @@ class SimulatedAnnealing(SwappingAlgorithm):
         mes = super().__str__()
         mes += f"""reduction function: {self._reduce_func.__name__}\n\
             alpha: {self._alpha}\n\
-            start temperatute: {self._temp}"""
+            start temperatute: {self._start_temp}"""
         return mes
