@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Union
+from typing import Union, Iterable
 import pandas as pd
 from .algorithm import Algorithm
 from ..utils import (
@@ -31,12 +31,15 @@ class SwappingAlgorithm(Algorithm):
         self._i = 0
 
     @solve_it
-    def solve(self,
-              distances: pd.DataFrame,
-              random_seed: Union[int, None] = None,
-              start_order: Union[list, None] = None
-              ) -> Result:
-        super().solve(distances=distances, random_seed=random_seed)
+    def _solve(self,
+               distances: pd.DataFrame,
+               random_seed: Union[int, None] = None,
+               start_order: Union[list, None] = None
+               ) -> Result:
+        super()._solve(distances=distances, random_seed=random_seed)
+        if start_order is not None:
+            self._start_order_check(start_order=start_order, distances=distances)
+
         self._path = start_order or self._get_random_path(indices=distances.index)
         # distance of the path at the beginning
         distance = get_path_distance(path=self._path, distances=distances)
@@ -65,6 +68,19 @@ class SwappingAlgorithm(Algorithm):
     @abstractmethod
     def _iterate_steps(self, distances: pd.DataFrame) -> None:
         pass
+
+    def _start_order_check(self,
+                           start_order: list,
+                           distances: pd.DataFrame
+                           ) -> None:
+        assert isinstance(start_order, Iterable), 'start_order must be iterable'
+        assert (
+            len(start_order) == len(distances)
+        ), f'Expected {len(distances)} elements, got {len(start_order)}'
+        assert (
+            all(index in distances.index.to_list() for index in start_order)
+        ), 'elements of start_order must allign with distance matrix indices'
+        assert len(set(start_order)) == len(start_order), 'elements in start_order must be unique'
 
     def _switch(self,
                 distances: pd.DataFrame,

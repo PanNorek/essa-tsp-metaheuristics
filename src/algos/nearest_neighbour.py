@@ -11,12 +11,12 @@ class NearestNeighbour(Algorithm):
     NAME = "NEAREST NEIGHBOUR"
 
     @solve_it
-    def solve(self,
-              distances: pd.DataFrame,
-              start: Union[int, None] = None,
-              random_seed: Union[int, None] = None,
-              ) -> int:
-        super().solve(distances=distances, random_seed=random_seed)
+    def _solve(self,
+               distances: pd.DataFrame,
+               start: Union[int, None] = None,
+               random_seed: Union[int, None] = None,
+               ) -> int:
+        super()._solve(distances=distances, random_seed=random_seed)
         # if starting point is None, choose it randomly from indices
         if start is None:
             start = random.choice(list(distances.index))

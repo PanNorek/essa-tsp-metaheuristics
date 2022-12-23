@@ -4,6 +4,7 @@ from typing import Callable, Union, Any
 import numpy as np
 from datetime import datetime
 from dataclasses import dataclass
+from functools import wraps
 import os
 
 
@@ -66,9 +67,18 @@ def get_path_distance(path: list, distances: pd.DataFrame) -> int:
 def solve_it(func: Callable):
     """Decorator to measure time of solve method of Algorithm"""
 
-    def wrapper(*args, **kwargs):
+    def wrapper(algo, *args, **kwargs):
         tic = time.perf_counter()
-        result = func(*args, **kwargs)
+        try:
+            result = func(algo, *args, **kwargs)
+        except KeyboardInterrupt:
+            result = Result(
+                algorithm=algo,
+                path=algo.best_path,
+                best_distance=min(algo.history),
+                distance_history=algo.history
+            )
+            print(f'Algorithm has been stopped manually\n')
         toc = time.perf_counter()
         result.time = toc - tic
         ResultManager.save_result(result=result)

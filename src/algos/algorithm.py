@@ -40,7 +40,6 @@ class Algorithm(ABC):
         self._verbose = verbose
         self._path = []
         self.history = []
-        self.mean_distances = []
         neigh = self._NEIGHBOURHOOD_TYPES.get(neigh_type)
         assert (
             neigh
@@ -48,11 +47,23 @@ class Algorithm(ABC):
         self._neigh_type = neigh
         self._neigh = None
 
-    @abstractmethod
     def solve(self,
               distances: pd.DataFrame,
-              random_seed: Union[int, None] = None
+              random_seed: Union[int, None] = None,
+              **kwargs
               ) -> Result:
+        return self._solve(
+            distances=distances,
+            random_seed=random_seed,
+            **kwargs
+        )
+
+    @abstractmethod
+    def _solve(self,
+               distances: pd.DataFrame,
+               random_seed: Union[int, None] = None,
+               **kwargs
+               ) -> Result:
         """
         Uses specific algorithm to solve Traveling Salesman Problem
 
@@ -93,7 +104,7 @@ class Algorithm(ABC):
         return self._path
 
     def __str__(self) -> str:
-        return f"{self.NAME}\nNeighbourhood type: {str(self._neigh)}\n"
+        return f"{self.NAME}\nNeighbourhood type: {str(self._neigh)}"
 
     def __repr__(self) -> str:
         return str(self)

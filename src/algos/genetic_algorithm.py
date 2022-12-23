@@ -46,6 +46,7 @@ class GeneticAlgorithm(Algorithm):
         self._mutation_rate = mutation_rate
         self._elite_size = elite_size
         self._mating_pool_size = mating_pool_size
+        self.mean_distances = []
         self.__check_params()
 
     def __check_params(self):
@@ -59,10 +60,11 @@ class GeneticAlgorithm(Algorithm):
         self._crossover = self._CROSSOVER_METHODS[self._crossover_method]()
 
     @solve_it
-    def solve(
-        self, distances: pd.DataFrame, random_seed: Union[int, None] = None
-    ) -> pd.DataFrame:
-        super().solve(distances=distances, random_seed=random_seed)
+    def _solve(self,
+               distances: pd.DataFrame,
+               random_seed: Union[int, None] = None
+               ) -> pd.DataFrame:
+        super()._solve(distances=distances, random_seed=random_seed)
         # 1st stage: Create random population
         population = Population(pop_size=self._pop_size)
         population.generate_population(distances=distances)
@@ -85,6 +87,7 @@ class GeneticAlgorithm(Algorithm):
                 mutation_rate=self._mutation_rate,
             )
             self.history.append(population.best.distance)
+            self._path = population.best.path
             self.mean_distances.append(population.mean_distance)
 
             if self._verbose:
@@ -93,8 +96,8 @@ class GeneticAlgorithm(Algorithm):
 
         result = Result(
             algorithm=self,
-            path=population.best.path,
-            best_distance=population.best.distance,
+            path=self.best_path,
+            best_distance=min(self.history),
             distance_history=self.history,
         )
         return result
