@@ -29,7 +29,8 @@ class SimulatedAnnealing(SwappingAlgorithm):
         The temperature progressively decreases from an initial positive value to zero.
     alpha: float
         cooling factor
-        The cooling factor is a number between 0 and 1 that controls the rate at which the temperature decreases.
+        The cooling factor is a number between 0 and 1 that controls
+        the rate at which the temperature decreases.
     reduce_func: Callable
         function to reduce temperature, default is reduce
         Available options: reduce, slowly_descend
