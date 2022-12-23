@@ -1,8 +1,8 @@
 class Queue:
     """Implementation of queue for Tabu List"""
 
-    def __init__(self, tabu_length: int = 3) -> None:
-        self._limit = tabu_length
+    def __init__(self, length: int = 3) -> None:
+        self._limit = length
         self._queue = []
 
     def enqueue(self, object_: object):
