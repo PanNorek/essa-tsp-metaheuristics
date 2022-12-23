@@ -32,7 +32,7 @@ class TabuSearch(SwappingAlgorithm):
             n_iter=n_iter,
             verbose=verbose
         )
-        self._tabu_list = Queue(length=tabu_length)
+        self._tabu_list = Queue(length=tabu_length, tabu_length=tabu_length)
 
     def _iterate_steps(self, distances: pd.DataFrame) -> None:
         # start new iteration

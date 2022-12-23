@@ -57,7 +57,7 @@ class DistanceHistoryPlotter:
             for result, label in zip(results, labels):
                 plt.plot(result.distance_history, label=label + " - best distance")
                 plt.plot(
-                    result.mean_distances,
+                    result.mean_distance_history,
                     label=label + " - mean distance",
                     linestyle="--",
                 )

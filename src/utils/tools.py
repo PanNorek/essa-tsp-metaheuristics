@@ -16,6 +16,7 @@ class Result:
     best_distance: int
     time: float = None
     distance_history: list = None
+    mean_distance_history: list = None
 
     def __str__(self) -> str:
         mes = f"""best distance: {self.best_distance}

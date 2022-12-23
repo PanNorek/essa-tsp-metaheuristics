@@ -1,8 +1,8 @@
 class Queue:
     """Implementation of queue for Tabu List"""
 
-    def __init__(self, length: int = 3) -> None:
-        self._limit = length
+    def __init__(self, tabu_length: int = 3) -> None:
+        self._limit = tabu_length
         self._queue = []
 
     def enqueue(self, object_: object):
@@ -13,7 +13,7 @@ class Queue:
 
     def dequeue(self):
         """Removes object from the beginning of the queue"""
-        if len(self) == 3:
+        if len(self) == self._limit:
             self._queue.pop(0)
 
     def __len__(self):
