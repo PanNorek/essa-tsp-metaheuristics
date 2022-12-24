@@ -6,3 +6,4 @@ from .simulated_annealing import SimulatedAnnealing
 from .multistart_algorithm import MultistartAlgorithm
 from .switching_algorithm import SwitchingAlgorithm
 from .genetic_algorithm import GeneticAlgorithm
+from .grid_search_ga import GridSearchGA
