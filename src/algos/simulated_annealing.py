@@ -3,6 +3,7 @@ import random
 from typing import Union, Callable
 import pandas as pd
 from .switching_algorithm import SwitchingAlgorithm
+from .iterating_algorithm import IteratingAlgorithm
 
 
 ALPHA = 0.9
@@ -18,7 +19,7 @@ def slowly_descend(temp: float, alpha: float = ALPHA) -> float:
     return temp / (1 + alpha * temp)
 
 
-class SimulatedAnnealing(SwitchingAlgorithm):
+class SimulatedAnnealing(SwitchingAlgorithm, IteratingAlgorithm):
     """
     Simulated Annealing Algorithm
 
@@ -72,7 +73,7 @@ class SimulatedAnnealing(SwitchingAlgorithm):
         self._alpha = alpha
         self._temp = self._start_temp = temp
 
-    def _iterate_steps(self, distances: pd.DataFrame) -> None:
+    def _run_iteration(self, distances: pd.DataFrame) -> None:
         self._next_iter()
         # find radom neighbouring solution and its distance
         new_path = self._switch(distances=distances, how='random')

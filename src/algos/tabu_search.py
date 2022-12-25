@@ -1,9 +1,10 @@
 import pandas as pd
 from .switching_algorithm import SwitchingAlgorithm
+from .iterating_algorithm import IteratingAlgorithm
 from ..utils import Queue
 
 
-class TabuSearch(SwitchingAlgorithm):
+class TabuSearch(SwitchingAlgorithm, IteratingAlgorithm):
     """Tabu Search Algorithm
 
     Parameters
@@ -34,13 +35,14 @@ class TabuSearch(SwitchingAlgorithm):
         )
         self._tabu_list = Queue(length=tabu_length)
 
-    def _iterate_steps(self, distances: pd.DataFrame) -> None:
+    def _run_iteration(self, distances: pd.DataFrame) -> None:
         self._next_iter()
         new_path = self._switch(distances=distances,
                                 how='best',
                                 exclude=self._tabu_list)
-        new_distance = self._get_path_distance(path=new_path,
-                                               distances=distances)
+        new_distance = self._get_path_distance(
+            path=new_path, distances=distances
+        )
         # new path that minimizes distance
         self._path = new_path
         # removing first swap from tabu list only if list is full

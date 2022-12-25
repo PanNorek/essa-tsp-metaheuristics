@@ -1,9 +1,10 @@
 import pandas as pd
 from ..utils import StopAlgorithm
 from .switching_algorithm import SwitchingAlgorithm
+from .iterating_algorithm import IteratingAlgorithm
 
 
-class HillClimber(SwitchingAlgorithm):
+class HillClimber(SwitchingAlgorithm, IteratingAlgorithm):
     """Hill Climber Algorithm
 
     Parameters
@@ -20,7 +21,7 @@ class HillClimber(SwitchingAlgorithm):
 
     NAME = "HILL CLIMBER"
 
-    def _iterate_steps(self, distances: pd.DataFrame) -> None:
+    def _run_iteration(self, distances: pd.DataFrame) -> None:
         """Iterate steps in Hill Climber Algorithm
 
         Args:

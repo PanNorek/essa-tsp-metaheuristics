@@ -76,7 +76,7 @@ class GeneticAlgorithm(IteratingAlgorithm):
         )
         # 2nd stage: Loop for each generation
         for _ in range(self._n_iter):
-            self._iterate_steps(distances=distances)
+            self._run_iteration(distances=distances)
 
         result = Result(
             algorithm=self,
@@ -87,7 +87,7 @@ class GeneticAlgorithm(IteratingAlgorithm):
         )
         return result
 
-    def _iterate_steps(self, distances: pd.DataFrame) -> None:
+    def _run_iteration(self, distances: pd.DataFrame) -> None:
         self._next_iter()
         # I: Crossover - make children
         self.population_.crossover(
