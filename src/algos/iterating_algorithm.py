@@ -56,7 +56,7 @@ class IteratingAlgorithm(TSPAlgorithm):
         return Result(
             algorithm=self,
             path=self._path,
-            distance=min(self.history),
+            distance=self.history[-1],
             distance_history=self.history,
         )
 
@@ -71,6 +71,15 @@ class IteratingAlgorithm(TSPAlgorithm):
 
     @abstractmethod
     def _run_iteration(self, distances: pd.DataFrame) -> None:
+        """Runs operations in a single interation
+
+        Params:
+            distances: pd.DataFrame
+                Matrix of distances between cities,
+                cities numbers or id names as indices and columns
+
+        It saves all information in attributes
+        """
         pass
 
     def _next_iter(self) -> None:

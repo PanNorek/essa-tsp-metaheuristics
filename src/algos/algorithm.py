@@ -25,6 +25,20 @@ class TSPAlgorithm(ABC):
     Properties:
         best_path - best path found by algorithm
 
+    The idea was that TSPAlgorithm resembles sklearn BaseEstimator interface
+    where all parameters related to the algorithm itself
+    and independent of the training data are passed in the constructor.
+    API solve method can be use on different set of data independently of
+    algorithm specifications. Most optimal path found can be accesed with
+    path_ property (in sklearn attributes followed by underscore are trained from data).
+    random_state and start_order parameters in solve method are an exception,
+    it gives more flexibility in looking for different solutions
+
+    The traveling salesman problem (TSP) is one of the most intensively studied
+    problems in optimization.
+    It is NP-hard, and the solution space scales factorially with the number of cities.
+    The time complexity of the brute force approach is O(n!),
+    which makes a TSP with fairly large number of cities infeasible to solve with modern computers.
     The travelling salesman problem asks the following question:
     "Given a list of cities and the distances between each pair of cities,
     what is the shortest possible route that visits each city exactly once
@@ -32,8 +46,9 @@ class TSPAlgorithm(ABC):
     It is an NP-hard problem in combinatorial optimization,
     important in theoretical computer science and operations research.
 
-    For more information checks out wikipedia page
+    For more information checks out:
     https://en.wikipedia.org/wiki/Travelling_salesman_problem
+    https://classes.engr.oregonstate.edu/mime/fall2017/rob537/hw_samples/hw2_sample2.pdf
     """
 
     NAME = ""
@@ -90,6 +105,7 @@ class TSPAlgorithm(ABC):
             Result object
 
         Method is a wrapper around _solve method - specific implementation of child class
+
         Check out src.utils.tools Result
         """
         # all classes inherited from Algorithm must have protected _solve method
@@ -344,7 +360,7 @@ class TSPAlgorithm(ABC):
         assert distances.index.to_list() == distances.columns.to_list(), mes
 
     @property
-    def best_path(self) -> list:
+    def path_(self) -> list:
         """
         The most optimal graph's path that was found
 

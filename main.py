@@ -1,4 +1,4 @@
-from src.algos import SimulatedAnnealing, NearestNeighbour, TabuSearch, HillClimber
+from src.algos import SimulatedAnnealing, NearestNeighbour, TabuSearch, HillClimbing
 from src.utils import load_data, PathPlotter, BenchmarkPlotter, DistanceHistoryPlotter
 from src.algos import MultistartAlgorithm
 
@@ -8,7 +8,7 @@ if __name__ == "__main__":
     df = load_data(r"data\TSP_29.xlsx")
     NUM_STARTS = 5
 
-    algorithms = [SimulatedAnnealing, NearestNeighbour, TabuSearch, HillClimber]
+    algorithms = [SimulatedAnnealing, NearestNeighbour, TabuSearch, HillClimbing]
 
     results = [min(NearestNeighbour().solve(df, start=x + 1) for x in range(29))]
     results.append(
@@ -28,7 +28,7 @@ if __name__ == "__main__":
         )
     )
     results.append(
-        MultistartAlgorithm()(HillClimber, df, n_starts=NUM_STARTS, verbose=False, n_iter=25)
+        MultistartAlgorithm()(HillClimbing, df, n_starts=NUM_STARTS, verbose=False, n_iter=25)
     )
 
     # Example of plotting the path

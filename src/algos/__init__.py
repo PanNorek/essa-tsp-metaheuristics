@@ -2,7 +2,7 @@ from .nearest_neighbour import NearestNeighbour
 from .algorithm import TSPAlgorithm
 from .iterating_algorithm import IteratingAlgorithm
 from .tabu_search import TabuSearch
-from .hill_climber import HillClimber
+from .hill_climber import HillClimbing
 from .simulated_annealing import SimulatedAnnealing
 from .multistart_algorithm import MultistartAlgorithm
 from .switching_algorithm import SwitchingAlgorithm

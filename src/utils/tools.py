@@ -75,7 +75,7 @@ def solve_it(func: Callable):
         except KeyboardInterrupt:
             result = Result(
                 algorithm=algo,
-                path=algo.best_path,
+                path=algo.path_,
                 distance=min(algo.history),
                 distance_history=algo.history
             )

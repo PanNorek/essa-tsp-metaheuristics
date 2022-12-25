@@ -80,8 +80,8 @@ class GeneticAlgorithm(IteratingAlgorithm):
 
         result = Result(
             algorithm=self,
-            path=self.best_path,
-            distance=min(self.history),
+            path=self.path_,
+            distance=self.history[-1],
             distance_history=self.history,
             mean_distance_history=self.mean_distances,
         )
