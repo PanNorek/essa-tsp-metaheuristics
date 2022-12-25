@@ -18,13 +18,13 @@ class TabuSearch(SwitchingAlgorithm):
     verbose: bool
         print progress, default is False
     """
-
+    DEFAULT_ITERS = 100
     NAME = "TABU SEARCH"
 
     def __init__(self,
                  tabu_length: int = 3,
                  neigh_type: str = "swap",
-                 n_iter: int = 100,
+                 n_iter: int = DEFAULT_ITERS,
                  verbose: bool = False,
                  ) -> None:
         super().__init__(
@@ -35,8 +35,7 @@ class TabuSearch(SwitchingAlgorithm):
         self._tabu_list = Queue(length=tabu_length)
 
     def _iterate_steps(self, distances: pd.DataFrame) -> None:
-        # start new iteration
-        self._i += 1
+        self._next_iter()
         new_path = self._switch(distances=distances,
                                 how='best',
                                 exclude=self._tabu_list)

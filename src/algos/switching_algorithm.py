@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Union, Iterable
 import pandas as pd
-from .algorithm import Algorithm
+from .iterating_algorithm import IteratingAlgorithm
 from ..utils import (
     StopAlgorithm,
     Result,
@@ -11,24 +11,11 @@ from ..utils import (
 )
 
 
-class SwitchingAlgorithm(Algorithm):
+class SwitchingAlgorithm(IteratingAlgorithm):
     """Swapping Algorithm"""
 
     DISTANCE = "distance"
     SWITCH = "switch"
-
-    def __init__(self,
-                 neigh_type: str = "swap",
-                 n_iter: int = 30,
-                 verbose: bool = False,
-                 ) -> None:
-        super().__init__(
-            neigh_type=neigh_type,
-            verbose=verbose
-        )
-        self._n_iter = n_iter
-        # current iteration
-        self._i = 0
 
     @solve_it
     def _solve(self,
@@ -36,11 +23,6 @@ class SwitchingAlgorithm(Algorithm):
                random_seed: Union[int, None] = None,
                start_order: Union[list, None] = None
                ) -> Result:
-        # reset iter
-        # TODO: maybe new class Iterating Algo Interface, that will reset it
-        self._i = 0
-        self.history = []
-
         self._path = self._setup_start(
             distances=distances,
             random_seed=random_seed,
@@ -70,10 +52,6 @@ class SwitchingAlgorithm(Algorithm):
             distance=min(self.history),
             distance_history=self.history,
         )
-
-    @abstractmethod
-    def _iterate_steps(self, distances: pd.DataFrame) -> None:
-        pass
 
     def _switch(self,
                 distances: pd.DataFrame,

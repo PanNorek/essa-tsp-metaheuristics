@@ -31,9 +31,7 @@ class HillClimber(SwitchingAlgorithm):
             distance (int): Total distance
             swap (tuple): Swap
         """
-
-        # start new iteration
-        self._i += 1
+        self._next_iter()
         # get new path
         new_path = self._switch(distances=distances, how='best')
         # get new distance

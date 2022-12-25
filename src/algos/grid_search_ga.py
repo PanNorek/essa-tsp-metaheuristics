@@ -24,7 +24,7 @@ class GridSearchGA:
     def solver(distances, **kwargs):
         return GeneticAlgorithm(
             pop_size=kwargs["POP_SIZE"],
-            no_generations=kwargs["NO_GENERATIONS"],
+            n_iters=kwargs["NO_GENERATIONS"],
             selection_method=kwargs["SELECTION_METHOD"],
             crossover_method=kwargs["CROSSOVER_METHOD"],
             elite_size=kwargs["ELITE_SIZE"],

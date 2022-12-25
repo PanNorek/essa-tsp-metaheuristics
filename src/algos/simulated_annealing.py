@@ -42,6 +42,7 @@ class SimulatedAnnealing(SwitchingAlgorithm):
     verbose: bool
         print progress, default is False
     """
+    DEFAULT_ITERS = 100
     NAME = "SIMULATED ANNEALING"
     _REDUCE_FUNC = {
         "reduce": reduce,
@@ -54,7 +55,7 @@ class SimulatedAnnealing(SwitchingAlgorithm):
                  alpha: float = ALPHA,
                  reduce_func: Union[Callable, str] = "reduce",
                  neigh_type: str = "swap",
-                 n_iter: int = 100,
+                 n_iter: int = DEFAULT_ITERS,
                  verbose: bool = False,
                  ) -> None:
         super().__init__(
@@ -72,8 +73,7 @@ class SimulatedAnnealing(SwitchingAlgorithm):
         self._temp = self._start_temp = temp
 
     def _iterate_steps(self, distances: pd.DataFrame) -> None:
-        # start new iteration
-        self._i += 1
+        self._next_iter()
         # find radom neighbouring solution and its distance
         new_path = self._switch(distances=distances, how='random')
         distance = self._get_path_distance(path=new_path, distances=distances)
