@@ -14,13 +14,13 @@ class Result:
 
     algorithm: Any
     path: list
-    best_distance: int
+    distance: int
     time: float = None
     distance_history: list = None
     mean_distance_history: list = None
 
     def __str__(self) -> str:
-        mes = f"""best distance: {self.best_distance}
+        mes = f"""distance: {self.distance}
                   algorithm: {self.algorithm}
                   solving time: {self.time:.3f} s
                 """.replace("  ", "")
@@ -35,14 +35,14 @@ class Result:
         assert isinstance(
             object_, Result
         ), f"can't compare result with {type(object_)} type"
-        return self.best_distance > object_.best_distance
+        return self.distance > object_.distance
 
     def to_df(self) -> pd.DataFrame:
         df = pd.DataFrame(
             data={
                 "algorithm": [self.algorithm],
                 "path": [self.path],
-                "best_distance": [self.best_distance],
+                "distance": [self.distance],
                 "solving_time": [self.time],
             }
         )
@@ -52,7 +52,7 @@ class Result:
         return {
             "algorithm": self.algorithm,
             "path": self.path,
-            "best_distance": self.best_distance,
+            "distance": self.distance,
             "solving_time": self.time,
         }
 
@@ -76,7 +76,7 @@ def solve_it(func: Callable):
             result = Result(
                 algorithm=algo,
                 path=algo.best_path,
-                best_distance=min(algo.history),
+                distance=min(algo.history),
                 distance_history=algo.history
             )
             print(f'Algorithm has been stopped manually\n')

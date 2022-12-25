@@ -36,11 +36,16 @@ class SwitchingAlgorithm(Algorithm):
                random_seed: Union[int, None] = None,
                start_order: Union[list, None] = None
                ) -> Result:
-        super()._solve(distances=distances, random_seed=random_seed)
-        if start_order is not None:
-            self._start_order_check(start_order=start_order, distances=distances)
+        # reset iter
+        # TODO: maybe new class Iterating Algo Interface, that will reset it
+        self._i = 0
+        self.history = []
 
-        self._path = start_order or self._get_random_path(indices=distances.index)
+        self._path = self._setup_start(
+            distances=distances,
+            random_seed=random_seed,
+            start_order=start_order
+        )
         # distance of the path at the beginning
         distance = get_path_distance(path=self._path, distances=distances)
         # list of distances at i iteration
@@ -57,30 +62,18 @@ class SwitchingAlgorithm(Algorithm):
                 if self._verbose:
                     print(exc.message)
                 break
+
         # return result object
         return Result(
             algorithm=self,
             path=self._path,
-            best_distance=min(self.history),
+            distance=min(self.history),
             distance_history=self.history,
         )
 
     @abstractmethod
     def _iterate_steps(self, distances: pd.DataFrame) -> None:
         pass
-
-    def _start_order_check(self,
-                           start_order: list,
-                           distances: pd.DataFrame
-                           ) -> None:
-        assert isinstance(start_order, Iterable), 'start_order must be iterable'
-        assert (
-            len(start_order) == len(distances)
-        ), f'Expected {len(distances)} elements, got {len(start_order)}'
-        assert (
-            all(index in distances.index.to_list() for index in start_order)
-        ), 'elements of start_order must allign with distance matrix indices'
-        assert len(set(start_order)) == len(start_order), 'elements in start_order must be unique'
 
     def _switch(self,
                 distances: pd.DataFrame,
