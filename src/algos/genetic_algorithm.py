@@ -1,6 +1,6 @@
 from typing import Union
 import pandas as pd
-from .algorithm import Algorithm
+from .iterating_algorithm import IteratingAlgorithm
 from ..utils.genetic import (
     Population,
     TruncationSelection,
@@ -12,11 +12,11 @@ from ..utils.genetic import (
 from ..utils import Result, solve_it
 
 
-class GeneticAlgorithm(Algorithm):
+class GeneticAlgorithm(IteratingAlgorithm):
     """Genetic algorithm for solving TSP problem"""
 
     NAME = "GENETIC ALGORITHM"
-
+    DEFAULT_ITERS = 10
     _SELECTION_METHODS = {
         "truncation": TruncationSelection,
         "roulette": Roulette,
@@ -27,7 +27,7 @@ class GeneticAlgorithm(Algorithm):
     def __init__(
         self,
         pop_size: int = 100,
-        no_generations: int = 10,
+        n_iters: int = DEFAULT_ITERS,
         selection_method: str = "truncation",
         crossover_method: str = "pmx",
         elite_size: Union[int, float] = 0,
@@ -37,10 +37,12 @@ class GeneticAlgorithm(Algorithm):
         verbose: bool = False,
     ) -> None:
         super().__init__(
-            neigh_type=neigh_type, verbose=verbose
+            neigh_type=neigh_type,
+            verbose=verbose,
+            n_iter=n_iters
         )
         self._pop_size = pop_size
-        self._no_generations = no_generations
+        self.population_ = None
         self._selection_method = selection_method
         self._crossover_method = crossover_method
         self._mutation_rate = mutation_rate
@@ -63,53 +65,75 @@ class GeneticAlgorithm(Algorithm):
     @solve_it
     def _solve(self,
                distances: pd.DataFrame,
-               random_seed: Union[int, None] = None
+               random_seed: Union[int, None] = None,
+               start_order: Population = None
                ) -> pd.DataFrame:
-        super()._solve(distances=distances, random_seed=random_seed)
         # 1st stage: Create random population
-        population = Population(pop_size=self._pop_size)
-        population.generate_population(distances=distances)
-
+        self.population_: Population = self._setup_start(
+            distances=distances,
+            random_seed=random_seed,
+            start_order=start_order
+        )
         # 2nd stage: Loop for each generation
-        for i in range(self._no_generations):
-            # I: Crossover - make children
-            population.crossover(
-                distances=distances,
-                sample_size=self._mating_pool_size,
-                selection_method=self._SELECTION_METHODS[self._selection_method],
-                crossover_method=self._crossover,
-                elite_size=self._elite_size,
-            )
-            # II: Mutation - mutate all population
-            population.mutate(
-                distances=distances,
-                neigh_type=self._neigh,
-                skip=self._elite_size,
-                mutation_rate=self._mutation_rate,
-            )
-            self.history.append(population.best.distance)
-            self._path = population.best.path
-            self.mean_distances.append(population.mean_distance)
-
-            if self._verbose:
-                print(f"Generation {i+1} best distance: {population.best.distance:.2f}")
-            print(f"Generation {i+1} mean distance: {population:.2f}")
+        for _ in range(self._n_iter):
+            self._run_iteration(distances=distances)
 
         result = Result(
             algorithm=self,
-            path=self.best_path,
-            best_distance=min(self.history),
+            path=self.path_,
+            distance=self.history[-1],
             distance_history=self.history,
             mean_distance_history=self.mean_distances,
         )
         return result
 
-    
+    def _run_iteration(self, distances: pd.DataFrame) -> None:
+        self._next_iter()
+        # I: Crossover - make children
+        self.population_.crossover(
+            distances=distances,
+            sample_size=self._mating_pool_size,
+            selection_method=self._SELECTION_METHODS[self._selection_method],
+            crossover_method=self._crossover,
+            elite_size=self._elite_size,
+        )
+        # II: Mutation - mutate all population
+        self.population_.mutate(
+            distances=distances,
+            neigh_type=self._neigh,
+            skip=self._elite_size,
+            mutation_rate=self._mutation_rate,
+        )
+        self.history.append(self.population_.best.distance)
+        self._path = self.population_.best.path
+        self.mean_distances.append(self.population_.mean_distance)
+
+        if self._verbose:
+            print(f"Generation {self._i} best distance: {self.population_.best.distance:.2f}")
+            print(f"Generation {self._i} mean distance: {self.population_:.2f}")
+
+    def _set_start_order(self,
+                         distances: pd.DataFrame,
+                         start_order: Population = None
+                         ) -> Population:
+        if start_order is not None:
+            self._start_order_check(start_order=start_order)
+            return start_order
+        population = Population(pop_size=self._pop_size)
+        population.generate_population(distances=distances)
+        return population
+
+    def _start_order_check(self, start_order: Population) -> None:
+        assert isinstance(start_order, Population), 'start_order must be iterable'
+        assert (
+            len(start_order) == self._pop_size
+        ), f'Expected population with {self._pop_size} elements, got {len(start_order)}'
+
     def __str__(self) -> str:
         mes = super().__str__()
         # replace __class__.__name__ with __str__ methods in crossover
-        mes += f"""pop_size: {self._pop_size}\n\
-        generations: {self._no_generations}\n\
+        mes += f"""\npop_size: {self._pop_size}\n\
+        generations: {self._n_iter}\n\
         selection_method: {self._selection_method}\n\
         crossover_method: {self._crossover.__class__.__name__}\n\
         elite_size: {self._elite_size}\n\

@@ -57,4 +57,5 @@ class MultistartAlgorithm:
             return min(results)
 
         results_df = pd.DataFrame().from_dict([x.to_dict() for x in results])
+        results_df = results_df.sort_values()
         return results_df

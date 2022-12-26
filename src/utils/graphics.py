@@ -15,7 +15,7 @@ class PathPlotter:
         )
         G = nx.from_pandas_edgelist(df, "from", "to", create_using=nx.DiGraph)
         plt.figure(figsize=(10, 6))
-        plt.title(f"Salesman Path, Distance: {result.best_distance}")
+        plt.title(f"Salesman Path, Distance: {result.distance}")
         nx.draw(G, with_labels=True)
         plt.show()
 
@@ -32,7 +32,7 @@ class BenchmarkPlotter:
             # labels = [result.algorithm.NAME for result in results]
             labels = [f"Algorithm {i}" for i in range(1, len(results) + 1)]
         ax = sns.barplot(
-            x=labels, y=[result.best_distance for result in results], palette=palette
+            x=labels, y=[result.distance for result in results], palette=palette
         )
         for p in ax.containers:
             ax.bar_label(p, label_type="edge")
