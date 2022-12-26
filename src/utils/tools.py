@@ -1,10 +1,9 @@
 import pandas as pd
 import time
-from typing import Callable, Union, Any
+from typing import Callable, Union, Any, Iterable
 import numpy as np
 from datetime import datetime
 from dataclasses import dataclass
-from functools import wraps
 import os
 
 
@@ -116,6 +115,33 @@ def load_data(path: str,
         # Get upper triangle of data
         return pd.np.triu(data.to_numpy())
     return data.to_numpy() if as_array else data
+
+
+def path_check(path: list, distances: pd.DataFrame) -> None:
+    """
+    Runs the series of checks to assert path correctness for TSP problem
+
+    Params:
+        path: list
+            Order of cities visited by the salesman
+        distances: pd.DataFrame
+            Matrix of distances between cities,
+            cities numbers or id names as indices and columns
+
+    Basic checks include:
+        checking whether path is iterable
+        checking whether path is of the same leghth as indices in distances matrix
+        checking whether path alligns with distances matrix indices
+        checking whether path has unique elements
+    """
+    assert isinstance(path, Iterable), 'start_order must be iterable'
+    assert (
+        len(path) == len(distances)
+    ), f'Expected {len(distances)} elements, got {len(path)}'
+    assert (
+        all(index in distances.index.to_list() for index in path)
+    ), 'elements of start_order must allign with distance matrix indices'
+    assert len(set(path)) == len(path), 'elements in start_order must be unique'
 
 
 class ResultManager:

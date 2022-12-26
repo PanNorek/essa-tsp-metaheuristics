@@ -2,17 +2,62 @@ from abc import ABC, abstractmethod, abstractproperty
 import random
 from typing import List, Union
 import pandas as pd
-from .tools import get_path_distance
-from .queue_list import Queue
+from .tools import get_path_distance, path_check
 
 
 class NeighbourhoodType(ABC):
-    """Abstract class for mutable"""
+    """
+    NeighbourhoodType interface
+
+    Base, abstract class that all NieghbourhoodType classes should inherit from
+
+    Methods:
+        switch - switches elements of the list and
+            returns a modified one
+
+    Properties:
+        last_switch - indices that were switched recently
+        last_switch_comment - explicit comment on the recent switch
+
+    Neighbourhood is a crucial part of TSP algorithms. With goal of finding
+    more optimal path, algorithm needs to search the vicinity of the current solution.
+
+    For move to be considered a neighbourhood it must fullfill these requirements:
+        - the number of adjacent solutions must be small
+        - possibility of reaching every solution from initial solution
+        - solutions in vicinity must be similar
+
+    The TSPAlgotithm uses different kind of NeighbourhoodType to search neighbouring
+    solutions space in iterative manner to reach most optimal solution
+
+    Algorithm keeps all possible switches in an attribute nad implements
+    random switch and best switch (one that gives most optimal adjacent solution)
+    Best switch is a default option, but it's more time consuming. Every possible
+    solution in vicinity is checked and most optimal is returned
+    For reference: SimulatedAnnealing uses random switch at each step,
+    HillClimbing always looks for the best solution in the neighbourhood
+
+    Checks out:
+
+    src.algos.simulated_annealing SimulatedAnnealing
+    src.algos.hill_climbing HillClimbing
+    """
 
     NAME = ""
     _SWITCH_OPTIONS = ["best", "random"]
 
     def __init__(self, path_length: int) -> None:
+        """
+        Params:
+            path_length: int
+                Lenght of ther path representing the order of cities
+
+        Interface assumes that switch method always takes a list.
+        For simplicity, indices are switched, not actual values.
+        That's why constructor takes path length instead of the names of cities
+        """
+        # all possible switches are constructed and kept in an attribute
+        # for quick access
         self._switches = self._get_all_switches(length=path_length)
 
     @property
@@ -21,50 +66,140 @@ class NeighbourhoodType(ABC):
 
     @abstractproperty
     def last_switch_comment(self) -> str:
+        """Explicit comment on the recent switch"""
         pass
 
     def switch(
         self,
         path: list,
-        distances: pd.DataFrame = None,
+        distances: Union[pd.DataFrame, None] = None,
         how: str = "best",
-        exclude: Union[Queue, None] = None,
+        exclude: Union[list, None] = None,
     ) -> list:
-        """Returns copy of the current path with swapped indices"""
+        """
+        Uses switch specific to the neighbourhood type and returns
+        the new adjacent solution
+
+        Params:
+            path: list
+                Order of cities visited by the salesman
+            distances: pd.DataFrame | None
+                Matrix of distances between cities,
+                cities numbers or id names as indices and columns
+            how: str
+                The way adjacent is chosen
+            exclude: list | None
+                List of forbidden switches
+        Returns:
+            a copy of a list with modified order
+            representing a new adjacent solution
+
+        distances:
+            distances matrix can be None if how="random"
+            there is no need for calculating solutions distances then
+        how:
+            "best" - default option
+                Every possible solution in vicinity is checked and most optimal is returned
+            "random" - random solution from vicinity is returned
+
+        exclude:
+            list of forbidden switches, by default None
+            Provide a list of tuples of indices ex. [(1,4), (2,6)]
+            Used in TabuSearch as a way to escape local mininum
+
+            Checks out:
+            src.algos.tabu_search TabuSearch
+        """
+        # for searching for the most optimal solution in vicinity
+        # distances matrix is needed
         if distances is None and how == "best":
             raise ValueError("Cannot find best switch without distances matrix")
+        # copy of the initial path
         path = path[:]
+        # check if correct option was passed
         assert how in self._SWITCH_OPTIONS, f"how must be one of {self._SWITCH_OPTIONS}"
         if how == "best":
+            # some neighbourhood types require specific way of
+            # finding most optimal solution in the vicinity
             switch = self._find_best_switch(
                 path=path, distances=distances, exclude=exclude
             )
         elif how == "random":
+            # in case of random solution, process is the same for all neighbourhood types
             rnd_idx = random.randint(0, len(self._switches) - 1)
             switch = self._switches[rnd_idx]
-
+        # initial state is stored in attributes for easy access and information
+        # about modification from outside of the class (in algorithm)
+        # SwitchingAgorithm implements wrapper for easy access to these attributes
         self._last_switch = switch
         self._last_path = path
-        new_path = self._switch(path=path, index_1=switch[0], index_2=switch[1])
+        # each neighbourhood type has its own implementation of _switch
+        # current ones always take path and tuple of indices as parameters
+        new_path = self._switch(path=path, switch=switch)
+        # new adjacent solution is returned
         return new_path
 
     def _find_best_switch(self,
                           path: list,
                           distances: pd.DataFrame,
-                          exclude: Union[Queue, None] = None
+                          exclude: Union[list, None] = None
                           ) -> tuple:
-        assert len(path) == len(
-            distances
-        ), "path and distances df must have the same length"
+        """
+        Uses specific logic to find the best adjacent solution
+
+        Params:
+            path: list
+                Order of cities visited by the salesman
+            distances: pd.DataFrame
+                Matrix of distances between cities,
+                cities numbers or id names as indices and columns
+            exclude: list | None
+                List of forbidden switches
+        Returns:
+            a tuple with indices representing a switch for best
+            adjacent solution
+
+        exclude:
+            list of forbidden switches, by default None
+            Provide a list of tuples of indices ex. [(1,4), (2,6)]
+            Used in TabuSearch as a way to escape local mininum
+
+            Checks out:
+            src.algos.tabu_search TabuSearch
+        """
+        # checks if path is correct
+        path_check(path=path, distances=distances)
+        # exclude all forbidden switches
         legal_switches = self._exclude_switches(exclude=exclude)
+        # list of tuples of all solutions in vicinity and their switches
         new_paths = [
-            (self._switch(path=path, index_1=switch[0], index_2=switch[1]), switch)
+            (self._switch(path=path, switch=switch), switch)
             for switch in legal_switches
         ]
+        # sort it by distance
         new_paths.sort(key=lambda x: get_path_distance(path=x[0], distances=distances))
+        # return switch that results in most optimal adjacent solution
         return new_paths[0][1]
 
-    def _exclude_switches(self, exclude: Union[Queue, None] = None) -> List[tuple]:
+    def _exclude_switches(self, exclude: Union[list, None] = None) -> List[tuple]:
+        """
+        Excludes forbidden switches and returns list of all legal switches
+
+        Params:
+            exclude: list | None
+                List of forbidden switches
+        Returns:
+            a list of tuples with indices representing all
+            legal switches
+
+        exclude:
+            list of forbidden switches, by default None
+            Provide a list of tuples of indices ex. [(1,4), (2,6)]
+            Used in TabuSearch as a way to escape local mininum
+
+            Checks out:
+            src.algos.tabu_search TabuSearch
+        """
         return (
             list(set(self._switches) - set(exclude)) if exclude
             else list(set(self._switches))
@@ -72,33 +207,85 @@ class NeighbourhoodType(ABC):
 
     @abstractmethod
     def _get_all_switches(self, length: int) -> List[tuple]:
-        """Returns all possible swaps of indices"""
+        """
+        Returns all possible switches of indices for a neighbourhood type
+
+        Params:
+            length: int
+                length of the list representing an order of cities
+        Returns:
+            a list of tuples with indices representing all
+            possible switches
+        """
         pass
 
     @abstractmethod
-    def _switch(self, path: list, index_1: int, index_2: int) -> list:
+    def _switch(self, path: list, switch: tuple) -> list:
+        """
+        Apply a modification to the path transforming it into
+        an adjacent solution
+
+        Params:
+            path: list
+                Order of cities visited by the salesman
+            switch: tuple
+                Indices used for switch
+
+        Returns:
+            a list representing a new path, which is a solution
+            from vicinity of the initial path
+        """
         pass
 
     def __str__(self) -> str:
+        """String representation of the object"""
         return self.NAME
 
     def __repr__(self) -> str:
+        """String representation of the object"""
         return str(self)
 
 
 class Swap(NeighbourhoodType):
+    """
+    Swap is a type of neighbourhood used in TSP
+
+    Methods:
+        switch - switches elements of the list and
+            returns a modified one
+
+    Properties:
+        last_switch - indices that were switched recently
+        last_switch_comment - explicit comment on the recent switch
+
+    Implements:
+        NeighbourhoodType - base class for all neighbourhoods
+
+    For Swap adjacent solution is constructed as follows:
+        initial path: [1, 5, 6, 9, 0, 2]
+        switch indices: (1, 3)
+        new solution: [1, 9, 6, 5, 0, 2]
+        Elements at indices 1 and 3 were swapped
+
+    Checks out:
+
+    src.utils.neighbourhood_type NeighbourhoodType interface
+    """
     NAME = "Swap"
 
-    def _switch(self, path: list, index_1: int, index_2: int) -> list:
+    def _switch(self, path: list, switch: tuple) -> list:
         path = path[:]
+        index_1, index_2 = switch
+        # swaps two elements
         path[index_1], path[index_2] = path[index_2], path[index_1]
         return path
 
     def _get_all_switches(self, length: int) -> List[tuple]:
-        """Returns all possible swaps of indices"""
-        # unique combination
+        # unique combinations
         swaps = [
-            (x, y) for x in range(length) for y in range(length) if (x != y) and (y > x)
+            (x, y) for x in range(length)
+            for y in range(length)
+            if (x != y) and (y > x)
         ]
         return swaps
 
@@ -111,29 +298,81 @@ class Swap(NeighbourhoodType):
 
 
 class Insertion(NeighbourhoodType):
+    """
+    Insertion is a type of neighbourhood used in TSP
+
+    Methods:
+        switch - switches elements of the list and
+            returns a modified one
+
+    Properties:
+        last_switch - indices that were switched recently
+        last_switch_comment - explicit comment on the recent switch
+
+    Implements:
+        NeighbourhoodType - base class for all neighbourhoods
+
+    For Insertion adjacent solution is constructed as follows:
+        initial path: [1, 5, 6, 9, 0, 2]
+        switch indices: (1, 3)
+        new solution: [1, 6, 9, 5, 0, 2]
+        Elements at index 1 was inserted into index 3
+
+    Checks out:
+
+    src.utils.neighbourhood_type NeighbourhoodType interface
+    """
     NAME = "Insertion"
 
-    def _switch(self, path: list, index_1: int, index_2: int) -> list:
+    def _switch(self, path: list, switch: tuple) -> list:
         path = path[:]
-        path.insert(index_1, path.pop(index_2))
+        index_1, index_2 = switch
+        # inserts element at index index_1 into index_2
+        path.insert(index_2, path.pop(index_1))
         return path
 
     def _get_all_switches(self, length: int) -> List[tuple]:
-        """Returns all possible swaps of indices"""
-        swaps = [(x, y) for x in range(length) for y in range(length) if (x != y)]
+        swaps = [
+            (x, y) for x in range(length)
+            for y in range(length)
+            if (x != y)
+        ]
         return swaps
 
     @property
     def last_switch_comment(self) -> str:
         if not hasattr(self, "_last_path") or not hasattr(self, "_last_switch"):
             return ""
-        element = self._last_path[self._last_switch[1]]
-        index = self._last_switch[0]
-        return f"{element} at index {self._last_switch[1]} inserted at index {index}"
+        element = self._last_path[self._last_switch[0]]
+        index = self._last_switch[1]
+        return f"{element} at index {self._last_switch[0]} inserted at index {index}"
 
 
 class Inversion(NeighbourhoodType):
-    """Inversion mutation"""
+    """
+    Inversion is a type of neighbourhood used in TSP
+
+    Methods:
+        switch - switches elements of the list and
+            returns a modified one
+
+    Properties:
+        last_switch - indices that were switched recently
+        last_switch_comment - explicit comment on the recent switch
+
+    Implements:
+        NeighbourhoodType - base class for all neighbourhoods
+
+    For Inversion adjacent solution is constructed as follows:
+        initial path: [1, 5, 6, 9, 0, 2]
+        switch indices: (1, 3)
+        new solution: [1, 9, 6, 5, 0, 2]
+        Slice from index 1 to index 3 was inversed
+
+    Checks out:
+
+    src.utils.neighbourhood_type NeighbourhoodType interface
+    """
 
     NAME = "Inversion"
 
@@ -141,20 +380,40 @@ class Inversion(NeighbourhoodType):
                  path_length: int,
                  window_length: Union[int, None] = None
                  ) -> None:
+        """
+        Params:
+            path_length: int
+                Lenght of ther path representing the order of cities
+            window_lenth: int | None
+                Length of a slice to be inversed
+
+        window_length:
+            Gives a flexibility of chosing a desired window_length
+            that is being inversed in switch method
+            If not passed, optimal length will be chosen
+
+        Interface assumes that switch method always takes a list.
+        For simplicity, indices are switched, not actual values.
+        That's why constructor takes path length instead of the names of cities
+        """
+        # sets window_length
+        # this option is not used with Algorithm, to reduce complexity
         if window_length is None:
             window_length = path_length // 10
         window_length = max(window_length, 3)
+        assert window_length < path_length, 'window length cannot be greater than path_length'
         self._window_length = window_length
         super().__init__(path_length=path_length)
 
-    def _switch(self, path: list, index_1: int, index_2: int) -> list:
+    def _switch(self, path: list, switch: tuple) -> list:
         path = path[:]
+        index_1, index_2 = switch
+        # inversion of a specified slice
         path[index_1:index_2] = path[index_1:index_2][::-1]
         return path
 
     def _get_all_switches(self, length: int) -> List[tuple]:
-        """Returns all possible swaps of indices"""
-        # unique combination
+        # unique combinations
         swaps = [
             (x, y)
             for x in range(length)

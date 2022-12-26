@@ -9,7 +9,8 @@ from ..utils import (
     Insertion,
     NeighbourhoodType,
     Result,
-    get_path_distance
+    get_path_distance,
+    path_check
 )
 
 
@@ -268,9 +269,8 @@ class TSPAlgorithm(ABC):
         user is correct and can be used in solve method
 
         Params:
-            start_order: list | None
-                Order from which algorithm starts solving problem,
-                if None, order will be chosen randomly
+            start_order: list
+                Order from which algorithm starts solving problem
             distances: pd.DataFrame
                 Matrix of distances between cities,
                 cities numbers or id names as indices and columns
@@ -281,18 +281,13 @@ class TSPAlgorithm(ABC):
             checking whether start_path alligns with distances matrix indices
             checking whether start_path has unique elements
 
+        This method wraps path_check function from src.utils.tools
+
         Specific checks are implemented in Nearestneighbour algorithm
 
         Check out src.algos.nearest_neighbour NearestNeighbour
         """
-        assert isinstance(start_order, Iterable), 'start_order must be iterable'
-        assert (
-            len(start_order) == len(distances)
-        ), f'Expected {len(distances)} elements, got {len(start_order)}'
-        assert (
-            all(index in distances.index.to_list() for index in start_order)
-        ), 'elements of start_order must allign with distance matrix indices'
-        assert len(set(start_order)) == len(start_order), 'elements in start_order must be unique'
+        path_check(path=start_order, distances=distances)
 
     def _get_path_distance(self,
                            path: list,
