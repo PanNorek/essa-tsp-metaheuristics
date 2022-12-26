@@ -67,6 +67,11 @@ class TabuSearch(SwitchingAlgorithm, IteratingAlgorithm):
                 Max number of iterations to run before finishing the algorithm
             verbose: bool
                 If True, prints out information about algorithm progress
+
+        neigh_type:
+            "swap": swapping two elements in a list
+            "inversion": inversing order of a slice of a list
+            "insertion": inserting element into a place
         """
         super().__init__(
             neigh_type=neigh_type,

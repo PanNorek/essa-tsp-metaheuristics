@@ -44,6 +44,7 @@ class Result:
                 "path": [self.path],
                 "distance": [self.distance],
                 "solving_time": [self.time],
+                "size": len(self.path)
             }
         )
         return df
@@ -54,6 +55,7 @@ class Result:
             "path": self.path,
             "distance": self.distance,
             "solving_time": self.time,
+            "size": len(self.path)
         }
 
 

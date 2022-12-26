@@ -68,6 +68,11 @@ class TSPAlgorithm(ABC):
                 Type of neighbourhood used in algorithm
             verbose: bool
                 If True, prints out information about algorithm progress
+
+        neigh_type:
+            "swap": swapping two elements in a list
+            "inversion": inversing order of a slice of a list
+            "insertion": inserting element into a place
         """
         self._verbose = verbose
         self._path = []
