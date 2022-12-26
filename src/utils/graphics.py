@@ -29,7 +29,8 @@ class BenchmarkPlotter:
         """Plot the benchmark of the algorithms"""
         plt.figure(figsize=(10, 6))
         if labels is None:
-            labels = [result.algorithm.NAME for result in results]
+            # labels = [result.algorithm.NAME for result in results]
+            labels = [f"Algorithm {i}" for i in range(1, len(results) + 1)]
         ax = sns.barplot(
             x=labels, y=[result.best_distance for result in results], palette=palette
         )

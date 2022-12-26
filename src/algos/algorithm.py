@@ -104,7 +104,7 @@ class Algorithm(ABC):
         return self._path
 
     def __str__(self) -> str:
-        return f"{self.NAME}\nNeighbourhood type: {str(self._neigh)}"
+        return f"{self.NAME}\nNeighbourhood type: {str(self._neigh)}\n"
 
     def __repr__(self) -> str:
         return str(self)

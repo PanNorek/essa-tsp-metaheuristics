@@ -93,7 +93,7 @@ class GeneticAlgorithm(Algorithm):
 
             if self._verbose:
                 print(f"Generation {i+1} best distance: {population.best.distance:.2f}")
-                print(f"Generation {i+1} mean distance: {population:.2f}")
+            print(f"Generation {i+1} mean distance: {population:.2f}")
 
         result = Result(
             algorithm=self,
@@ -104,6 +104,7 @@ class GeneticAlgorithm(Algorithm):
         )
         return result
 
+    
     def __str__(self) -> str:
         mes = super().__str__()
         # replace __class__.__name__ with __str__ methods in crossover
