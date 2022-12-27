@@ -19,6 +19,15 @@ class Individual:
 
     def mutate(self, neigh_type: NeighbourhoodType) -> None:
         self.path = neigh_type.switch(path=self.path, how='random')
+    
+    
+    def to_dict(self) -> dict:
+        return {
+            self.INDIVIDUAL: self,
+            self.PATH: self.path,
+            self.DISTANCE: self.distance,
+            self.FITNESS: self.fitness,
+        }
 
     def __assert_type(self, object_) -> None:
         assert isinstance(object_, Individual), f"Cannot compare with {type(object_)} type"
@@ -36,11 +45,3 @@ class Individual:
     def __len__(self) -> int:
         return len(self.path)
 
-    @property
-    def __dict__(self) -> dict:
-        return {
-            self.INDIVIDUAL: self,
-            self.PATH: self.path,
-            self.DISTANCE: self.distance,
-            self.FITNESS: self.fitness,
-        }
