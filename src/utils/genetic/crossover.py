@@ -3,52 +3,45 @@ from abc import abstractmethod, ABC
 
 
 class CrossoverMethod(ABC):
-
-    def crossover(self,
-                  parent_1: list,
-                  parent_2: list
-                  ) -> tuple[list]:
-        assert len(parent_1) == len(parent_2), 'path lenghts must be the same'
+    def crossover(self, parent_1: list, parent_2: list) -> tuple[list]:
+        assert len(parent_1) == len(parent_2), "path lenghts must be the same"
         n = len(parent_1) - 1
         idx1, idx2 = sorted((random.randint(0, n), random.randint(0, n)))
         self._subset = slice(idx1, idx2)
-        child_1, child_2 = self._get_children(parent_1=parent_1,
-                                              parent_2=parent_2)
-        first_child = self._modify(child_1=child_1,
-                                   child_2=child_2)
+        child_1, child_2 = self._get_children(parent_1=parent_1, parent_2=parent_2)
+        first_child = self._modify(child_1=child_1, child_2=child_2)
 
-        second_child = self._modify(child_1=child_2,
-                                    child_2=child_1)
+        second_child = self._modify(child_1=child_2, child_2=child_1)
         return (first_child, second_child)
 
     @abstractmethod
-    def _modify(self,
-                child_1: list,
-                child_2: list,
-                ) -> list:
+    def _modify(
+        self,
+        child_1: list,
+        child_2: list,
+    ) -> list:
         pass
 
-    def _get_children(self,
-                      parent_1: list,
-                      parent_2: list
-                      ) -> tuple[list]:
+    def _get_children(self, parent_1: list, parent_2: list) -> tuple[list]:
         return parent_1[:], parent_2[:]
 
 
 class PMX(CrossoverMethod):
-    def _get_children(self,
-                      parent_1: list,
-                      parent_2: list,
-                      ) -> tuple[list]:
+    def _get_children(
+        self,
+        parent_1: list,
+        parent_2: list,
+    ) -> tuple[list]:
         sub = self._subset
         child_1, child_2 = parent_1[:], parent_2[:]
         child_1[sub], child_2[sub] = child_2[sub], child_1[sub]
         return child_1, child_2
 
-    def _modify(self,
-                child_1: list,
-                child_2: list,
-                ) -> list:
+    def _modify(
+        self,
+        child_1: list,
+        child_2: list,
+    ) -> list:
         child_1, child_2 = child_1[:], child_2[:]
         for i, gene in enumerate(child_1):
             # if gene is included in chosen subset - skip
@@ -70,11 +63,11 @@ class PMX(CrossoverMethod):
 
 
 class OX(CrossoverMethod):
-
-    def _modify(self,
-                child_1: list,
-                child_2: list,
-                ) -> list:
+    def _modify(
+        self,
+        child_1: list,
+        child_2: list,
+    ) -> list:
         child_1, child_2 = child_1[:], child_2[:]
         # clear entire list except for chosen subset
         child_1 = [x if x in child_1[self._subset] else 0 for x in child_1]

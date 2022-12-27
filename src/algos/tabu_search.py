@@ -51,12 +51,13 @@ class TabuSearch(SwitchingAlgorithm, IteratingAlgorithm):
     DEFAULT_ITERS = 100
     NAME = "TABU SEARCH"
 
-    def __init__(self,
-                 tabu_length: int = 3,
-                 neigh_type: str = "swap",
-                 n_iter: int = DEFAULT_ITERS,
-                 verbose: bool = False,
-                 ) -> None:
+    def __init__(
+        self,
+        tabu_length: int = 3,
+        neigh_type: str = "swap",
+        n_iter: int = DEFAULT_ITERS,
+        verbose: bool = False,
+    ) -> None:
         """
         Params:
             tabu_length: int
@@ -73,11 +74,7 @@ class TabuSearch(SwitchingAlgorithm, IteratingAlgorithm):
             "inversion": inversing order of a slice of a list
             "insertion": inserting element into a place
         """
-        super().__init__(
-            neigh_type=neigh_type,
-            n_iter=n_iter,
-            verbose=verbose
-        )
+        super().__init__(neigh_type=neigh_type, n_iter=n_iter, verbose=verbose)
         self._tabu_list = Queue(length=tabu_length)
 
     def _run_iteration(self, distances: pd.DataFrame) -> None:
@@ -85,14 +82,10 @@ class TabuSearch(SwitchingAlgorithm, IteratingAlgorithm):
         self._next_iter()
         # get new path - best solution in vicinity
         new_path = self._switch(
-            distances=distances,
-            how='best',
-            exclude=self._tabu_list
+            distances=distances, how="best", exclude=self._tabu_list
         )
         # get new distance - distance of the best solution in vicinity
-        new_distance = self._get_path_distance(
-            path=new_path, distances=distances
-        )
+        new_distance = self._get_path_distance(path=new_path, distances=distances)
         # new path that minimizes distance - always accepts
         # new most optimal solution in vicinity even if it's worse
         # a way not to stuck in local minimum

@@ -139,11 +139,9 @@ class NeighbourhoodType(ABC):
         # new adjacent solution is returned
         return new_path
 
-    def _find_best_switch(self,
-                          path: list,
-                          distances: pd.DataFrame,
-                          exclude: Union[list, None] = None
-                          ) -> tuple:
+    def _find_best_switch(
+        self, path: list, distances: pd.DataFrame, exclude: Union[list, None] = None
+    ) -> tuple:
         """
         Uses specific logic to find the best adjacent solution
 
@@ -201,7 +199,8 @@ class NeighbourhoodType(ABC):
             src.algos.tabu_search TabuSearch
         """
         return (
-            list(set(self._switches) - set(exclude)) if exclude
+            list(set(self._switches) - set(exclude))
+            if exclude
             else list(set(self._switches))
         )
 
@@ -271,6 +270,7 @@ class Swap(NeighbourhoodType):
 
     src.utils.neighbourhood_type NeighbourhoodType interface
     """
+
     NAME = "Swap"
 
     def _switch(self, path: list, switch: tuple) -> list:
@@ -283,9 +283,7 @@ class Swap(NeighbourhoodType):
     def _get_all_switches(self, length: int) -> List[tuple]:
         # unique combinations
         swaps = [
-            (x, y) for x in range(length)
-            for y in range(length)
-            if (x != y) and (y > x)
+            (x, y) for x in range(length) for y in range(length) if (x != y) and (y > x)
         ]
         return swaps
 
@@ -322,6 +320,7 @@ class Insertion(NeighbourhoodType):
 
     src.utils.neighbourhood_type NeighbourhoodType interface
     """
+
     NAME = "Insertion"
 
     def _switch(self, path: list, switch: tuple) -> list:
@@ -332,11 +331,7 @@ class Insertion(NeighbourhoodType):
         return path
 
     def _get_all_switches(self, length: int) -> List[tuple]:
-        swaps = [
-            (x, y) for x in range(length)
-            for y in range(length)
-            if (x != y)
-        ]
+        swaps = [(x, y) for x in range(length) for y in range(length) if (x != y)]
         return swaps
 
     @property
@@ -376,10 +371,9 @@ class Inversion(NeighbourhoodType):
 
     NAME = "Inversion"
 
-    def __init__(self,
-                 path_length: int,
-                 window_length: Union[int, None] = None
-                 ) -> None:
+    def __init__(
+        self, path_length: int, window_length: Union[int, None] = None
+    ) -> None:
         """
         Params:
             path_length: int
@@ -401,7 +395,9 @@ class Inversion(NeighbourhoodType):
         if window_length is None:
             window_length = path_length // 10
         window_length = max(window_length, 3)
-        assert window_length < path_length, 'window length cannot be greater than path_length'
+        assert (
+            window_length < path_length
+        ), "window length cannot be greater than path_length"
         self._window_length = window_length
         super().__init__(path_length=path_length)
 

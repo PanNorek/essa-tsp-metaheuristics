@@ -16,6 +16,7 @@ class MultistartAlgorithm:
     Call this class with algorithm and distance matrix
     to run algorithm with multiple starts in parallel.
     """
+
     def __init__(self, verbose: bool = False) -> None:
         self._verbose = verbose
 
@@ -25,7 +26,7 @@ class MultistartAlgorithm:
         distances: pd.DataFrame,
         n_starts=10,
         only_best=True,
-        n_jobs: int = 1,
+        n_jobs: int = -1,
         **kwargs,
     ) -> Result:
         """Run algorithm with multiple starts in parallel
@@ -51,7 +52,9 @@ class MultistartAlgorithm:
         toc = time.time()
 
         if self._verbose:
-            print(f"Solving time for {algorithm.NAME}: {toc - tic:.3f} s - Parallel: {n_jobs != 1}")
+            print(
+                f"Solving time for {algorithm.NAME}: {toc - tic:.3f} s - Parallel: {n_jobs != 1}"
+            )
 
         if only_best:
             return min(results)

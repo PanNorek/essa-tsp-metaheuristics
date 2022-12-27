@@ -52,11 +52,9 @@ class HillClimbing(SwitchingAlgorithm, IteratingAlgorithm):
         # number of iteration is increased by one
         self._next_iter()
         # get new path - best solution in vicinity
-        new_path = self._switch(distances=distances, how='best')
+        new_path = self._switch(distances=distances, how="best")
         # get new distance - distance of the best solution in vicinity
-        new_distance = self._get_path_distance(
-            path=new_path, distances=distances
-        )
+        new_distance = self._get_path_distance(path=new_path, distances=distances)
         # distance gain
         gain = self.history[-1] - new_distance
         # break condition - if there are no more optimal solutions in vicinity

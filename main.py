@@ -1,34 +1,43 @@
 from src.algos import SimulatedAnnealing, NearestNeighbour, TabuSearch, HillClimbing
 from src.utils import load_data, PathPlotter, BenchmarkPlotter, DistanceHistoryPlotter
 from src.algos import MultistartAlgorithm
-
+import os
 
 if __name__ == "__main__":
 
-    df = load_data(r"data\TSP_29.xlsx")
+    distances = load_data(os.path.join("data", "TSP_29.xlsx"))
     NUM_STARTS = 5
 
     algorithms = [SimulatedAnnealing, NearestNeighbour, TabuSearch, HillClimbing]
 
-    results = [min(NearestNeighbour().solve(df, start=x + 1) for x in range(29))]
+    results = [
+        min(NearestNeighbour().solve(distances, start_order=x + 1) for x in range(29))
+    ]
     results.append(
         MultistartAlgorithm()(
             SimulatedAnnealing,
-            df,
+            distances,
             n_starts=NUM_STARTS,
             temp=1000,
             alpha=0.9,
             n_iter=100,
-            verbose=False,
+            verbose=True,
         )
     )
     results.append(
         MultistartAlgorithm()(
-            TabuSearch, df, n_starts=NUM_STARTS, verbose=False, tabu_length=3, n_iter=30
+            TabuSearch,
+            distances,
+            n_starts=NUM_STARTS,
+            verbose=True,
+            tabu_length=3,
+            n_iter=30,
         )
     )
     results.append(
-        MultistartAlgorithm()(HillClimbing, df, n_starts=NUM_STARTS, verbose=False, n_iter=25)
+        MultistartAlgorithm()(
+            HillClimbing, distances, n_starts=NUM_STARTS, verbose=True, n_iter=25
+        )
     )
 
     # Example of plotting the path
@@ -45,4 +54,6 @@ if __name__ == "__main__":
     )  # Reds_d, Blues_d, Greens_d, Purples_d, Oranges_d, Greys_d
 
     dhp = DistanceHistoryPlotter()
-    dhp.plot(results[1:])  # results[1:] to exclude NearestNeighbour - it has no distance history
+    dhp.plot(
+        results[1:]
+    )  # results[1:] to exclude NearestNeighbour - it has no distance history
