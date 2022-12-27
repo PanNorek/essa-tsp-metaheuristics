@@ -1,18 +1,19 @@
 from abc import abstractmethod
 from typing import Union
 import pandas as pd
-from .algorithm import TSPAlgorithm
+from .algorithm import TSPHeuristicAlgorithm
 from ..utils import Queue
 
 
-class SwitchingAlgorithm(TSPAlgorithm):
+class SwitchingAlgorithm(TSPHeuristicAlgorithm):
     """Swapping Algorithm"""
 
-    def _switch(self,
-                distances: pd.DataFrame,
-                how: str = "best",
-                exclude: Union[Queue, None] = None,
-                ) -> list:
+    def _switch(
+        self,
+        distances: pd.DataFrame,
+        how: str = "best",
+        exclude: Union[Queue, None] = None,
+    ) -> list:
         """Wraps NeighbourhoodType switch method"""
         return self._neigh.switch(
             path=self._path, distances=distances, how=how, exclude=exclude

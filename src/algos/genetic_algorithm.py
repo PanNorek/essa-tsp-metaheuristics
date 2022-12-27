@@ -110,7 +110,7 @@ class GeneticAlgorithm(IteratingAlgorithm):
 
         if self._verbose:
             print(f"Generation {self._i} best distance: {self.population_.best.distance:.2f}")
-            print(f"Generation {self._i} mean distance: {self.population_:.2f}")
+            print(f"Generation {self._i} mean distance: {self.population_.mean_distance:.2f}")
 
     def _set_start_order(self,
                          distances: pd.DataFrame,

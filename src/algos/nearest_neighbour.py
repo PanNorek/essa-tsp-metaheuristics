@@ -23,17 +23,16 @@ class NearestNeighbour(TSPAlgorithm):
     NAME = "NEAREST NEIGHBOUR"
 
     @solve_it
-    def _solve(self,
-               distances: pd.DataFrame,
-               random_seed: Union[int, None] = None,
-               start_order: Union[int, None] = None
-               ) -> int:
+    def _solve(
+        self,
+        distances: pd.DataFrame,
+        random_seed: Union[int, None] = None,
+        start_order: Union[int, None] = None,
+    ) -> int:
         # specific implementation for NN algorithm
         # gets the starting point city
         start_order = self._setup_start(
-            distances=distances,
-            random_seed=random_seed,
-            start_order=start_order
+            distances=distances, random_seed=random_seed, start_order=start_order
         )
         # _path attribute is the travelled path between cities
         # the first element is city chosen as starting point
@@ -57,11 +56,7 @@ class NearestNeighbour(TSPAlgorithm):
         # calculates the final distance TS has to traverse
         distance = self._get_path_distance(path=self._path, distances=distances)
         # returns Result object
-        return Result(
-            algorithm=self,
-            path=self._path,
-            distance=distance
-        )
+        return Result(algorithm=self, path=self._path, distance=distance)
 
     def _get_random_start(self, indices: Union[list, pd.Index]) -> Any:
         """
@@ -83,10 +78,7 @@ class NearestNeighbour(TSPAlgorithm):
         # return random city
         return random.choice(indices)
 
-    def _start_order_check(self,
-                           start_order: Any,
-                           distances: pd.DataFrame
-                           ) -> None:
+    def _start_order_check(self, start_order: Any, distances: pd.DataFrame) -> None:
         """
         Runs the series of checks to assert that starting path provided by
         user is correct and can be used in solve method
@@ -107,8 +99,12 @@ class NearestNeighbour(TSPAlgorithm):
         implementation specific to NN. This algorithm needs
         an element representing a city as a starting point
         """
-        assert not isinstance(start_order, list), 'start_order must not be a list for NN'
-        assert start_order in list(distances.index), 'starting point not in distance matix'
+        assert not isinstance(
+            start_order, list
+        ), "start_order must not be a list for NN"
+        assert start_order in list(
+            distances.index
+        ), "starting point not in distance matix"
 
     def _set_neighbourhood(self, distances: pd.DataFrame) -> None:
         """
