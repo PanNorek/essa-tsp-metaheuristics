@@ -55,23 +55,22 @@ class SimulatedAnnealing(SwitchingAlgorithm, IteratingAlgorithm):
     https://mathworld.wolfram.com/SimulatedAnnealing.html
     https://en.wikipedia.org/wiki/Simulated_annealing
     """
+
     DEFAULT_ITERS = 100
     NAME = "SIMULATED ANNEALING"
-    _REDUCE_FUNC = {
-        "reduce": reduce,
-        "descend": slowly_descend
-    }
+    _REDUCE_FUNC = {"reduce": reduce, "descend": slowly_descend}
 
-    def __init__(self,
-                 # TODO: check empirically xd
-                 temp: int = 100,
-                 alpha: float = ALPHA,
-                 reduce_func: Union[Callable, str] = "reduce",
-                 stopping_tol: Union[float, None] = None,
-                 neigh_type: str = "swap",
-                 n_iter: int = DEFAULT_ITERS,
-                 verbose: bool = False,
-                 ) -> None:
+    def __init__(
+        self,
+        # TODO: check empirically xd
+        temp: int = 100,
+        alpha: float = ALPHA,
+        reduce_func: Union[Callable, str] = "reduce",
+        stopping_tol: Union[float, None] = None,
+        neigh_type: str = "swap",
+        n_iter: int = DEFAULT_ITERS,
+        verbose: bool = False,
+    ) -> None:
         """
         Params:
             temp: int
@@ -128,11 +127,7 @@ class SimulatedAnnealing(SwitchingAlgorithm, IteratingAlgorithm):
             "insertion": inserting element into a place
         """
         # IteratingAlgorithm constructor
-        super().__init__(
-            neigh_type=neigh_type,
-            n_iter=n_iter,
-            verbose=verbose
-        )
+        super().__init__(neigh_type=neigh_type, n_iter=n_iter, verbose=verbose)
         self._stop_tool = stopping_tol
         # checks if passed reduce_func param is correct
         if not callable(reduce_func):
@@ -140,10 +135,10 @@ class SimulatedAnnealing(SwitchingAlgorithm, IteratingAlgorithm):
                 reduce_func in self._REDUCE_FUNC
             ), f"reduce_func must be one of {list(self._REDUCE_FUNC.keys())} or a function"
             reduce_func = self._REDUCE_FUNC[reduce_func]
-        assert callable(reduce_func), 'passed reduce_func must be callable'
+        assert callable(reduce_func), "passed reduce_func must be callable"
         self._reduce_func: Callable = reduce_func
         # checks if alpha param is correct
-        assert 0 < alpha < 1, 'reduction parameter must be between 0 and 1'
+        assert 0 < alpha < 1, "reduction parameter must be between 0 and 1"
         self._alpha = alpha
         # initial temp for identifying algorithm
         self._temp = self._initial_temp = temp
@@ -152,7 +147,7 @@ class SimulatedAnnealing(SwitchingAlgorithm, IteratingAlgorithm):
         # number of iteration is increased by one
         self._next_iter()
         # find radom neighbouring solution
-        new_path = self._switch(distances=distances, how='random')
+        new_path = self._switch(distances=distances, how="random")
         # get distance of chosen random solution in vicinity
         distance = self._get_path_distance(path=new_path, distances=distances)
         # distance gain
@@ -189,13 +184,10 @@ class SimulatedAnnealing(SwitchingAlgorithm, IteratingAlgorithm):
         If stopping tolerance was provided checks if temperature is close to zero
         with this absolute tolerance and raises StopAlgorithm if it is
         """
-        if (
-            (self._stop_tool is not None) and
-            isclose(self._temp, 0, abs_tol=self._stop_tool)
+        if (self._stop_tool is not None) and isclose(
+            self._temp, 0, abs_tol=self._stop_tool
         ):
-            raise StopAlgorithm(
-                iteration=self._i, distance=self.history[-1]
-            )
+            raise StopAlgorithm(iteration=self._i, distance=self.history[-1])
 
     def __str__(self) -> str:
         mes = super().__str__()

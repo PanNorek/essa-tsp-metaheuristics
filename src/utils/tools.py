@@ -22,7 +22,9 @@ class Result:
         mes = f"""distance: {self.distance}
                   algorithm: {self.algorithm}
                   solving time: {self.time:.3f} s
-                """.replace("  ", "")
+                """.replace(
+            "  ", ""
+        )
         if self.distance_history:
             mes += f"""history: {self.distance_history}\n"""
         return mes
@@ -43,7 +45,7 @@ class Result:
                 "path": [self.path],
                 "distance": [self.distance],
                 "solving_time": [self.time],
-                "size": len(self.path)
+                "size": len(self.path),
             }
         )
         return df
@@ -54,7 +56,7 @@ class Result:
             "path": self.path,
             "distance": self.distance,
             "solving_time": self.time,
-            "size": len(self.path)
+            "size": len(self.path),
         }
 
 
@@ -78,9 +80,9 @@ def solve_it(func: Callable):
                 algorithm=algo,
                 path=algo.path_,
                 distance=min(algo.history),
-                distance_history=algo.history
+                distance_history=algo.history,
             )
-            print(f'Algorithm has been stopped manually\n')
+            print(f"Algorithm has been stopped manually\n")
         toc = time.perf_counter()
         result.time = toc - tic
         ResultManager.save_result(result=result)
@@ -99,10 +101,9 @@ class StopAlgorithm(Exception):
         super().__init__(self.message)
 
 
-def load_data(path: str,
-              triu: bool = False,
-              as_array: bool = False
-              ) -> Union[pd.DataFrame, np.array]:
+def load_data(
+    path: str, triu: bool = False, as_array: bool = False
+) -> Union[pd.DataFrame, np.array]:
     """
     Load data from given path
     Args:
@@ -134,14 +135,14 @@ def path_check(path: list, distances: pd.DataFrame) -> None:
         checking whether path alligns with distances matrix indices
         checking whether path has unique elements
     """
-    assert isinstance(path, Iterable), 'start_order must be iterable'
-    assert (
-        len(path) == len(distances)
-    ), f'Expected {len(distances)} elements, got {len(path)}'
-    assert (
-        all(index in distances.index.to_list() for index in path)
-    ), 'elements of start_order must allign with distance matrix indices'
-    assert len(set(path)) == len(path), 'elements in start_order must be unique'
+    assert isinstance(path, Iterable), "start_order must be iterable"
+    assert len(path) == len(
+        distances
+    ), f"Expected {len(distances)} elements, got {len(path)}"
+    assert all(
+        index in distances.index.to_list() for index in path
+    ), "elements of start_order must allign with distance matrix indices"
+    assert len(set(path)) == len(path), "elements in start_order must be unique"
 
 
 class ResultManager:

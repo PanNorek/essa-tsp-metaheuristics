@@ -13,6 +13,7 @@ from ..utils import (
     path_check,
 )
 
+
 class TSPAlgorithm(ABC):
     """
     Traveling Salesman Problem (TSP) base solver
@@ -50,8 +51,9 @@ class TSPAlgorithm(ABC):
     https://en.wikipedia.org/wiki/Travelling_salesman_problem
     https://classes.engr.oregonstate.edu/mime/fall2017/rob537/hw_samples/hw2_sample2.pdf
     """
-    
+
     NAME = ""
+
     def __init__(self, verbose: bool = False) -> None:
         """
         Params:
@@ -132,7 +134,7 @@ class TSPAlgorithm(ABC):
 
         Check out src.utils.tools Result, solve_it
         """
-        pass 
+        pass
 
     def _setup_start(
         self,
@@ -190,7 +192,6 @@ class TSPAlgorithm(ABC):
         self._distances_matrix_check(distances=distances)
         self._set_random_seed(random_seed=random_seed)
 
-
     def _set_start_order(
         self, distances: pd.DataFrame, start_order: Union[list, None] = None
     ) -> list:
@@ -216,7 +217,7 @@ class TSPAlgorithm(ABC):
             self._start_order_check(start_order=start_order, distances=distances)
             return start_order
         return self._get_random_start(indices=distances.index)
-    
+
     def _start_order_check(self, start_order: list, distances: pd.DataFrame) -> None:
         """
         Runs the series of checks to assert that starting path provided by
@@ -242,7 +243,7 @@ class TSPAlgorithm(ABC):
         Check out src.algos.nearest_neighbour NearestNeighbour
         """
         path_check(path=start_order, distances=distances)
-    
+
     def _get_path_distance(
         self, path: list, distances: pd.DataFrame
     ) -> Union[int, float]:
@@ -261,7 +262,7 @@ class TSPAlgorithm(ABC):
         Check out src.utils.tools get_path_distances
         """
         return get_path_distance(path=path, distances=distances)
-    
+
     def _get_random_start(self, indices: Union[list, pd.Index]) -> list:
         """
         Chooses random path from indices as the cities
@@ -331,7 +332,7 @@ class TSPAlgorithm(ABC):
         """How algorithm is represented as string in Result object and csv file"""
         return str(self)
 
-    
+
 class TSPHeuristicAlgorithm(TSPAlgorithm):
     """
     Traveling Salesman Problem (TSP) base solver
@@ -370,7 +371,6 @@ class TSPHeuristicAlgorithm(TSPAlgorithm):
     https://classes.engr.oregonstate.edu/mime/fall2017/rob537/hw_samples/hw2_sample2.pdf
     """
 
-    
     _NEIGHBOURHOOD_TYPES = {
         "swap": Swap,
         "inversion": Inversion,

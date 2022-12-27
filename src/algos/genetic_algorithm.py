@@ -36,11 +36,7 @@ class GeneticAlgorithm(IteratingAlgorithm):
         neigh_type: str = "swap",
         verbose: bool = False,
     ) -> None:
-        super().__init__(
-            neigh_type=neigh_type,
-            verbose=verbose,
-            n_iter=n_iters
-        )
+        super().__init__(neigh_type=neigh_type, verbose=verbose, n_iter=n_iters)
         self._pop_size = pop_size
         self.population_ = None
         self._selection_method = selection_method
@@ -59,20 +55,21 @@ class GeneticAlgorithm(IteratingAlgorithm):
         assert (
             self._crossover_method in self._CROSSOVER_METHODS
         ), f"crossover method must be one of {self._CROSSOVER_METHODS}"
-        assert isinstance(self._elite_size, (int, float)), "elite size must be int or float"
+        assert isinstance(
+            self._elite_size, (int, float)
+        ), "elite size must be int or float"
         self._crossover = self._CROSSOVER_METHODS[self._crossover_method]()
 
     @solve_it
-    def _solve(self,
-               distances: pd.DataFrame,
-               random_seed: Union[int, None] = None,
-               start_order: Population = None
-               ) -> pd.DataFrame:
+    def _solve(
+        self,
+        distances: pd.DataFrame,
+        random_seed: Union[int, None] = None,
+        start_order: Population = None,
+    ) -> pd.DataFrame:
         # 1st stage: Create random population
         self.population_: Population = self._setup_start(
-            distances=distances,
-            random_seed=random_seed,
-            start_order=start_order
+            distances=distances, random_seed=random_seed, start_order=start_order
         )
         # 2nd stage: Loop for each generation
         for _ in range(self._n_iter):
@@ -109,13 +106,16 @@ class GeneticAlgorithm(IteratingAlgorithm):
         self.mean_distances.append(self.population_.mean_distance)
 
         if self._verbose:
-            print(f"Generation {self._i} best distance: {self.population_.best.distance:.2f}")
-            print(f"Generation {self._i} mean distance: {self.population_.mean_distance:.2f}")
+            print(
+                f"Generation {self._i} best distance: {self.population_.best.distance:.2f}"
+            )
+            print(
+                f"Generation {self._i} mean distance: {self.population_.mean_distance:.2f}"
+            )
 
-    def _set_start_order(self,
-                         distances: pd.DataFrame,
-                         start_order: Population = None
-                         ) -> Population:
+    def _set_start_order(
+        self, distances: pd.DataFrame, start_order: Population = None
+    ) -> Population:
         if start_order is not None:
             self._start_order_check(start_order=start_order)
             return start_order
@@ -124,10 +124,10 @@ class GeneticAlgorithm(IteratingAlgorithm):
         return population
 
     def _start_order_check(self, start_order: Population) -> None:
-        assert isinstance(start_order, Population), 'start_order must be iterable'
+        assert isinstance(start_order, Population), "start_order must be iterable"
         assert (
             len(start_order) == self._pop_size
-        ), f'Expected population with {self._pop_size} elements, got {len(start_order)}'
+        ), f"Expected population with {self._pop_size} elements, got {len(start_order)}"
 
     def __str__(self) -> str:
         mes = super().__str__()
