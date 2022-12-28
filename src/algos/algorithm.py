@@ -229,6 +229,7 @@ class TSPAlgorithm(ABC):
         Check out src.algos.nearest_neighbour NearestNeighbour
         """
         path_check(path=start_order, distances=distances)
+        assert isinstance(start_order, list), 'start_order must be a list'
 
     def _get_path_distance(
         self, path: list, distances: pd.DataFrame

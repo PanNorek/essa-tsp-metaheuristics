@@ -335,10 +335,10 @@ class GeneticAlgorithm(IteratingAlgorithm):
         # prints out info about new generation in verbose mode
         if self._verbose:
             print(
-                f"Generation {self._i} best distance: {self.population_.best.distance:.2f}"
+                f"Generation {self._i}\nBest distance: {self.population_.best.distance:.2f}"
             )
             print(
-                f"Generation {self._i} mean distance: {self.population_.mean_distance:.2f}"
+                f"Mean distance: {self.population_.mean_distance:.2f}"
             )
 
     def _set_start_order(
@@ -364,7 +364,7 @@ class GeneticAlgorithm(IteratingAlgorithm):
     def __str__(self) -> str:
         mes = super().__str__()
         # replace __class__.__name__ with __str__ methods in crossover
-        mes += f"""\npop_size: {self._pop_size}\n\
+        mes += f"""pop_size: {self._pop_size}\n\
         generations: {self._n_iter}\n\
         selection_method: {self._selection_method}\n\
         crossover_method: {self._crossover.__class__.__name__}\n\

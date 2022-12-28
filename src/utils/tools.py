@@ -65,8 +65,8 @@ class Result:
         """String representation of distance history"""
         # if distance history if too long, show only start and end of it
         if len(self.distance_history) > 10:
-            return f"{self.distance_history[1]}, {self.distance_history[2]}...\
-                {self.distance_history[-2]}, {self.distance_history[-1]}"
+            return f"{self.distance_history[1]}, {self.distance_history[2]} ... " +\
+                f"{self.distance_history[-2]}, {self.distance_history[-1]}"
         return self.distance_history
 
     def __repr__(self) -> str:

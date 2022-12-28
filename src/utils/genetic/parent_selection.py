@@ -70,7 +70,7 @@ class Roulette(ParentSelection):
     @staticmethod
     def select(generation: List[Individual], size: None = None) -> Parents:
         # load individuals
-        df = pd.DataFrame.from_dict(ind.to_dict() for ind in generation)
+        df = pd.DataFrame.from_dict([ind.to_dict() for ind in generation])
         # calculate cumulative fitness
         cum_fit = df[Individual.FITNESS].cumsum()
         # divide by total fitness
