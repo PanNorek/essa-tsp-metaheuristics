@@ -3,12 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Union
 import pandas as pd
 import numpy as np
-from ..utils import (
-    Result,
-    get_path_distance,
-    path_check,
-    distances_matrix_check
-)
+from ..utils import Result, get_path_distance, path_check, distances_matrix_check
 
 
 class TSPAlgorithm(ABC):

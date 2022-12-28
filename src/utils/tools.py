@@ -65,8 +65,8 @@ class Result:
         """String representation of distance history"""
         # if distance history if too long, show only start and end of it
         if len(self.distance_history) > 10:
-            return f"{self._str_history[1]}, {self._str_history[2]}\
-                ... {self._str_history[-2]}, {self._str_history[-1]}"
+            return f"{self.distance_history[1]}, {self.distance_history[2]}...\
+                {self.distance_history[-2]}, {self.distance_history[-1]}"
         return self.distance_history
 
     def __repr__(self) -> str:
@@ -160,7 +160,7 @@ def solve_it(func: Callable):
             # for some reason or it is empty - returns None
             if not hasattr(algo, 'path_'):
                 return None
-            if not hasattr(algo, 'history'):
+            if not hasattr(algo, "history"):
                 return None
             if len(algo.history) == 0:
                 return None
@@ -171,7 +171,7 @@ def solve_it(func: Callable):
                 algorithm=algo,
                 path=algo.path_,
                 distance=algo.history[-1],
-                distance_history=algo.history
+                distance_history=algo.history,
             )
             print(f"Algorithm has been stopped manually\n")
         toc = time.perf_counter()
@@ -204,9 +204,7 @@ class StopAlgorithm(Exception):
         super().__init__(self.message)
 
 
-def load_data(
-    path: str, as_array: bool = False
-) -> Union[pd.DataFrame, np.array]:
+def load_data(path: str, as_array: bool = False) -> Union[pd.DataFrame, np.array]:
     """
     Loads distances matrix data from given path
     File must have .xlsx extension for excel file
@@ -274,6 +272,7 @@ class ResultManager:
     Methods:
         save_result (staticmethod) - saves result into csv file
     """
+
     @staticmethod
     def save_result(result: Result, path: str = "results.csv") -> None:
         """
@@ -313,11 +312,11 @@ class ResultManager:
         if os.path.exists(path):
             return None
 
-        split = path.split('/')
+        split = path.split("/")
         # if non-existing directory was passed
         if len(split) > 1:
             # seperate folder from file
-            folder_path = '/'.join(split[:-1])
+            folder_path = "/".join(split[:-1])
             # if folder doesn't exist, create directory
             if not os.path.exists(folder_path):
                 os.makedirs(folder_path)
