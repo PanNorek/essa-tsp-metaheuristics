@@ -1,18 +1,46 @@
 class Queue:
-    """Implementation of queue for Tabu List"""
+    """
+    Specific implementation of queue respresenting Tabu List
+    used in TabuSearch Algorithm
+
+    Queue is iterable and elements can be accesed with indices
+
+    Methods:
+        enqueuqe:
+            add an element to the end of the queue
+            if limit of elements was exceeded exception is raised
+        dequeue:
+            removes an element from the beginning of the queue
+            works only if queue is full
+    """
 
     def __init__(self, length: int = 3) -> None:
+        """
+        Params:
+            length: int
+                Max length of the queue
+        """
         self._limit = length
         self._queue = []
 
     def enqueue(self, object_: object):
-        """Adds object to the end of the queue"""
+        """
+        Adds object to the end of the queue
+
+        Raises:
+            AssertionError
+                if queue is full attempt will raise an exception
+        """
         assert len(self) < self._limit, "Queue overflow!"
         assert isinstance(object_, tuple), "object must be a tuple!"
         self._queue.append(object_)
 
     def dequeue(self):
-        """Removes object from the beginning of the queue"""
+        """
+        Removes object from the beginning of the queue
+
+        If queue is not full, first element will not be removed
+        """
         if len(self) == self._limit:
             self._queue.pop(0)
 

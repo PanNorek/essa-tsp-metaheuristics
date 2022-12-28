@@ -7,6 +7,7 @@ from ..utils import (
     Result,
     get_path_distance,
     path_check,
+    distances_matrix_check
 )
 
 
@@ -295,11 +296,14 @@ class TSPAlgorithm(ABC):
                 cities numbers or id names as indices and columns
 
         The only check inplemented is whether indices of distances matrix allign with
-        column names. If any other check needs to be run,
-        this method has to be overriden in child class
+        column names. Wraps distances_matrix_check function.
+        If any other check needs to be run, this method has to be overriden in child class
+
+        Check out:
+
+        src.utils.tools distances_matrix_check
         """
-        mes = "indices and columns of distances matrix should be equal"
-        assert distances.index.to_list() == distances.columns.to_list(), mes
+        distances_matrix_check(distances=distances)
 
     @property
     def path_(self) -> list:
