@@ -65,6 +65,6 @@ class GridSearchGA:
             elite_size=kwargs["ELITE_SIZE"],
             mating_pool_size=kwargs["MATING_POOL_SIZE"],
             mutation_rate=kwargs["MUTATION_RATE"],
-            neigh_type=kwargs["NEIGH_TYPE"],
+            mutation_type=kwargs["NEIGH_TYPE"],
             verbose=kwargs["VERBOSE"],
         ).solve(distances)

@@ -16,11 +16,10 @@ class ParentSelection(ABC):
     @abstractmethod
     def select(generation: List[Individual], size: Union[int, float] = 0.5) -> Parents:
         """
-        Selects the next generation from the current population
+        Selects two individuals (parents) for crossover
 
-        Args:
+        Params:
             population (Population): current population
-
         """
         pass
 
@@ -31,7 +30,7 @@ class ParentSelection(ABC):
         return size
 
 
-class TruncationSelection(ParentSelection):
+class Truncation(ParentSelection):
     """
     Truncation offspring selection
     """
@@ -71,9 +70,7 @@ class Roulette(ParentSelection):
     @staticmethod
     def select(generation: List[Individual], size: None = None) -> Parents:
         # load individuals
-        df = pd.DataFrame.from_records(vars(o) for o in generation)
-        # add fitness column
-        df[Individual.FITNESS] = 1 / df[Individual.DISTANCE]
+        df = pd.DataFrame.from_dict(ind.to_dict() for ind in generation)
         # calculate cumulative fitness
         cum_fit = df[Individual.FITNESS].cumsum()
         # divide by total fitness

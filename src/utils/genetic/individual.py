@@ -17,8 +17,8 @@ class Individual:
     def fitness(self) -> float:
         return 1 / self.distance
 
-    def mutate(self, neigh_type: NeighbourhoodType) -> None:
-        self.path = neigh_type.switch(path=self.path, how="random")
+    def mutate(self, mutation: NeighbourhoodType) -> None:
+        self.path = mutation.switch(path=self.path, how="random")
 
     def to_dict(self) -> dict:
         return {

@@ -141,7 +141,7 @@ def solve_it(func: Callable):
     Functionality:
         - Measures time of solving the problem (run time of _solve method)
         - Catches KeyboardInterrupt Exception to break algorithm,
-          save and return current most optimal solution
+          save and return current candidate solution
         - With help of ResultManager keeps track of all runs and
           saves Result in csv file
 
@@ -157,11 +157,14 @@ def solve_it(func: Callable):
         # catches manual interuption of _solve method
         except KeyboardInterrupt:
             # if function is not able to access path_ or history
-            # for some reason - returns None
+            # for some reason or it is empty - returns None
             if not hasattr(algo, 'path_'):
                 return None
             if not hasattr(algo, 'history'):
                 return None
+            if len(algo.history) == 0:
+                return None
+
             # results object representing the state of the
             # algorithm at the moment of interuption
             result = Result(

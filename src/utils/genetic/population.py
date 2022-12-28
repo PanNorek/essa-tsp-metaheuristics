@@ -60,7 +60,7 @@ class Population:
         """Crossover the population.
         Function uses PMX (Partially Matched Crossover) algorithm.
 
-        Args:
+        Params:
             distances (pd.DataFrame): matrix of distances between cities
             crossover_rate (float): probability of crossover
         """
@@ -97,7 +97,7 @@ class Population:
     def mutate(
         self,
         distances: pd.DataFrame,
-        neigh_type: NeighbourhoodType,
+        mutation: NeighbourhoodType,
         skip: Union[int, float] = 0,
         mutation_rate: float = 0.5,
     ) -> None:
@@ -114,7 +114,7 @@ class Population:
         for individual in self._population[skip:]:
             if random.random() > mutation_rate:
                 continue
-            individual.mutate(neigh_type=neigh_type)
+            individual.mutate(mutation=mutation)
             individual.distance = get_path_distance(
                 path=individual.path, distances=distances
             )

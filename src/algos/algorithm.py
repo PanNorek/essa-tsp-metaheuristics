@@ -116,12 +116,14 @@ class TSPAlgorithm(ABC):
         Returns:
             Result object
 
-        Child class implementation of this method should be decorated with solve_it
-        function to enhance its power.
+        Developer note:
 
-        Decorator add solving time into the results
-        and saves it directly into csv file. Moreover it enables stopping dragging out
-        algorithm manually without any lose in information
+            Child class implementation of this method should be decorated with solve_it
+            function to enhance its power.
+
+            Decorator add solving time into the results
+            and saves it directly into csv file. Moreover it enables stopping dragging out
+            algorithm manually without any lose in information
 
         Check out src.utils.tools Result, solve_it
         """
