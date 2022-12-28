@@ -1,24 +1,20 @@
 import pandas as pd
 from ..utils import StopAlgorithm
-from .switching_algorithm import SwitchingAlgorithm
 from .iterating_algorithm import IteratingAlgorithm
 
 
-class HillClimbing(SwitchingAlgorithm, IteratingAlgorithm):
+class HillClimbing(IteratingAlgorithm):
     """
     Hill Climber Algorithm
 
     Methods:
         solve - used for solving TSP problem
 
-    Properties:
-        best_path - best path found by algorithm
+    Attributes:
+        path_ - best path found by algorithm
         history - list of best paths from each iteration
 
     Implements:
-        SwitchingAlgorithm - wrapper around NeighbourhoodType,
-            facilitates searching through adjacent solutions and gives
-            more explicit comments in verbose mode
         IteratingAlgorithm - provides method to facilitates and order
             iterative approach to solving TSP with use of object attributes
 
@@ -39,10 +35,10 @@ class HillClimbing(SwitchingAlgorithm, IteratingAlgorithm):
     local minimum, that's why is usually run multiple times in different vicinities
     (different random paths are chosen as starting point)
 
-    Checks out src.algos.multistart_algorithm MultistartAlgorithm for the implementation.
+    Check out src.algos.multistart_algorithm MultistartAlgorithm for the implementation.
     It enables running all algorithms with multistart in parallel using multiple threads
 
-    For more information checks out:
+    For more information check out:
     https://classes.engr.oregonstate.edu/mime/fall2017/rob537/hw_samples/hw2_sample2.pdf
     """
 
@@ -56,7 +52,7 @@ class HillClimbing(SwitchingAlgorithm, IteratingAlgorithm):
         # get new distance - distance of the best solution in vicinity
         new_distance = self._get_path_distance(path=new_path, distances=distances)
         # distance gain
-        gain = self.history[-1] - new_distance
+        gain = self._history[-1] - new_distance
         # break condition - if there are no more optimal solutions in vicinity
         # algorithm finishes
         if gain <= 0:
@@ -69,4 +65,4 @@ class HillClimbing(SwitchingAlgorithm, IteratingAlgorithm):
         # new path that shortens the distance
         self._path = new_path
         # adding new best distance to distances history
-        self.history.append(new_distance)
+        self._history.append(new_distance)

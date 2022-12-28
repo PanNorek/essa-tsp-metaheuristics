@@ -2,7 +2,6 @@ from math import exp, isclose
 import random
 from typing import Union, Callable
 import pandas as pd
-from .switching_algorithm import SwitchingAlgorithm
 from .iterating_algorithm import IteratingAlgorithm
 from ..utils import StopAlgorithm
 
@@ -20,21 +19,18 @@ def slowly_descend(temp: float, alpha: float = ALPHA) -> float:
     return temp / (1 + alpha * temp)
 
 
-class SimulatedAnnealing(SwitchingAlgorithm, IteratingAlgorithm):
+class SimulatedAnnealing(IteratingAlgorithm):
     """
     Simulated Annealing Algorithm
 
     Methods:
         solve - used for solving TSP problem
 
-    Properties:
-        best_path - best path found by algorithm
+    Attributes:
+        path_ - best path found by algorithm
         history - list of best paths from each iteration
 
     Implements:
-        SwitchingAlgorithm - wrapper around NeighbourhoodType,
-            facilitates searching through adjacent solutions and gives
-            more explicit comments in verbose mode
         IteratingAlgorithm - provides method to facilitates and order
             iterative approach to solving TSP with use of object attributes
 
@@ -51,7 +47,7 @@ class SimulatedAnnealing(SwitchingAlgorithm, IteratingAlgorithm):
     probabilities of selecting better or worse solutions, which during the
     search respectively remain at 1 (or positive) and decrease toward zero.
 
-    For more information checks out:
+    For more information check out:
     https://mathworld.wolfram.com/SimulatedAnnealing.html
     https://en.wikipedia.org/wiki/Simulated_annealing
     """
@@ -152,7 +148,7 @@ class SimulatedAnnealing(SwitchingAlgorithm, IteratingAlgorithm):
         distance = self._get_path_distance(path=new_path, distances=distances)
         # distance gain
         # negative for a "good" trade; positive for a "bad" trade
-        diff = distance - self.history[-1]
+        diff = distance - self._history[-1]
         # checks if temp is close to 0
         self.__check_temp()
         # calculate metropolis acceptance criterion
@@ -163,10 +159,10 @@ class SimulatedAnnealing(SwitchingAlgorithm, IteratingAlgorithm):
         # metropolis acceptance criterion is a way of not getting stuck in local minimum
         if (diff < 0) or (metropolis > random.random()):
             self._path = new_path
-            self.history.append(distance)
+            self._history.append(distance)
             if self._verbose:
                 print(f"step {self._i}: gain: {-diff}")
-                print(f"new distance: {self.history[-1]}")
+                print(f"new distance: {self._history[-1]}")
 
         # if new solution is rejected, algorithm goes on
         elif self._verbose:
@@ -187,7 +183,7 @@ class SimulatedAnnealing(SwitchingAlgorithm, IteratingAlgorithm):
         if (self._stop_tool is not None) and isclose(
             self._temp, 0, abs_tol=self._stop_tool
         ):
-            raise StopAlgorithm(iteration=self._i, distance=self.history[-1])
+            raise StopAlgorithm(iteration=self._i, distance=self._history[-1])
 
     def __str__(self) -> str:
         mes = super().__str__()

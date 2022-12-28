@@ -59,6 +59,7 @@ class GeneticAlgorithm(IteratingAlgorithm):
             self._elite_size, (int, float)
         ), "elite size must be int or float"
         self._crossover = self._CROSSOVER_METHODS[self._crossover_method]()
+        self._selection = self._SELECTION_METHODS[self._selection_method]
 
     @solve_it
     def _solve(
@@ -78,8 +79,8 @@ class GeneticAlgorithm(IteratingAlgorithm):
         result = Result(
             algorithm=self,
             path=self.path_,
-            distance=self.history[-1],
-            distance_history=self.history,
+            distance=self._history[-1],
+            distance_history=self._history,
             mean_distance_history=self.mean_distances,
         )
         return result
@@ -90,18 +91,18 @@ class GeneticAlgorithm(IteratingAlgorithm):
         self.population_.crossover(
             distances=distances,
             sample_size=self._mating_pool_size,
-            selection_method=self._SELECTION_METHODS[self._selection_method],
+            selection_method=self._selection,
             crossover_method=self._crossover,
             elite_size=self._elite_size,
         )
-        # II: Mutation - mutate all population
+        # II: Mutation - mutate entire population
         self.population_.mutate(
             distances=distances,
             neigh_type=self._neigh,
             skip=self._elite_size,
             mutation_rate=self._mutation_rate,
         )
-        self.history.append(self.population_.best.distance)
+        self._history.append(self.population_.best.distance)
         self._path = self.population_.best.path
         self.mean_distances.append(self.population_.mean_distance)
 

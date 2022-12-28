@@ -1,11 +1,11 @@
 import time
 import pandas as pd
 from joblib import Parallel, delayed
-from .switching_algorithm import SwitchingAlgorithm
+from .heuristic_algorithm import TSPHeuristicAlgorithm
 from ..utils import Result
 
 
-def solver(algorithm: SwitchingAlgorithm, distances: pd.DataFrame):
+def solver(algorithm: TSPHeuristicAlgorithm, distances: pd.DataFrame):
     """Solver function for parallel processing"""
     return algorithm.solve(distances=distances)
 
@@ -22,7 +22,7 @@ class MultistartAlgorithm:
 
     def __call__(
         self,
-        algorithm: SwitchingAlgorithm,
+        algorithm: TSPHeuristicAlgorithm,
         distances: pd.DataFrame,
         n_starts=10,
         only_best=True,
@@ -42,7 +42,7 @@ class MultistartAlgorithm:
         Returns:
             Result: Result of algorithm
         """
-        algo: SwitchingAlgorithm = algorithm(**kwargs)
+        algo: TSPHeuristicAlgorithm = algorithm(**kwargs)
 
         tic = time.time()
         results: list[Result] = Parallel(n_jobs=n_jobs)(

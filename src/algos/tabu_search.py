@@ -1,10 +1,9 @@
 import pandas as pd
-from .switching_algorithm import SwitchingAlgorithm
 from .iterating_algorithm import IteratingAlgorithm
 from ..utils import Queue
 
 
-class TabuSearch(SwitchingAlgorithm, IteratingAlgorithm):
+class TabuSearch(IteratingAlgorithm):
     """
     Tabu Search Algorithm
 
@@ -12,13 +11,10 @@ class TabuSearch(SwitchingAlgorithm, IteratingAlgorithm):
         solve - used for solving TSP problem
 
     Properties:
-        best_path - best path found by algorithm
+        path_ - best path found by algorithm
         history - list of best paths from each iteration
 
     Implements:
-        SwitchingAlgorithm - wrapper around NeighbourhoodType,
-            facilitates searching through adjacent solutions and gives
-            more explicit comments in verbose mode
         IteratingAlgorithm - provides method to facilitates and order
             iterative approach to solving TSP with use of object attributes
 
@@ -44,7 +40,7 @@ class TabuSearch(SwitchingAlgorithm, IteratingAlgorithm):
         Longer runs usually doesn't improve the solution significantly
         but are taking more time
 
-    For more information checks out:
+    For more information check out:
     https://en.wikipedia.org/wiki/Tabu_search
     """
 
@@ -97,10 +93,10 @@ class TabuSearch(SwitchingAlgorithm, IteratingAlgorithm):
         # in verbose mode information about switch that led to new solution is printed out
         if self._verbose:
             # distance gain
-            gain = self.history[-1] - new_distance
+            gain = self._history[-1] - new_distance
             print(f"best switch: {self._last_switch_comment} - gain: {gain}")
             print(f"step {self._i}: distance: {new_distance}")
             print(f"tabu list: {self._tabu_list}")
 
         # adding new best distance to distances history
-        self.history.append(new_distance)
+        self._history.append(new_distance)

@@ -9,6 +9,12 @@ class NearestNeighbour(TSPAlgorithm):
     """
     Nearest Neighbour Algorithm
 
+    Methods:
+        solve - used for solving TSP problem
+
+    Attributes:
+        path_ - best path found by algorithm
+
     One of the simplest one.
     The nearest neighbour algorithm was one of the first
     algorithms used to solve the travelling salesman problem approximately.
@@ -16,7 +22,7 @@ class NearestNeighbour(TSPAlgorithm):
     the nearest city until all have been visited.
     The algorithm quickly yields a short tour, but usually not the optimal one.
 
-    For more information checks out wikipedia page
+    For more information check out wikipedia page
     https://en.wikipedia.org/wiki/Nearest_neighbour_algorithm
     """
 

@@ -37,7 +37,7 @@ class NeighbourhoodType(ABC):
     For reference: SimulatedAnnealing uses random switch at each step,
     HillClimbing always looks for the best solution in the neighbourhood
 
-    Checks out:
+    Check out:
 
     src.algos.simulated_annealing SimulatedAnnealing
     src.algos.hill_climbing HillClimbing
@@ -61,12 +61,13 @@ class NeighbourhoodType(ABC):
         self._switches = self._get_all_switches(length=path_length)
 
     @property
-    def last_switch(self):
+    def last_switch(self) -> tuple:
+        """Tuple representing the latest switch"""
         return self._last_switch
 
     @abstractproperty
     def last_switch_comment(self) -> str:
-        """Explicit comment on the recent switch"""
+        """Explicit comment on the latest switch"""
         pass
 
     def switch(
@@ -87,7 +88,7 @@ class NeighbourhoodType(ABC):
                 Matrix of distances between cities,
                 cities numbers or id names as indices and columns
             how: str
-                The way adjacent is chosen
+                The way adjacent solution is chosen
             exclude: list | None
                 List of forbidden switches
         Returns:
@@ -107,7 +108,8 @@ class NeighbourhoodType(ABC):
             Provide a list of tuples of indices ex. [(1,4), (2,6)]
             Used in TabuSearch as a way to escape local mininum
 
-            Checks out:
+            Check out:
+
             src.algos.tabu_search TabuSearch
         """
         # for searching for the most optimal solution in vicinity
@@ -162,7 +164,7 @@ class NeighbourhoodType(ABC):
             Provide a list of tuples of indices ex. [(1,4), (2,6)]
             Used in TabuSearch as a way to escape local mininum
 
-            Checks out:
+            Check out:
             src.algos.tabu_search TabuSearch
         """
         # checks if path is correct
@@ -195,7 +197,7 @@ class NeighbourhoodType(ABC):
             Provide a list of tuples of indices ex. [(1,4), (2,6)]
             Used in TabuSearch as a way to escape local mininum
 
-            Checks out:
+            Check out:
             src.algos.tabu_search TabuSearch
         """
         return (
@@ -266,7 +268,7 @@ class Swap(NeighbourhoodType):
         new solution: [1, 9, 6, 5, 0, 2]
         Elements at indices 1 and 3 were swapped
 
-    Checks out:
+    Check out:
 
     src.utils.neighbourhood_type NeighbourhoodType interface
     """
@@ -316,7 +318,7 @@ class Insertion(NeighbourhoodType):
         new solution: [1, 6, 9, 5, 0, 2]
         Elements at index 1 was inserted into index 3
 
-    Checks out:
+    Check out:
 
     src.utils.neighbourhood_type NeighbourhoodType interface
     """
@@ -364,7 +366,7 @@ class Inversion(NeighbourhoodType):
         new solution: [1, 9, 6, 5, 0, 2]
         Slice from index 1 to index 3 was inversed
 
-    Checks out:
+    Check out:
 
     src.utils.neighbourhood_type NeighbourhoodType interface
     """
