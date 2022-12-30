@@ -1,15 +1,20 @@
 # essa-tsp-metaheuristics
 
-📊 About
+## Contents
+1. [📊 About](#-About)
+2. [📋 Requirements](#-Requirements)
+3. [⭐ Features](#-Features)
+4. [📝 Examples](#-Examples)
+5. [👨‍💻 Contributing](#-Contributing)
+6. [📂 Directory Structure](#-Directory-Structure)
+7. [📅 Development schedule](#-Development-Schedule)
+8. [📧 Contact](#-Contact)
+9. [📄 License](#-License)
+
+
+## 📊 About
 
 A repository containing heuristics for the traveling salesman problem (TSP) is a collection of algorithms and techniques that can be used to approximately solve the TSP. The TSP is a classic optimization problem in computer science that involves finding the shortest possible route that visits a given set of cities and returns to the starting city. The problem is NP-hard, meaning that it is very difficult to find an exact solution, particularly for large sets of cities. Heuristics are methods that can quickly find a good, but not necessarily optimal, solution to the TSP. These methods are useful for real-world applications where finding the exact solution may be impractical due to time or resource constraints. The repository contains a variety of heuristics, such as nearest neighbor, hill climber and genetic algorithm.
-
-## Contents
-- [x] Nearest Neighbour Algorithm
-- [x] Hill Climber Algorithm
-- [x] Tabu Search Algorithm
-- [x] Simulated Annealing Algorithm
-- [x] Genetic Algorithm
 
 ## 📋 Requirements
   1. The library works under Python 3.9+
@@ -22,8 +27,6 @@ A repository containing heuristics for the traveling salesman problem (TSP) is a
   * <b> Format supported by the repository
   <img src="assets/TSPExcel.png" width="60%">
   
-  
-
 
 ## ⭐ Features
 - [x] Parallel Multistart for algorithms except Genetic Algorithm
@@ -100,7 +103,7 @@ print(result)
         └───utils
             └───genetic
 
-## 📅 Development schedule
+## 📅 Development Schedule
 **Version 1.0.0**
 
 - [x] Nearest Neighbour Algorithm
