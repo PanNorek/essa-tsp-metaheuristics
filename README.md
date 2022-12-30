@@ -13,7 +13,8 @@ A repository containing heuristics for the traveling salesman problem (TSP) is a
 
 ## 📋 Requirements
   1. The library works under Python 3.9+
-  2. Algorithms need distance matrix to solve the problem. 
+  2. Algorithms need distance matrix to solve the problem. A distance matrix is a table that lists the distances between pairs of objects. In the context of this repository, a distance matrix is an excel file that specifies the distances between every pair of cities in the TSP. The distance matrix is used to define the TSP, as it specifies the cost of traveling from one city to another.
+
 
 ## ⭐ Features
 - [x] Parallel Multistart for algorithms except Genetic Algorithm
@@ -82,6 +83,7 @@ print(result)
 ## 📂 Directory Structure
     ├───.github
     |   └───workflows
+    ├───assets
     ├───data
     ├───notebooks
     └───src
