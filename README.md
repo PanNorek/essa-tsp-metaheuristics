@@ -14,19 +14,19 @@
 
 ## 📊 About
 
-A repository containing heuristics for the traveling salesman problem (TSP) is a collection of algorithms and techniques that can be used to approximately solve the TSP. The TSP is a classic optimization problem in computer science that involves finding the shortest possible route that visits a given set of cities and returns to the starting city. The problem is NP-hard, meaning that it is very difficult to find an exact solution, particularly for large sets of cities. Heuristics are methods that can quickly find a good, but not necessarily optimal, solution to the TSP. These methods are useful for real-world applications where finding the exact solution may be impractical due to time or resource constraints. The repository contains a variety of heuristics, such as nearest neighbor, hill climber and genetic algorithm.
+A repository containing heuristics for the traveling salesman problem (TSP) is a collection of algorithms and techniques that can be used to approximately solve the TSP. The TSP is a classic optimization problem in computer science that involves finding the shortest possible route that visits a given set of cities and returns to the starting city. The problem is NP-hard, meaning that it is very difficult to find an exact solution, particularly for large sets of cities. Heuristics are methods that can quickly find a good, but not necessarily optimal, solution to the TSP. These methods are useful for real-world applications where finding the exact solution may be impractical due to time or resource constraints. The repository contains a variety of heuristics, such as nearest neighbor, hill climbing and genetic algorithm.
 
 ## 📋 Requirements
   1. The library works under Python 3.9+
   2. Algorithms need distance matrix to solve the problem. A distance matrix is a table that lists the distances between pairs of objects. In the context of this repository, a distance matrix is an excel file that specifies the distances between every pair of cities in the TSP. The distance matrix is used to define the TSP, as it specifies the cost of traveling from one city to another.
-  
+
  <b> Distance matrix examples: </b>
-  * <b> Example Problem </b>
+  * <b> Example Problem </b><br>
   <img src="assets/Travelling-Salesman-Problem-TSP.png" width="60%" alt="https://www.thecrazyprogrammer.com/2017/05/travelling-salesman-problem.html">
-  
-  * <b> Format supported by the repository
+
+  * <b> Format supported by the repository</b>
   <img src="assets/TSPExcel.png" width="60%">
-  
+
 
 ## ⭐ Features
 - [x] Parallel Multistart for algorithms except Genetic Algorithm
@@ -58,7 +58,7 @@ param_grid = {
     "POP_SIZE": [500],
     "N_ITERS": [100],
     "SELECTION_METHOD": ["truncation", "roulette", "tournament"], # "truncation", "roulette", "tournament"
-    "CROSSOVER_METHOD": ["pmx", "ox"], # "ox", "pmx" 
+    "CROSSOVER_METHOD": ["pmx", "ox"], # "ox", "pmx"
     "ELITE_SIZE": [0, ],
     "MATING_POOL_SIZE": [.5],
     "MUTATION_RATE": [.15],
@@ -77,7 +77,7 @@ print(result)
 The nearest neighbor algorithm is a heuristic for solving the traveling salesman problem (TSP). It is a simple and efficient method that can be used to quickly find a good, although not necessarily optimal, solution to the TSP. The algorithm works by iteratively adding the nearest unvisited city to the current tour until all cities have been visited.
 ```python
 
-from src.utils import load_data, PathPlotter, BenchmarkPlotter, DistanceHistoryPlotter
+from src.utils import load_data
 from src.algos import *
 import os
 
@@ -107,7 +107,7 @@ print(result)
 **Version 1.0.0**
 
 - [x] Nearest Neighbour Algorithm
-- [x] Hill Climber Algorithm
+- [x] Hill Climbing Algorithm
 - [x] Tabu Search Algorithm
 - [x] Simulated Annealing Algorithm
 - [x] Genetic Algorithm
@@ -125,7 +125,7 @@ print(result)
 ## 🎓 Learning Materials
 * [The Travelling Salesman Problem](https://classes.engr.oregonstate.edu/mime/fall2017/rob537/hw_samples/hw2_sample2.pdf)
 * [Hill Climber Algorithm](https://classes.engr.oregonstate.edu/mime/fall2017/rob537/hw_samples/hw2_sample2.pdf)
-* [About Genetic Oerations](https://mat.uab.cat/~alseda/MasterOpt/GeneticOperations.pdf)
+* [About Genetic Operations](https://mat.uab.cat/~alseda/MasterOpt/GeneticOperations.pdf)
 
 
 ## 📧 Contact
