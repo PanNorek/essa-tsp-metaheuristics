@@ -45,7 +45,9 @@ class IteratingAlgorithm(TSPHeuristicAlgorithm):
     Check out:
 
     src.utils.neighbourhood_type NeighbourhoodType
+
     src.utils.heuristic_algorithm TSPHeuristicAlgorithm
+
     src.utils.tools StopAlgorithm
     """
 

@@ -148,11 +148,13 @@ class TSPHeuristicAlgorithm(TSPAlgorithm):
             Used in TabuSearch as a way to escape local mininum
 
             Check out:
+
             src.algos.tabu_search TabuSearch
 
         Wraps NeighbourhoodType switch method
 
         Check out:
+
         src.utils.neighbourhood_type NeighbourhoodType
         """
         return self._neigh.switch(

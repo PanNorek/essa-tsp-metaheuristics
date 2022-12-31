@@ -5,6 +5,7 @@ import numpy as np
 from datetime import datetime
 from dataclasses import dataclass
 import os
+import random
 
 
 @dataclass
@@ -263,6 +264,21 @@ def path_check(path: list, distances: pd.DataFrame) -> None:
         index in distances.index.to_list() for index in path
     ), "elements of start_order must allign with distance matrix indices"
     assert len(set(path)) == len(path), "elements in start_order must be unique"
+
+
+def get_random_path(indices: Union[list, pd.Index]) -> list:
+    """
+    Chooses random path from indices as the cities
+
+    Args:
+        indices: list | pd.Index
+            Cities to be visited by the salesman
+    """
+    # indices of the cities
+    if isinstance(indices, pd.Index):
+        indices = list(indices)
+    # return random path
+    return random.sample(indices, len(indices))
 
 
 class ResultManager:

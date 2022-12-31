@@ -3,7 +3,13 @@ from abc import ABC, abstractmethod
 from typing import Union
 import pandas as pd
 import numpy as np
-from ..utils import Result, get_path_distance, path_check, distances_matrix_check
+from ..utils import (
+    Result,
+    get_path_distance,
+    path_check,
+    distances_matrix_check,
+    get_random_path
+)
 
 
 class TSPAlgorithm(ABC):
@@ -197,7 +203,9 @@ class TSPAlgorithm(ABC):
         If algorithm requires specific checks for starting path or different
         way of chosing primary random solution it must be overriden in child class.
 
-        For example check out src.algos.nearest_neighbour NearestNeighbour
+        For example check out
+
+        src.algos.nearest_neighbour NearestNeighbour
         """
         if start_order is not None:
             self._start_order_check(start_order=start_order, distances=distances)
@@ -226,7 +234,9 @@ class TSPAlgorithm(ABC):
 
         Specific checks are implemented in Nearestneighbour algorithm
 
-        Check out src.algos.nearest_neighbour NearestNeighbour
+        Check out:
+
+        src.algos.nearest_neighbour NearestNeighbour
         """
         path_check(path=start_order, distances=distances)
         assert isinstance(start_order, list), 'start_order must be a list'
@@ -246,7 +256,9 @@ class TSPAlgorithm(ABC):
 
         Wraps get_path_distance function
 
-        Check out src.utils.tools get_path_distances
+        Check out:
+
+        src.utils.tools get_path_distances
         """
         return get_path_distance(path=path, distances=distances)
 
@@ -263,11 +275,7 @@ class TSPAlgorithm(ABC):
         For example check out src.algos.nearest_neighbour NearestNeighbour
         which randomly selects only first cuity instead of the entire path
         """
-        # indices of the cities
-        if isinstance(indices, pd.Index):
-            indices = list(indices)
-        # return random path
-        return random.sample(indices, len(indices))
+        return get_random_path(indices=indices)
 
     def _set_random_seed(self, random_seed: Union[int, None] = None) -> None:
         """

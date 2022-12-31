@@ -16,6 +16,14 @@ class GeneticAlgorithm(IteratingAlgorithm):
     """
     Genetic algorithm for solving TSP problem
 
+    Methods:
+        solve - used for solving TSP problem
+
+    Attributes:
+        path_ - best path found by algorithm
+        history - list of accepted solutions during iteration process
+        population - list of all individuals forming up the population
+
     Metaheuristic inspired by the process of natural selection
     that belongs to the larger class of evolutionary algorithms (EA).
     Genetic algorithms are commonly used to generate high-quality
@@ -23,13 +31,14 @@ class GeneticAlgorithm(IteratingAlgorithm):
     biologically inspired operators such as mutation, crossover and selection.
 
     In a genetic algorithm, a population of candidate solutions
-    (in GA called Individuals is evolved toward better solutions.
+    (in GA called Individuals) is evolved toward better solutions.
     Each candidate solution has a set of properties (its chromosomes or genotype)
     which can be mutated and altered.
 
     Check out:
 
     src.utils.genetic.individual Individual
+
     src.utils.genetic.population Population
 
     Chromosome is a set of parameters which define a proposed solution
@@ -180,6 +189,7 @@ class GeneticAlgorithm(IteratingAlgorithm):
 
         elite_size:
             number of the fittest individuals that goes directly to the next generation.
+
             If float:
                 Value must be between 0 and 1 - the percentage of population considered an elite
             If int:
@@ -190,6 +200,7 @@ class GeneticAlgorithm(IteratingAlgorithm):
             A way to filter out bad inferior individuals and select parents from the fittest
             Larger mating_pool_size gives more chance for bad individuals to breed
             Smaller mating_pool_size may cause homogenity in population
+
             If float:
                 Value must be between 0 and 1 - the percentage of the fittest
                 population from which parents will be drawn
@@ -308,7 +319,7 @@ class GeneticAlgorithm(IteratingAlgorithm):
         self.population_.crossover(
             distances=distances,
             # mating pool size to draw parents from
-            sample_size=self._mating_pool_size,
+            mating_pool_size=self._mating_pool_size,
             # class of selection method
             selection_method=self._selection,
             # crossover method object
@@ -322,7 +333,7 @@ class GeneticAlgorithm(IteratingAlgorithm):
             # neighbourhood type object passed as mutation
             mutation=self._neigh,
             # elite size is skipped - not mutated
-            skip=self._elite_size,
+            elite_size=self._elite_size,
             # probability of mutation
             mutation_rate=self._mutation_rate,
         )

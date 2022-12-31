@@ -40,6 +40,7 @@ class NeighbourhoodType(ABC):
     Check out:
 
     src.algos.simulated_annealing SimulatedAnnealing
+
     src.algos.hill_climbing HillClimbing
     """
 
@@ -165,6 +166,7 @@ class NeighbourhoodType(ABC):
             Used in TabuSearch as a way to escape local mininum
 
             Check out:
+
             src.algos.tabu_search TabuSearch
         """
         # checks if path is correct
@@ -198,6 +200,7 @@ class NeighbourhoodType(ABC):
             Used in TabuSearch as a way to escape local mininum
 
             Check out:
+
             src.algos.tabu_search TabuSearch
         """
         return (
