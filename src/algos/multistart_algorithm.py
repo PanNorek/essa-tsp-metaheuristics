@@ -6,9 +6,9 @@ from .algorithm import TSPAlgorithm
 from ..utils import Result
 
 
-def solver(algorithm: TSPAlgorithm, distances: pd.DataFrame):
+def solver(algorithm: TSPAlgorithm, distances: pd.DataFrame, random_seed: int = None):
     """Solver function for parallel processing"""
-    return algorithm.solve(distances=distances)
+    return algorithm.solve(distances=distances, random_seed=random_seed)
 
 
 class MultistartAlgorithm:
@@ -25,6 +25,7 @@ class MultistartAlgorithm:
         self,
         algorithm: TSPAlgorithm,
         distances: pd.DataFrame,
+        random_seed: int = None,
         n_starts: int = 10,
         only_best: bool = True,
         n_jobs: int = -1,
@@ -57,7 +58,9 @@ class MultistartAlgorithm:
         # keeping track of time
         tic = time.time()
         results: list[Result] = Parallel(n_jobs=n_jobs)(
-            delayed(solver)(algorithm=algo, distances=distances)
+            delayed(solver)(
+                algorithm=algo, distances=distances, random_seed=random_seed
+            )
             for _ in range(n_starts)
         )
         toc = time.time()
