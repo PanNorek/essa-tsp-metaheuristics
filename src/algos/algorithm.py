@@ -22,7 +22,7 @@ class TSPAlgorithm(ABC):
     where all parameters related to the algorithm itself
     and independent of the training data are passed in the constructor.
     API solve method can be use on different set of data independently of
-    algorithm specifications. Most optimal path found can be accesed with
+    algorithm specifications. Optimal path found can be accesed with
     path_ property (in sklearn attributes followed by underscore are trained from data).
     random_state and start_order parameters in solve method are an exception,
     it gives more flexibility in looking for different solutions
@@ -306,10 +306,10 @@ class TSPAlgorithm(ABC):
     @property
     def path_(self) -> list:
         """
-        The most optimal graph's path that was found
+        The optimal graph's path that was found
 
         Path is kind of a trained attribute of the solver
-        The most optimal path can be accessed at any given moment with this property
+        The optimal path can be accessed at any given moment with this property
         Path is updated each time algorithm finds more optimal solution running solve method
         """
         return self._path

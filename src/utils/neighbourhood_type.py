@@ -28,12 +28,12 @@ class NeighbourhoodType(ABC):
         - solutions in vicinity must be similar
 
     The TSPAlgotithm uses different kind of NeighbourhoodType to search neighbouring
-    solutions space in iterative manner to reach most optimal solution
+    solutions space in iterative manner to reach optimal solution
 
     Algorithm keeps all possible switches in an attribute nad implements
-    random switch and best switch (one that gives most optimal adjacent solution)
+    random switch and best switch (one that gives optimal adjacent solution)
     Best switch is a default option, but it's more time consuming. Every possible
-    solution in vicinity is checked and most optimal is returned
+    solution in vicinity is checked and optimal is returned
     For reference: SimulatedAnnealing uses random switch at each step,
     HillClimbing always looks for the best solution in the neighbourhood
 
@@ -100,7 +100,7 @@ class NeighbourhoodType(ABC):
             there is no need for calculating solutions distances then
         how:
             "best" - default option
-                Every possible solution in vicinity is checked and most optimal is returned
+                Every possible solution in vicinity is checked and optimal is returned
             "random" - random solution from vicinity is returned
 
         exclude:
@@ -112,7 +112,7 @@ class NeighbourhoodType(ABC):
 
             src.algos.tabu_search TabuSearch
         """
-        # for searching for the most optimal solution in vicinity
+        # for searching for the optimal solution in vicinity
         # distances matrix is needed
         if distances is None and how == "best":
             raise ValueError("Cannot find best switch without distances matrix")
@@ -122,7 +122,7 @@ class NeighbourhoodType(ABC):
         assert how in self._SWITCH_OPTIONS, f"how must be one of {self._SWITCH_OPTIONS}"
         if how == "best":
             # some neighbourhood types require specific way of
-            # finding most optimal solution in the vicinity
+            # finding optimal solution in the vicinity
             switch = self._find_best_switch(
                 path=path, distances=distances, exclude=exclude
             )
@@ -178,7 +178,7 @@ class NeighbourhoodType(ABC):
         ]
         # sort it by distance
         new_paths.sort(key=lambda x: get_path_distance(path=x[0], distances=distances))
-        # return switch that results in most optimal adjacent solution
+        # return switch that results in optimal adjacent solution
         return new_paths[0][1]
 
     def _exclude_switches(self, exclude: Union[list, None] = None) -> List[tuple]:

@@ -83,7 +83,7 @@ class TabuSearch(IteratingAlgorithm):
         # get new distance - distance of the best solution in vicinity
         new_distance = self._get_path_distance(path=new_path, distances=distances)
         # new path that minimizes distance - always accepts
-        # new most optimal solution in vicinity even if it's worse
+        # new optimal solution in vicinity even if it's worse
         # a way not to stuck in local minimum
         self._path = new_path
         # removing first switch from tabu list only if list is full

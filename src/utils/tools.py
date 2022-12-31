@@ -23,11 +23,11 @@ class Result:
             TSPAlgorithm object that solved TSP problem
             giving this solution
         path:
-            Most optimal solution found be the algorithm
+            optimal solution found be the algorithm
             In TSP represents an order of cities that minimizes
             the distance
         distance:
-            Distance to be traversed by the salesman with most optimal
+            Distance to be traversed by the salesman with optimal
             path found be the algorithm. In TSP distance is a cost function
         time:
             Time of solving the problem

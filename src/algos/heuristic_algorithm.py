@@ -139,7 +139,7 @@ class TSPHeuristicAlgorithm(TSPAlgorithm):
             there is no need for calculating solutions distances then
         how:
             "best" - default option
-                Every possible solution in vicinity is checked and most optimal is returned
+                Every possible solution in vicinity is checked and optimal is returned
             "random" - random solution from vicinity is returned
 
         exclude:
