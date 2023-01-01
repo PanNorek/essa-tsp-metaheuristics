@@ -10,7 +10,6 @@ class CrossoverMethod(ABC):
         self._subset = slice(idx1, idx2)
         child_1, child_2 = self._get_children(parent_1=parent_1, parent_2=parent_2)
         first_child = self._modify(child_1=child_1, child_2=child_2)
-
         second_child = self._modify(child_1=child_2, child_2=child_1)
         return (first_child, second_child)
 

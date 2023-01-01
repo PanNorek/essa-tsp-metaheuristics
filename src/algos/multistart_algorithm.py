@@ -1,18 +1,19 @@
 import time
 import pandas as pd
 from joblib import Parallel, delayed
-from typing import Union
+from typing import Union, ClassVar
 from .algorithm import TSPAlgorithm
 from ..utils import Result
 
 
-def solver(algorithm: TSPAlgorithm, distances: pd.DataFrame, random_seed: int = None):
+def solver(algorithm: TSPAlgorithm, distances: pd.DataFrame):
     """Solver function for parallel processing"""
-    return algorithm.solve(distances=distances, random_seed=random_seed)
+    return algorithm.solve(distances=distances)
 
 
 class MultistartAlgorithm:
-    """Multistart Algorithm
+    """
+    Multistart Algorithm
 
     Call this class with algorithm and distance matrix
     to run algorithm with multiple starts in parallel.
@@ -23,9 +24,8 @@ class MultistartAlgorithm:
 
     def __call__(
         self,
-        algorithm: TSPAlgorithm,
+        algorithm: type[TSPAlgorithm],
         distances: pd.DataFrame,
-        random_seed: int = None,
         n_starts: int = 10,
         only_best: bool = True,
         n_jobs: int = -1,
@@ -34,7 +34,7 @@ class MultistartAlgorithm:
         """Runs algorithm with multiple starts in parallel
             Params:
 
-            algorithm: TSPAlgorithm
+            algorithm: type[TSPAlgorithm]
                 Algorithm to run
             distances: pd.DataFrame
                 Matrix of distances between cities,
@@ -42,24 +42,30 @@ class MultistartAlgorithm:
             n_starts int:
                 Number of starts
             only_best: bool
-                If False returns Dataframe of n_starts results
+                If False returns DataFrame of n_starts results
             n_jobs: int
                 Number of thread to involve
             **kwargs:
                 Keyword arguments for algorithm init
 
+        algorithm:
+            TSPAlgorithm subclass itself rather than its instance
+
         n_jobs:
             Deafult -1, run on all available threads
             One means a standard synchronous run
         """
-        # algorithm object
+        # algorithm object - Parallel makes a copy of an object
         algo: TSPAlgorithm = algorithm(**kwargs)
-
+        # prints out info about running algorithm in verbose mode
+        if self._verbose:
+            print(f"\nparams: {kwargs}")
+            print(algo)
         # keeping track of time
         tic = time.time()
         results: list[Result] = Parallel(n_jobs=n_jobs)(
             delayed(solver)(
-                algorithm=algo, distances=distances, random_seed=random_seed
+                algorithm=algo, distances=distances
             )
             for _ in range(n_starts)
         )

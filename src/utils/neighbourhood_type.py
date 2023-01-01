@@ -321,6 +321,10 @@ class Insertion(NeighbourhoodType):
         new solution: [1, 6, 9, 5, 0, 2]
         Elements at index 1 was inserted into index 3
 
+    The slowest one of neighbourhood types while
+    searching for the best adjacent solution.
+    The number of switches is significantly larger.
+
     Check out:
 
     src.utils.neighbourhood_type NeighbourhoodType interface
@@ -368,6 +372,10 @@ class Inversion(NeighbourhoodType):
         switch indices: (1, 3)
         new solution: [1, 9, 6, 5, 0, 2]
         Slice from index 1 to index 3 was inversed
+
+    The quickest one of neighbourhood types while
+    searching for the best adjacent solution.
+    The number of switches is significantly smaller.
 
     Check out:
 
