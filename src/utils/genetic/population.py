@@ -176,7 +176,7 @@ class Population:
         while len(new_population) < self._pop_size:
             # select parents with a given method
             parent_1, parent_2 = selection_method.select(
-                generation=self._population[elite_size:],
+                population=self._population[elite_size:],
                 size=mating_pool_size
             )
             # cross over with a given method
@@ -271,7 +271,7 @@ class Population:
 
     def __str__(self) -> str:
         """String representation of the population"""
-        return f"Size: {len(self)}\n best: {self.best}"
+        return f"Size: {len(self)}\nbest: {self.best}"
 
     def __repr__(self) -> str:
         """String representation of the population"""

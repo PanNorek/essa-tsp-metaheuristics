@@ -55,7 +55,7 @@ class GeneticAlgorithm(IteratingAlgorithm):
 
     Two way of crossover are implemented:
         - PMX:
-            A way to combine two individuals resulting in two new children.
+            A way to combine two individuals chromosome resulting in two new child chromosome.
             - carve out randomly selected slice of each parent and replace it in its counterpart
             - ensure that the "unique item" invariant for both child individuals is maintained
         - OX:
@@ -87,7 +87,7 @@ class GeneticAlgorithm(IteratingAlgorithm):
             random two individuals from x best individuals in population are selected
         - Tournament:
             the sample of x individuals is drawn randomly from the population
-            and the best one is selcted for both parents
+            and the best one is selected for both parents
         - Roulette:
             Stochastic selection method, where the probability for selection
             of an individual is proportional to its fitness.
@@ -374,11 +374,10 @@ class GeneticAlgorithm(IteratingAlgorithm):
 
     def __str__(self) -> str:
         mes = super().__str__()
-        # replace __class__.__name__ with __str__ methods in crossover
         mes += f"""pop_size: {self._pop_size}\n\
         generations: {self._n_iter}\n\
         selection_method: {self._selection_method}\n\
-        crossover_method: {self._crossover.__class__.__name__}\n\
+        crossover_method: {self._crossover_method}\n\
         elite_size: {self._elite_size}\n\
         mating_pool_size: {self._mating_pool_size}\n\
         mutation_rate: {self._mutation_rate}\n"""
