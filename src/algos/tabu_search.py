@@ -100,3 +100,8 @@ class TabuSearch(IteratingAlgorithm):
 
         # adding new best distance to distances history
         self._history.append(new_distance)
+
+    def __str__(self) -> str:
+        mes = super().__str__()
+        mes += f"""tabu_length: {self._tabu_list.length}\n"""
+        return mes

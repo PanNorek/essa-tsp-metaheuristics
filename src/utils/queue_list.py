@@ -22,6 +22,7 @@ class Queue:
         """
         self._limit = length
         self._queue = []
+        self.length = length
 
     def enqueue(self, object_: object):
         """
