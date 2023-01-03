@@ -135,7 +135,7 @@ class GeneticAlgorithm(IteratingAlgorithm):
     def __init__(
         self,
         pop_size: int = 100,
-        n_iters: int = DEFAULT_ITERS,
+        n_iter: int = DEFAULT_ITERS,
         selection_method: str = "truncation",
         crossover_method: str = "pmx",
         elite_size: Union[int, float] = 0,
@@ -221,7 +221,7 @@ class GeneticAlgorithm(IteratingAlgorithm):
             - "insertion": inserting element into a place
         """
         # IteratingAlgorithm constructor
-        super().__init__(neigh_type=mutation_type, verbose=verbose, n_iter=n_iters)
+        super().__init__(neigh_type=mutation_type, verbose=verbose, n_iter=n_iter)
         self._pop_size = pop_size
         # random population is drawn in solve method
         self.population_ = None
@@ -277,8 +277,10 @@ class GeneticAlgorithm(IteratingAlgorithm):
             assert (
                 0 <= self._mating_pool_size <= 1
             ), "mating pool must be between 0 and 1 if passed as float"
-            # sets to int
-            self._mating_pool_size = int(self._pop_size * self._mating_pool_size)
+            # sets to int - substract elite_size
+            self._mating_pool_size = int(
+                (self._pop_size - self._elite_size) * self._mating_pool_size
+            )
         # setting crossover object
         self._crossover = self._CROSSOVER_METHODS[self._crossover_method]()
         # setting selection class
