@@ -281,6 +281,10 @@ class GeneticAlgorithm(IteratingAlgorithm):
             self._mating_pool_size = int(
                 (self._pop_size - self._elite_size) * self._mating_pool_size
             )
+        assert (
+           (self._elite_size + self._mating_pool_size) <= self._pop_size
+        ), "elite_size and mating_pole_size together exceed population size"
+
         # setting crossover object
         self._crossover = self._CROSSOVER_METHODS[self._crossover_method]()
         # setting selection class
