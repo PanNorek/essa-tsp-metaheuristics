@@ -347,9 +347,10 @@ class Insertion(NeighbourhoodType):
 
     def _exclude_switches(self, exclude: Union[list, None] = None) -> List[tuple]:
         # include reverse operation to prevent algorithm from accepting recent solution again
-        exclude = list(exclude) + [self._last_switch[::-1]]
         return (
-            list(set(self._switches) - set(exclude))
+            list(set(self._switches) - set(
+                list(exclude) + [self._last_switch[::-1]]
+            ))
             if exclude
             else list(set(self._switches))
         )

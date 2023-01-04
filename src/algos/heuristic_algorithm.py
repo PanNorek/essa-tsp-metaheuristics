@@ -68,7 +68,7 @@ class TSPHeuristicAlgorithm(TSPAlgorithm):
         assert (
             neigh
         ), f"neigh_type must be one of {list(self._NEIGHBOURHOOD_TYPES.keys())}"
-        self._neigh_type = neigh
+        self._neigh_type: type[NeighbourhoodType] = neigh
         # will be instanciated in solve mthod with knowledge
         # of all possible switches of cities in distance matrix
         self._neigh = None

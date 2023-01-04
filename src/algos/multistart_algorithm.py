@@ -1,7 +1,7 @@
 import time
 import pandas as pd
 from joblib import Parallel, delayed
-from typing import Union, ClassVar
+from typing import Union
 from .algorithm import TSPAlgorithm
 from ..utils import Result
 
