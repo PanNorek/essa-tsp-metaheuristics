@@ -10,6 +10,7 @@ from ..utils.genetic import (
     OX,
 )
 from ..utils import Result, solve_it
+import copy
 
 
 class GeneticAlgorithm(IteratingAlgorithm):
@@ -136,7 +137,7 @@ class GeneticAlgorithm(IteratingAlgorithm):
         self,
         pop_size: int = 100,
         n_iter: int = DEFAULT_ITERS,
-        selection_method: str = "truncation",
+        selection_method: str = "tournament",
         crossover_method: str = "pmx",
         elite_size: Union[int, float] = 0,
         mating_pool_size: Union[int, float] = 0.5,
@@ -363,7 +364,8 @@ class GeneticAlgorithm(IteratingAlgorithm):
     ) -> Population:
         if start_order is not None:
             self._start_order_check(start_order=start_order)
-            return start_order
+            copy_order = copy.deepcopy(start_order)
+            return copy_order
         # if start_order not specified
         # randomly generate population of individuals
         population = Population(pop_size=self._pop_size)

@@ -43,6 +43,7 @@ class HillClimbing(IteratingAlgorithm):
     """
 
     NAME = "HILL CLIMBER"
+    DEFAULT_ITERS = 50
 
     def _run_iteration(self, distances: pd.DataFrame) -> None:
         # number of iteration is increased by one

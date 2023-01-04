@@ -122,6 +122,3 @@ class NearestNeighbour(TSPAlgorithm):
                 cities numbers or id names as indices and columns
         """
         self._neigh = None
-
-    def __str__(self) -> str:
-        return f"{self.NAME}\n"

@@ -60,6 +60,8 @@ class NeighbourhoodType(ABC):
         # all possible switches are constructed and kept in an attribute
         # for quick access
         self._switches = self._get_all_switches(length=path_length)
+        self._last_switch = ()
+        self._last_path = []
 
     @property
     def last_switch(self) -> tuple:
@@ -342,6 +344,15 @@ class Insertion(NeighbourhoodType):
     def _get_all_switches(self, length: int) -> List[tuple]:
         swaps = [(x, y) for x in range(length) for y in range(length) if (x != y)]
         return swaps
+
+    def _exclude_switches(self, exclude: Union[list, None] = None) -> List[tuple]:
+        # include reverse operation to prevent algorithm from accepting recent solution again
+        exclude = list(exclude) + [self._last_switch[::-1]]
+        return (
+            list(set(self._switches) - set(exclude))
+            if exclude
+            else list(set(self._switches))
+        )
 
     @property
     def last_switch_comment(self) -> str:

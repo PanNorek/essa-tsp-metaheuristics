@@ -52,13 +52,12 @@ class SimulatedAnnealing(IteratingAlgorithm):
     https://en.wikipedia.org/wiki/Simulated_annealing
     """
 
-    DEFAULT_ITERS = 100
+    DEFAULT_ITERS = 1000
     NAME = "SIMULATED ANNEALING"
     _REDUCE_FUNC = {"reduce": reduce, "descend": slowly_descend}
 
     def __init__(
         self,
-        # TODO: check empirically xd
         temp: int = 100,
         alpha: float = ALPHA,
         reduce_func: Union[Callable, str] = "reduce",
