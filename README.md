@@ -135,5 +135,6 @@ print(result)
 
 ## 📄 License
 
-GNU GENERAL PUBLIC LICENSE
+[![](https://img.shields.io/badge/license-MIT-green?style=plastic)](https://choosealicense.com/licenses/mit/)
+   
 
