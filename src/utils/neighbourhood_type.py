@@ -119,8 +119,6 @@ class NeighbourhoodType(ABC):
         # distances matrix is needed
         if distances is None and how == "best":
             raise ValueError("Cannot find best switch without distances matrix")
-        # checks if path is correct
-        self._order_check(path=path, distances=distances)
         # copy of the initial path
         path = path[:]
         # check if correct option was passed
@@ -145,9 +143,6 @@ class NeighbourhoodType(ABC):
         new_path = self._switch(path=path, switch=switch)
         # new adjacent solution is returned
         return new_path
-
-    def _order_check(self, path: list, distances: pd.DataFrame) -> None:
-        path_check(path=path, distances=distances)
 
     def _find_best_switch(
         self, path: list, distances: pd.DataFrame, exclude: Union[list, None] = None
@@ -176,6 +171,8 @@ class NeighbourhoodType(ABC):
 
             src.algos.tabu_search TabuSearch
         """
+        # checks if path is correct
+        self._order_check(path=path, distances=distances)
         # exclude all forbidden switches
         legal_switches = self._exclude_switches(exclude=exclude)
         # list of tuples of all solutions in vicinity and their switches
@@ -187,6 +184,9 @@ class NeighbourhoodType(ABC):
         new_paths.sort(key=lambda x: get_order_cost(order=x[0], cost_matrix=distances))
         # return switch that results in optimal adjacent solution
         return new_paths[0][1]
+
+    def _order_check(self, path: list, distances: pd.DataFrame) -> None:
+        path_check(path=path, distances=distances)
 
     def _exclude_switches(self, exclude: Union[list, None] = None) -> List[tuple]:
         """
