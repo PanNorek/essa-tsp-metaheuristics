@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod, abstractproperty
 import random
 from typing import List, Union
 import pandas as pd
-from .tools import get_path_distance, path_check
+from .tools import get_order_cost, path_check
 
 
 class NeighbourhoodType(ABC):
@@ -119,6 +119,8 @@ class NeighbourhoodType(ABC):
         # distances matrix is needed
         if distances is None and how == "best":
             raise ValueError("Cannot find best switch without distances matrix")
+        # checks if path is correct
+        self._order_check(path=path, distances=distances)
         # copy of the initial path
         path = path[:]
         # check if correct option was passed
@@ -143,6 +145,9 @@ class NeighbourhoodType(ABC):
         new_path = self._switch(path=path, switch=switch)
         # new adjacent solution is returned
         return new_path
+
+    def _order_check(self, path: list, distances: pd.DataFrame) -> None:
+        path_check(path=path, distances=distances)
 
     def _find_best_switch(
         self, path: list, distances: pd.DataFrame, exclude: Union[list, None] = None
@@ -171,8 +176,6 @@ class NeighbourhoodType(ABC):
 
             src.algos.tabu_search TabuSearch
         """
-        # checks if path is correct
-        path_check(path=path, distances=distances)
         # exclude all forbidden switches
         legal_switches = self._exclude_switches(exclude=exclude)
         # list of tuples of all solutions in vicinity and their switches
@@ -181,7 +184,7 @@ class NeighbourhoodType(ABC):
             for switch in legal_switches
         ]
         # sort it by distance
-        new_paths.sort(key=lambda x: get_path_distance(path=x[0], distances=distances))
+        new_paths.sort(key=lambda x: get_order_cost(order=x[0], cost_matrix=distances))
         # return switch that results in optimal adjacent solution
         return new_paths[0][1]
 
@@ -449,3 +452,30 @@ class Inversion(NeighbourhoodType):
             return ""
         elements = [self._last_path[index] for index in range(*self._last_switch)]
         return f"Elements {elements} at indices {self._last_switch} inversed"
+
+
+class NEHInsertion(Insertion):
+
+    def _get_all_switches(self, length: Union[int, None]) -> list[tuple]:
+        if length is None:
+            return ()
+        swaps = [(length-1, x) for x in range(length)]
+        return swaps
+
+    def switch(
+        self,
+        path: list,
+        distances: Union[pd.DataFrame, None] = None,
+        how: str = "best",
+        exclude: Union[list, None] = None,
+    ) -> list:
+        self._switches = self._get_all_switches(length=len(path))
+        return super().switch(
+            path=path,
+            distances=distances,
+            how=how,
+            exclude=exclude
+        )
+
+    def _order_check(self, path: list, distances: pd.DataFrame) -> None:
+        pass

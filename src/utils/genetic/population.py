@@ -1,7 +1,7 @@
 import random
 import pandas as pd
 from typing import Union, List
-from ..tools import get_path_distance, get_random_path
+from ..tools import get_order_cost, get_random_path
 from .individual import Individual
 from ..neighbourhood_type import NeighbourhoodType
 from .parent_selection import ParentSelection
@@ -68,7 +68,7 @@ class Population:
         paths = [get_random_path(indices=indices) for _ in range(self._pop_size)]
         # get distances of radom paths
         distances = [
-            get_path_distance(path=path, distances=distances) for path in paths
+            get_order_cost(order=path, cost_matrix=distances) for path in paths
         ]
         # create a list of individuals from random paths and assing it to _population attr
         self._population = [
@@ -188,11 +188,11 @@ class Population:
             child_1, child_2 = (
                 Individual(
                     path=child_1,
-                    distance=get_path_distance(path=child_1, distances=distances),
+                    distance=get_order_cost(order=child_1, cost_matrix=distances),
                 ),
                 Individual(
                     path=child_2,
-                    distance=get_path_distance(path=child_2, distances=distances),
+                    distance=get_order_cost(order=child_2, cost_matrix=distances),
                 ),
             )
             # add first child to population
@@ -262,8 +262,8 @@ class Population:
             # mutate an individual
             individual.mutate(mutation=mutation)
             # and set its new distance
-            individual.distance = get_path_distance(
-                path=individual.path, distances=distances
+            individual.distance = get_order_cost(
+                order=individual.path, cost_matrix=distances
             )
 
     # magic methods

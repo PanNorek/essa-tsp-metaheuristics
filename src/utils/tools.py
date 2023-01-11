@@ -6,6 +6,7 @@ from datetime import datetime
 from dataclasses import dataclass
 import os
 import random
+import itertools
 
 
 @dataclass
@@ -110,21 +111,32 @@ class Result:
         }
 
 
-def get_path_distance(path: list, distances: pd.DataFrame) -> Union[int, float]:
+def get_order_cost(order: list, cost_matrix: pd.DataFrame) -> Union[int, float]:
     """
     Calculate distance of the path based on distances matrix
 
     Args:
-        path: list
-            Order of cities visited by the salesman
-        distances: pd.DataFrame
-            Matrix of distances between cities,
-            cities numbers or id names as indices and columns
+        order: list
+            Order of jobs to perform on the machines
+        cost_matrix: pd.DataFrame
+            Matrix of times needed to perform a job
+            on the machines
     """
-    path_length = sum(distances.loc[x, y] for x, y in zip(path, path[1:]))
-    # add distance back to the starting point
-    path_length += distances.loc[path[0], path[-1]]
-    return path_length
+    df = cost_matrix.copy()
+
+    df = df.loc[order]
+
+    df.iloc[:, 0] = df.iloc[:, 0].cumsum()
+    df.iloc[0, :] = df.iloc[0, :].cumsum()
+
+    data = df.values.copy()
+
+    for x, y in itertools.product(range(1, df.shape[0]), range(1, df.shape[1])):
+        start_time = max(data[x-1, y], data[x, y-1])
+        finish_time = start_time + data[x, y]
+        data[x, y] = finish_time
+
+    return data[-1, -1]
 
 
 def solve_it(func: Callable):
@@ -257,9 +269,9 @@ def path_check(path: list, distances: pd.DataFrame) -> None:
         checking whether path has unique elements
     """
     assert isinstance(path, Iterable), "start_order must be iterable"
-    assert len(path) == len(
-        distances
-    ), f"Expected {len(distances)} elements, got {len(path)}"
+    # assert len(path) == len(
+    #     distances
+    # ), f"Expected {len(distances)} elements, got {len(path)}"
     assert all(
         index in distances.index.to_list() for index in path
     ), "elements of start_order must allign with distance matrix indices"

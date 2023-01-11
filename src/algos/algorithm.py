@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 from ..utils import (
     Result,
-    get_path_distance,
+    get_order_cost,
     path_check,
     distances_matrix_check,
     get_random_path
@@ -260,7 +260,7 @@ class TSPAlgorithm(ABC):
 
         src.utils.tools get_path_distances
         """
-        return get_path_distance(path=path, distances=distances)
+        return get_order_cost(order=path, cost_matrix=distances)
 
     def _get_random_start(self, indices: Union[list, pd.Index]) -> list:
         """
@@ -309,7 +309,8 @@ class TSPAlgorithm(ABC):
 
         src.utils.tools distances_matrix_check
         """
-        distances_matrix_check(distances=distances)
+        # distances_matrix_check(distances=distances)
+        pass
 
     @property
     def path_(self) -> list:

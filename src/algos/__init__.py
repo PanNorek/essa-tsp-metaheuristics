@@ -9,3 +9,4 @@ from .genetic_algorithm import GeneticAlgorithm
 from .grid_search_ga import GridSearchGA
 from .heuristic_algorithm import TSPHeuristicAlgorithm
 from .tsp_grid_search import TSPGridSearch
+from .neh_algorithm import NEH
