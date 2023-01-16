@@ -56,6 +56,7 @@ class Result:
         mes = f"""distance: {self.distance}
                   algorithm: {self.algorithm}
                   solving time: {self.time:.3f} s
+                  path: {self.path}
                 """.replace(
             "  ", ""
         )
@@ -67,8 +68,10 @@ class Result:
         """String representation of distance history"""
         # if distance history if too long, show only start and end of it
         if len(self.distance_history) > 10:
-            return f"{self.distance_history[1]}, {self.distance_history[2]} ... " +\
-                f"{self.distance_history[-2]}, {self.distance_history[-1]}"
+            return (
+                f"{self.distance_history[1]}, {self.distance_history[2]} ... "
+                + f"{self.distance_history[-2]}, {self.distance_history[-1]}"
+            )
         return self.distance_history
 
     def __repr__(self) -> str:
@@ -132,7 +135,7 @@ def get_order_cost(order: list, cost_matrix: pd.DataFrame) -> Union[int, float]:
     data = df.values.copy()
 
     for x, y in itertools.product(range(1, df.shape[0]), range(1, df.shape[1])):
-        start_time = max(data[x-1, y], data[x, y-1])
+        start_time = max(data[x - 1, y], data[x, y - 1])
         finish_time = start_time + data[x, y]
         data[x, y] = finish_time
 
@@ -171,7 +174,7 @@ def solve_it(func: Callable):
         except KeyboardInterrupt:
             # if function is not able to access path_ or history
             # for some reason or it is empty - returns None
-            if not hasattr(algo, 'path_'):
+            if not hasattr(algo, "path_"):
                 return None
             if not hasattr(algo, "history"):
                 return None
