@@ -21,13 +21,13 @@ class NEH(TSPAlgorithm):
     ) -> int:
         # specific implementation for NEH algorithm
         # jobs ordered incresingly by cummulative time on all machines
-        order = distances.sum(axis=1).sort_values().index.to_list()
+        order = distances.sum(axis=1).sort_values(ascending=False).index.to_list()
         # the first element is job chosen as starting point
-        self._path = []
+        self._path = [order[0]]
 
         # add jobs in sequence from less to most time consuming
         # insert new job into the best place (that minimize cost function)
-        for x in range(len(distances)):
+        for x in range(1, len(distances)):
             self._path.append(order[x])
             self._path = self._neigh.switch(
                 path=self._path, distances=distances
