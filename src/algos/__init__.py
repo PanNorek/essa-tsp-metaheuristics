@@ -1,5 +1,5 @@
 from .nearest_neighbour import NearestNeighbour
-from .algorithm import TSPAlgorithm
+from .algorithm import PFSPAlgorithm
 from .iterating_algorithm import IteratingAlgorithm
 from .tabu_search import TabuSearch
 from .hill_climbing import HillClimbing

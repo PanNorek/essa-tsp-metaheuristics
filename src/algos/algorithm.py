@@ -8,15 +8,15 @@ from ..utils import (
     get_order_cost,
     path_check,
     distances_matrix_check,
-    get_random_path
+    get_random_path,
 )
 
 
-class TSPAlgorithm(ABC):
+class PFSPAlgorithm(ABC):
     """
-    Traveling Salesman Problem (TSP) base solver
+    Permutation Flowshop Scheduling Problem (PFSP) base solver
 
-    Base, abstract class that all TSP solvers should inherit from
+    Base, abstract class that all PFSP solvers should inherit from
 
     Methods:
         solve - used for solving TSP problem
@@ -24,30 +24,22 @@ class TSPAlgorithm(ABC):
     Attributes:
         path_ - best path found by algorithm
 
-    The idea was that TSPAlgorithm resembles sklearn BaseEstimator interface
+    The idea was that PFSPAlgorithm resembles sklearn BaseEstimator interface
     where all parameters related to the algorithm itself
     and independent of the training data are passed in the constructor.
     API solve method can be use on different set of data independently of
-    algorithm specifications. Optimal path found can be accesed with
+    algorithm specifications. Optimal order found can be accesed with
     path_ property (in sklearn attributes followed by underscore are trained from data).
     random_state and start_order parameters in solve method are an exception,
     it gives more flexibility in looking for different solutions
 
-    The traveling salesman problem (TSP) is one of the most intensively studied
-    problems in optimization.
-    It is NP-hard, and the solution space scales factorially with the number of cities.
-    The time complexity of the brute force approach is O(n!),
-    which makes a TSP with fairly large number of cities infeasible to solve with modern computers.
-    The travelling salesman problem asks the following question:
-    "Given a list of cities and the distances between each pair of cities,
-    what is the shortest possible route that visits each city exactly once
-    and returns to the origin city?"
-    It is an NP-hard problem in combinatorial optimization,
-    important in theoretical computer science and operations research.
+    The Permutation Flowshop Scheduling Problem (PFSP) is a type of scheduling problem that involves scheduling a set of jobs on a set of machines in a specific order, such that the overall completion time is minimized. In a PFSP, the jobs must be processed in a specific order, and cannot be reordered or split up. The objective is to find the optimal order in which to process the jobs on the machines in order to minimize the overall completion time. The PFSP is a NP-hard problem, meaning that it is computationally difficult to find an exact solution in a reasonable amount of time for large problem instances.
+
+    The time complexity of a brute force algorithm for the PFSP would be O(n!), where n is the number of jobs.
+
 
     For more information check out:
-    https://en.wikipedia.org/wiki/Travelling_salesman_problem
-    https://classes.engr.oregonstate.edu/mime/fall2017/rob537/hw_samples/hw2_sample2.pdf
+    https://en.wikipedia.org/wiki/Flow-shop_scheduling
     """
 
     NAME = ""
@@ -69,12 +61,11 @@ class TSPAlgorithm(ABC):
         start_order: Union[list, None] = None,
     ) -> Result:
         """
-        Uses specific algorithm to solve Traveling Salesman Problem
+        Uses specific algorithm to solve Permutation Flowshop Scheduling Problem
 
         Params:
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
             random_seed: int | None
                 Seed set for all random operations inside algorithm,
                 if None results won't be repeatable
@@ -102,12 +93,11 @@ class TSPAlgorithm(ABC):
         start_order: Union[list, None] = None,
     ) -> Result:
         """
-        Uses specific implementation of algorithm to solve Traveling Salesman Problem
+        Uses specific implementation of algorithm to solve Permutation Flowshop Scheduling Problem
 
         Params:
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
             random_seed: int | None
                 Seed set for all random operations inside algorithm,
                 if None results won't be repeatable
@@ -141,8 +131,7 @@ class TSPAlgorithm(ABC):
 
         Params:
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+               Matrix of set of jobs scheduled on a set of machines in a specific order
             random_seed: int | None
                 Seed set for all random operations inside algorithm,
                 if None results won't be repeatable
@@ -173,8 +162,7 @@ class TSPAlgorithm(ABC):
 
         Params:
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
             random_seed: int | None
                 Seed set for all random operations inside algorithm,
                 if None results won't be repeatable
@@ -192,15 +180,14 @@ class TSPAlgorithm(ABC):
 
         Params:
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
             start_order: list | None
                 Order from which algorithm starts solving problem,
                 if None, order will be chosen randomly
 
         If start_order is provided it checks if it's correct for a given algorithm
-        and returns requested path accordingly, if not random solution is chosen.
-        If algorithm requires specific checks for starting path or different
+        and returns requested order accordingly, if not random solution is chosen.
+        If algorithm requires specific checks for starting order or different
         way of chosing primary random solution it must be overriden in child class.
 
         For example check out
@@ -221,44 +208,39 @@ class TSPAlgorithm(ABC):
             start_order: list
                 Order from which algorithm starts solving problem
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
 
         Basic checks include:
-            checking whether start_path is iterable
-            checking whether start_path is of the same leghth as indices in distances matrix
-            checking whether start_path alligns with distances matrix indices
-            checking whether start_path has unique elements
+            # checking whether start_path is iterable #TODO: add comments
+            # checking whether start_path is of the same leghth as indices in distances matrix
+            # checking whether start_path alligns with distances matrix indices
+            # checking whether start_path has unique elements
 
         This method wraps path_check function from src.utils.tools
 
-        Specific checks are implemented in Nearestneighbour algorithm
+        Specific checks are implemented in PFSP_NearestNeighbor algorithm
 
         Check out:
 
-        src.algos.nearest_neighbour NearestNeighbour
+        src.algos.pfsp_nn PFSP_NearestNeighbor
         """
         path_check(path=start_order, distances=distances)
-        assert isinstance(start_order, list), 'start_order must be a list'
+        assert isinstance(start_order, list), "start_order must be a list"
 
-    def _get_path_distance(
-        self, path: list, distances: pd.DataFrame
-    ) -> Union[int, float]:
+    def _get_order_time(self, path: list, distances: pd.DataFrame) -> Union[int, float]:
         """
-        Calculates distances between cities order in the list
+        Calculates total time based on given order and distances matrix
 
         Params:
             path: list
-                Order of cities visited by the salesman
+                Order of tasks to be scheduled
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
-
-        Wraps get_path_distance function
+                Matrix of set of jobs scheduled on a set of machines in a specific order
+        Wraps get_order_cost function
 
         Check out:
 
-        src.utils.tools get_path_distances
+        src.utils.tools get_order_cost
         """
         return get_order_cost(order=path, cost_matrix=distances)
 
@@ -268,12 +250,10 @@ class TSPAlgorithm(ABC):
 
         Params:
             indices: list | pd.Index
-                Cities to be visited by the salesman
+                List of indices to choose from
 
         If algorithm requires different way of chosing primary random
         solution it must be overriden in child class.
-        For example check out src.algos.nearest_neighbour NearestNeighbour
-        which randomly selects only first cuity instead of the entire path
         """
         return get_random_path(indices=indices)
 
@@ -292,30 +272,30 @@ class TSPAlgorithm(ABC):
         random.seed(random_seed)
         np.random.seed(random_seed)
 
-    def _distances_matrix_check(self, distances: pd.DataFrame) -> None:
-        """
-        Checks if distances matrix is correct
+    # def _distances_matrix_check(self, distances: pd.DataFrame) -> None:
+    #     """
+    #     Checks if distances matrix is correct
 
-        Params:
-            distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+    #     Params:
+    #         distances: pd.DataFrame
+    #             Matrix of distances between cities,
+    #             cities numbers or id names as indices and columns
 
-        The only check inplemented is whether indices of distances matrix allign with
-        column names. Wraps distances_matrix_check function.
-        If any other check needs to be run, this method has to be overriden in child class
+    #     The only check inplemented is whether indices of distances matrix allign with
+    #     column names. Wraps distances_matrix_check function.
+    #     If any other check needs to be run, this method has to be overriden in child class
 
-        Check out:
+    #     Check out:
 
-        src.utils.tools distances_matrix_check
-        """
-        # distances_matrix_check(distances=distances)
-        pass
+    #     src.utils.tools distances_matrix_check
+    #     """
+    #     # distances_matrix_check(distances=distances)
+    #     pass
 
     @property
     def path_(self) -> list:
         """
-        The optimal graph's path that was found
+        The optimal graph's order that was found
 
         Path is kind of a trained attribute of the solver
         The optimal path can be accessed at any given moment with this property
