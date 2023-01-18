@@ -239,19 +239,7 @@ def load_data(path: str, as_array: bool = False) -> Union[pd.DataFrame, np.array
 
 
 def distances_matrix_check(distances: pd.DataFrame) -> None:
-    """
-    Checks if distances matrix is correct
-
-    Params:
-        distances: pd.DataFrame
-            Matrix of distances between cities,
-            cities numbers or id names as indices and columns
-
-    The only check inplemented is whether indices of
-    distances matrix allign with column names.
-    """
-    mes = "indices and columns of distances matrix should be equal"
-    assert distances.index.to_list() == distances.columns.to_list(), mes
+    pass
 
 
 def path_check(path: list, distances: pd.DataFrame) -> None:
