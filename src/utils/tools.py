@@ -213,11 +213,21 @@ class StopAlgorithm(Exception):
     src.utils.iterating_algorithm IteratingAlgorithm
     """
 
-    def __init__(self, iteration: int, distance: int) -> None:
-        self.message = (
-            f"Algorithm stopped at {iteration} iteration\nBest distance: {distance}"
-        )
-        super().__init__(self.message)
+    def __init__(
+        self,
+        message: str = None,
+        iteration: int = 0,
+        distance: int = 0
+    ) -> None:
+        self.message = message
+        self.iteration = iteration
+        self.distance = distance
+
+    @property
+    def info(self) -> str:
+        mes = self.message or ""
+        mes += f"\nAlgorithm stopped at {self.iteration} iteration\nBest distance: {self.distance}"
+        return mes
 
 
 def load_data(path: str, as_array: bool = False) -> Union[pd.DataFrame, np.array]:

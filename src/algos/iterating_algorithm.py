@@ -128,8 +128,10 @@ class IteratingAlgorithm(TSPHeuristicAlgorithm):
             try:
                 self._run_iteration(distances=distances)
             except StopAlgorithm as exc:
+                exc.iteration = self._i
+                exc.distance = self.history[-1]
                 if self._verbose:
-                    print(exc.message)
+                    print(exc.info)
                 break
 
     @abstractmethod
