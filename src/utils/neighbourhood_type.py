@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod, abstractproperty
 import random
 from typing import List, Union
 import pandas as pd
-from .tools import get_order_cost, path_check
+from .tools import get_order_cost, path_check, StopAlgorithm
 
 
 class NeighbourhoodType(ABC):
@@ -175,6 +175,10 @@ class NeighbourhoodType(ABC):
         self._order_check(path=path, distances=distances)
         # exclude all forbidden switches
         legal_switches = self._exclude_switches(exclude=exclude)
+
+        if not legal_switches:
+            raise StopAlgorithm(message="No legal neighbouring solution available")
+
         # list of tuples of all solutions in vicinity and their switches
         new_paths = [
             (self._switch(path=path, switch=switch), switch)

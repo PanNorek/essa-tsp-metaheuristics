@@ -213,11 +213,21 @@ class StopAlgorithm(Exception):
     src.utils.iterating_algorithm IteratingAlgorithm
     """
 
-    def __init__(self, iteration: int, distance: int) -> None:
-        self.message = (
-            f"Algorithm stopped at {iteration} iteration\nBest distance: {distance}"
-        )
-        super().__init__(self.message)
+    def __init__(
+        self,
+        message: str = None,
+        iteration: int = 0,
+        distance: int = 0
+    ) -> None:
+        self.message = message
+        self.iteration = iteration
+        self.distance = distance
+
+    @property
+    def info(self) -> str:
+        mes = self.message or ""
+        mes += f"\nAlgorithm stopped at {self.iteration} iteration\nBest distance: {self.distance}"
+        return mes
 
 
 def load_data(path: str, as_array: bool = False) -> Union[pd.DataFrame, np.array]:
@@ -239,19 +249,7 @@ def load_data(path: str, as_array: bool = False) -> Union[pd.DataFrame, np.array
 
 
 def distances_matrix_check(distances: pd.DataFrame) -> None:
-    """
-    Checks if distances matrix is correct
-
-    Params:
-        distances: pd.DataFrame
-            Matrix of distances between cities,
-            cities numbers or id names as indices and columns
-
-    The only check inplemented is whether indices of
-    distances matrix allign with column names.
-    """
-    mes = "indices and columns of distances matrix should be equal"
-    assert distances.index.to_list() == distances.columns.to_list(), mes
+    pass
 
 
 def path_check(path: list, distances: pd.DataFrame) -> None:
