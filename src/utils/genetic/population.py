@@ -57,8 +57,7 @@ class Population:
 
         Params:
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
 
         Returns:
             Population (self)
@@ -113,8 +112,7 @@ class Population:
 
         Params:
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
             mating_pool_size: int | float
                 Size of the sample from which parents will be selected
             selection_method: ParentSelection
@@ -221,8 +219,7 @@ class Population:
 
         Params:
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
             mutation: NeighbourhoodType
                 Type of neighbourhood used to mutate individual
             elite_size: int | float

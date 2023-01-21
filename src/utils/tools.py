@@ -29,8 +29,7 @@ class Result:
             In TSP represents an order of cities that minimizes
             the distance
         distance:
-            Distance to be traversed by the salesman with optimal
-            path found be the algorithm. In TSP distance is a cost function
+            Time to complete all jobs. In PFSP distance is a cost function
         time:
             Time of solving the problem
         distance_history:
@@ -41,7 +40,7 @@ class Result:
 
     Check out:
 
-    src.utils.heuristic_algorithm TSPAlgorithm
+    src.utils.heuristic_algorithm PFSPAlgorithm
     """
 
     algorithm: Any
@@ -260,8 +259,7 @@ def path_check(path: list, distances: pd.DataFrame) -> None:
         path: list
             Order of cities visited by the salesman
         distances: pd.DataFrame
-            Matrix of distances between cities,
-            cities numbers or id names as indices and columns
+            Matrix of set of jobs scheduled on a set of machines in a specific order
 
     Basic checks include:
         checking whether path is iterable

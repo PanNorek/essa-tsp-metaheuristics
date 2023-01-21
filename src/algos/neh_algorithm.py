@@ -21,7 +21,7 @@ class NEH(PFSPAlgorithm):
     ) -> int:
         # specific implementation for NEH algorithm
         # jobs ordered incresingly by cummulative time on all machines
-        order = distances.sum(axis=1).sort_values(ascending=True).index.to_list()
+        order = distances.sum(axis=1).sort_values().index.to_list()
 
         # the first element is job chosen as starting point
         self._path = [order[0]]

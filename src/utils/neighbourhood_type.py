@@ -88,8 +88,7 @@ class NeighbourhoodType(ABC):
             path: list
                 Order of cities visited by the salesman
             distances: pd.DataFrame | None
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
             how: str
                 The way adjacent solution is chosen
             exclude: list | None
@@ -154,8 +153,7 @@ class NeighbourhoodType(ABC):
             path: list
                 Order of cities visited by the salesman
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
             exclude: list | None
                 List of forbidden switches
         Returns:
