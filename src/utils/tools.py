@@ -144,14 +144,14 @@ def get_order_cost(order: list, cost_matrix: pd.DataFrame) -> Union[int, float]:
 
 def solve_it(func: Callable):
     """
-    Decorator for _solve method of TSPAlgorithm
+    Decorator for _solve method of PFSPAlgorithm
 
     It must be called from inside of the algorithm
-    as it takes TSPAlgorithm itself as the first parameter
+    as it takes PFSPAlgorithm itself as the first parameter
 
     Developer note:
-        decorate _solve method of TSPAlgorithm with solve_it
-        and keep it in line with TSPAlgorithm iterface
+        decorate _solve method of PFSPAlgorithm with solve_it
+        and keep it in line with PFSPAlgorithm iterface
         in order for it to return Result object
 
     Functionality:
@@ -163,7 +163,7 @@ def solve_it(func: Callable):
 
     Check out:
 
-    src.utils.heuristic_algorithm TSPAlgorithm
+    src.utils.heuristic_algorithm PFSPAlgorithm
     """
 
     def wrapper(algo, *args, **kwargs) -> Union[Result, None]:

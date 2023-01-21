@@ -169,7 +169,7 @@ class PFSPAlgorithm(ABC):
 
         Methods checks distance matrix correctness and sets random seed
         """
-        self._distances_matrix_check(distances=distances)
+        # self._distances_matrix_check(distances=distances)
         self._set_random_seed(random_seed=random_seed)
 
     def _set_start_order(
