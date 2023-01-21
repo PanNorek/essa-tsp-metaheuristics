@@ -1,11 +1,11 @@
 import random
 from typing import Union, Any
 import pandas as pd
-from .algorithm import TSPAlgorithm
+from .algorithm import PFSPAlgorithm
 from ..utils import solve_it, Result
 
 
-class NearestNeighbour(TSPAlgorithm):
+class NearestNeighbour(PFSPAlgorithm):
     """
     Nearest Neighbour Algorithm
 
@@ -60,7 +60,7 @@ class NearestNeighbour(TSPAlgorithm):
             unvisited.remove(nearest_city)
 
         # calculates the final distance TS has to traverse
-        distance = self._get_path_distance(path=self._path, distances=distances)
+        distance = self._get_order_time(path=self._path, distances=distances)
         # returns Result object
         return Result(algorithm=self, path=self._path, distance=distance)
 

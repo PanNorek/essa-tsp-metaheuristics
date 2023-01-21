@@ -19,10 +19,10 @@ class PFSPAlgorithm(ABC):
     Base, abstract class that all PFSP solvers should inherit from
 
     Methods:
-        solve - used for solving TSP problem
+        solve - used for solving PFSP problem
 
     Attributes:
-        path_ - best path found by algorithm
+        path_ - best order found by algorithm
 
     The idea was that PFSPAlgorithm resembles sklearn BaseEstimator interface
     where all parameters related to the algorithm itself

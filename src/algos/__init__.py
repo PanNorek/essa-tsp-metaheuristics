@@ -7,7 +7,7 @@ from .simulated_annealing import SimulatedAnnealing
 from .multistart_algorithm import MultistartAlgorithm
 from .genetic_algorithm import GeneticAlgorithm
 from .grid_search_ga import GridSearchGA
-from .heuristic_algorithm import TSPHeuristicAlgorithm
-from .tsp_grid_search import TSPGridSearch
+from .heuristic_algorithm import PFSPHeuristicAlgorithm
+from .tsp_grid_search import PFSPGridSearch
 from .neh_algorithm import NEH
 from .pfsp_nn import PFSP_NearestNeighbor

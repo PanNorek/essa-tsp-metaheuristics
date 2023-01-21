@@ -8,15 +8,15 @@ class TabuSearch(IteratingAlgorithm):
     Tabu Search Algorithm
 
     Methods:
-        solve - used for solving TSP problem
+        solve - used for solving PFSP problem
 
     Properties:
-        path_ - best path found by algorithm
-        history - list of best paths from each iteration
+        path_ - best order found by algorithm
+        history - list of best orders from each iteration
 
     Implements:
         IteratingAlgorithm - provides method to facilitates and order
-            iterative approach to solving TSP with use of object attributes
+            iterative approach to solving PFSP with use of object attributes
 
     Tabu search is a metaheuristic search method employing
     local search methods used for mathematical optimization
@@ -81,7 +81,7 @@ class TabuSearch(IteratingAlgorithm):
             distances=distances, how="best", exclude=self._tabu_list
         )
         # get new distance - distance of the best solution in vicinity
-        new_distance = self._get_path_distance(path=new_path, distances=distances)
+        new_distance = self._get_order_time(path=new_path, distances=distances)
         # new path that minimizes distance - always accepts
         # new optimal solution in vicinity even if it's worse
         # a way not to stuck in local minimum

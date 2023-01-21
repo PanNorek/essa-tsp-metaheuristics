@@ -1,6 +1,6 @@
 from typing import Union, Iterable
 import pandas as pd
-from .algorithm import TSPAlgorithm
+from .algorithm import PFSPAlgorithm
 from ..utils import (
     Inversion,
     Swap,
@@ -9,15 +9,15 @@ from ..utils import (
 )
 
 
-class TSPHeuristicAlgorithm(TSPAlgorithm):
+class PFSPHeuristicAlgorithm(PFSPAlgorithm):
     """
-    Solver for heuristic approach to Traveling Salesman Problem (TSP)
+    Solver for heuristic approach to Permutation Flowshop Scheduling Problem (PFSP)
 
     Methods:
-        solve - used for solving TSP problem
+        solve - used for solving PFSP problem
 
     Attributes:
-        path_ - best path found by algorithm
+        path_ - best order found by algorithm
 
     Heuristic is a technique designed for solving a problem more quickly
     when classic methods are too slow for finding an approximate solution,
@@ -25,7 +25,7 @@ class TSPHeuristicAlgorithm(TSPAlgorithm):
     This is achieved by trading optimality, completeness, accuracy, or precision for speed.
     In a way, it can be considered a shortcut
 
-    In TSP checking every path is taking extreme amount of time,
+    In PFSP checking every order is taking extreme amount of time,
     heuristic algorithms narrow down the search space only to adjecent solutions
 
     Interface wraps functionality of NeighbourhoodType interface
@@ -33,7 +33,6 @@ class TSPHeuristicAlgorithm(TSPAlgorithm):
     proper for provided distance matrix is done in the background
 
     For more information check out:
-    https://en.wikipedia.org/wiki/Travelling_salesman_problem
     https://en.wikipedia.org/wiki/Heuristic_(computer_science)
 
     src.utils.neighbourhood_type NeighbourhoodType

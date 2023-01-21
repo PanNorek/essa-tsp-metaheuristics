@@ -2,11 +2,11 @@ import time
 import pandas as pd
 from joblib import Parallel, delayed
 from typing import Union
-from .algorithm import TSPAlgorithm
+from .algorithm import PFSPAlgorithm
 from ..utils import Result
 
 
-def solver(algorithm: TSPAlgorithm, distances: pd.DataFrame):
+def solver(algorithm: PFSPAlgorithm, distances: pd.DataFrame):
     """Solver function for parallel processing"""
     return algorithm.solve(distances=distances)
 
@@ -24,7 +24,7 @@ class MultistartAlgorithm:
 
     def __call__(
         self,
-        algorithm: type[TSPAlgorithm],
+        algorithm: type[PFSPAlgorithm],
         distances: pd.DataFrame,
         n_starts: int = 10,
         only_best: bool = True,
@@ -34,11 +34,10 @@ class MultistartAlgorithm:
         """Runs algorithm with multiple starts in parallel
             Params:
 
-            algorithm: type[TSPAlgorithm]
+            algorithm: type[PFSPAlgorithm]
                 Algorithm to run
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
             n_starts int:
                 Number of starts
             only_best: bool
@@ -49,14 +48,14 @@ class MultistartAlgorithm:
                 Keyword arguments for algorithm init
 
         algorithm:
-            TSPAlgorithm subclass itself rather than its instance
+            PFSPAlgorithm subclass itself rather than its instance
 
         n_jobs:
             Deafult -1, run on all available threads
             One means a standard synchronous run
         """
         # algorithm object - Parallel makes a copy of an object
-        algo: TSPAlgorithm = algorithm(**kwargs)
+        algo: PFSPAlgorithm = algorithm(**kwargs)
         # prints out info about running algorithm in verbose mode
         if self._verbose:
             print(f"\nparams: {kwargs}")
@@ -64,9 +63,7 @@ class MultistartAlgorithm:
         # keeping track of time
         tic = time.time()
         results: list[Result] = Parallel(n_jobs=n_jobs)(
-            delayed(solver)(
-                algorithm=algo, distances=distances
-            )
+            delayed(solver)(algorithm=algo, distances=distances)
             for _ in range(n_starts)
         )
         toc = time.time()

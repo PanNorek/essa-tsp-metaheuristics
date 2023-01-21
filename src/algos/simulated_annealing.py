@@ -24,15 +24,15 @@ class SimulatedAnnealing(IteratingAlgorithm):
     Simulated Annealing Algorithm
 
     Methods:
-        solve - used for solving TSP problem
+        solve - used for solving PFSP problem
 
     Attributes:
-        path_ - best path found by algorithm
-        history - list of best paths from each iteration
+        path_ - best order found by algorithm
+        history - list of best orders from each iteration
 
     Implements:
         IteratingAlgorithm - provides method to facilitates and order
-            iterative approach to solving TSP with use of object attributes
+            iterative approach to solving PFSP with use of object attributes
 
     Simulated annealing (SA) is a probabilistic technique for approximating
     the global optimum of a given function. Specifically, it is a metaheuristic
@@ -144,7 +144,7 @@ class SimulatedAnnealing(IteratingAlgorithm):
         # find radom neighbouring solution
         new_path = self._switch(distances=distances, how="random")
         # get distance of chosen random solution in vicinity
-        distance = self._get_path_distance(path=new_path, distances=distances)
+        distance = self._get_order_time(path=new_path, distances=distances)
         # distance gain
         # negative for a "good" trade; positive for a "bad" trade
         diff = distance - self._history[-1]

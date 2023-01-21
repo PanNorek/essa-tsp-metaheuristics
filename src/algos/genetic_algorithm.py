@@ -15,13 +15,13 @@ import copy
 
 class GeneticAlgorithm(IteratingAlgorithm):
     """
-    Genetic algorithm for solving TSP problem
+    Genetic algorithm for solving PFSP problem
 
     Methods:
-        solve - used for solving TSP problem
+        solve - used for solving PFSP problem
 
     Attributes:
-        path_ - best path found by algorithm
+        path_ - best order found by algorithm
         history - list of accepted solutions during iteration process
         population - list of all individuals forming up the population
 
@@ -45,9 +45,9 @@ class GeneticAlgorithm(IteratingAlgorithm):
     Chromosome is a set of parameters which define a proposed solution
     to the problem that the genetic algorithm is trying to solve
 
-    In TSP chromosome is represented by the path (order of the cities)
+    In PFSP chromosome is represented by the order (order of the jobs)
     One of the hindrances is a requirement of uniqueness. Genes must not
-    repeat in the chromosome. TSP problems use special methods of crossover
+    repeat in the chromosome. PFSP problems use special methods of crossover
     to take care of this:
 
     Crossover, also called recombination, is a genetic operator used to
@@ -76,10 +76,10 @@ class GeneticAlgorithm(IteratingAlgorithm):
 
     In each generation, the fitness of every individual in the population is evaluated.
 
-    In TSP distance is a cost function, in order to turn it into a fitness function
+    In PFSP time is a cost function, in order to turn it into a fitness function
     following formula is applied:
 
-    fitness = 1/distance
+    fitness = 1/time
 
     The more fit individuals are stochastically selected from the current population
 

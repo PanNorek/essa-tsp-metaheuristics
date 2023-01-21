@@ -1,11 +1,11 @@
-from src.algos import TSPAlgorithm
+from src.algos import PFSPAlgorithm
 from typing import Union, Any
 import pandas as pd
 from src.utils import solve_it, Result, get_order_cost
 import random
 
 
-class PFSP_NearestNeighbor(TSPAlgorithm):
+class PFSP_NearestNeighbor(PFSPAlgorithm):
     """Proposed nearest neighbor model for the permutation flow shop problem.
     We add successively more tasks to the initial task by locally minimizing the durations on the machines.
 
@@ -65,6 +65,6 @@ class PFSP_NearestNeighbor(TSPAlgorithm):
             # Step III.4: Remove the nearest neighbor from the unordered tasks
             unordered_tasks.remove(nearest_neighbor)
         # Step IV: Calculate the final cost function
-        distance = self._get_path_distance(path=self._path, distances=distances)
+        distance = self._get_order_time(path=self._path, distances=distances)
         # Step V: Return the result
         return Result(algorithm=self, path=self._path, distance=distance)

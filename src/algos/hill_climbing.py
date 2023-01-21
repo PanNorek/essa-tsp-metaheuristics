@@ -8,25 +8,25 @@ class HillClimbing(IteratingAlgorithm):
     Hill Climber Algorithm
 
     Methods:
-        solve - used for solving TSP problem
+        solve - used for solving PFSP problem
 
     Attributes:
-        path_ - best path found by algorithm
-        history - list of best paths from each iteration
+        path_ - best order found by algorithm
+        history - list of best orders from each iteration
 
     Implements:
         IteratingAlgorithm - provides method to facilitates and order
-            iterative approach to solving TSP with use of object attributes
+            iterative approach to solving PFSP with use of object attributes
 
     The hill climbing algorithm is one of the most naive approaches in solving the
-    TSP. A random solution, a random sequence of cities, is generated. Then, all
+    PFSP. A random solution, a random sequence of cities, is generated. Then, all
     successor states of the solution is evaluated, where a successor state is obtained
     by switching the ordering of two cities adjacent in the solution,
-    which is described in TSPAlgorithm as "searching neighbouring solutions space"
+    which is described in PFSPAlgorithm as "searching neighbouring solutions space"
     The best successor is chosen only if it gives more optimal solution (shortest path),
     in other case the algorithm is finished.
 
-    Setting start_order (options provided by TSPAlgorithm interface)
+    Setting start_order (options provided by PFSPAlgorithm interface)
     in HillClimbing doesn't make sense, beacuse in case of lack
     of more optimal solutions in the vicinity, algorithm finishes at once
     giving the same result.
@@ -51,7 +51,7 @@ class HillClimbing(IteratingAlgorithm):
         # get new path - best solution in vicinity
         new_path = self._switch(distances=distances, how="best")
         # get new distance - distance of the best solution in vicinity
-        new_distance = self._get_path_distance(path=new_path, distances=distances)
+        new_distance = self._get_order_time(path=new_path, distances=distances)
         # distance gain
         gain = self._history[-1] - new_distance
         # break condition - if there are no more optimal solutions in vicinity

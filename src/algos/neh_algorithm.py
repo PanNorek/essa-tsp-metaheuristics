@@ -1,11 +1,11 @@
-from src.algos import TSPAlgorithm
+from src.algos import PFSPAlgorithm
 import random
 from typing import Union, Any
 import pandas as pd
 from src.utils import solve_it, Result, NEHInsertion
 
 
-class NEH(TSPAlgorithm):
+class NEH(PFSPAlgorithm):
     NAME = "NEH"
 
     def __init__(self, verbose: bool = False) -> None:
@@ -21,7 +21,8 @@ class NEH(TSPAlgorithm):
     ) -> int:
         # specific implementation for NEH algorithm
         # jobs ordered incresingly by cummulative time on all machines
-        order = distances.sum(axis=1).sort_values(ascending=False).index.to_list()
+        order = distances.sum(axis=0).sort_values(ascending=False).index.to_list()
+
         # the first element is job chosen as starting point
         self._path = [order[0]]
 
@@ -29,13 +30,9 @@ class NEH(TSPAlgorithm):
         # insert new job into the best place (that minimize cost function)
         for x in range(1, len(distances)):
             self._path.append(order[x])
-            self._path = self._neigh.switch(
-                path=self._path, distances=distances
-            )
+            self._path = self._neigh.switch(path=self._path, distances=distances)
 
         # calculates the final cost function
-        distance = self._get_path_distance(
-            path=self._path, distances=distances
-        )
+        distance = self._get_order_time(path=self._path, distances=distances)
         # returns Result object
         return Result(algorithm=self, path=self._path, distance=distance)

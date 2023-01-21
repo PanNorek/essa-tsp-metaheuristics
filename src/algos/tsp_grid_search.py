@@ -1,12 +1,12 @@
 import pandas as pd
 from sklearn.model_selection import ParameterGrid
 from .multistart_algorithm import MultistartAlgorithm
-from .algorithm import TSPAlgorithm
+from .algorithm import PFSPAlgorithm
 from ..utils import Result
 from typing import Union
 
 
-class TSPGridSearch:
+class PFSPGridSearch:
     """Exhaustive search over specified parameter values for an algorithm
 
     Methods:
@@ -16,7 +16,7 @@ class TSPGridSearch:
 
     Example:
 
-    gs = TSPGridSearch()
+    gs = PFSPGridSearch()
     gs.solve(algorithm=HillClimbing,
              params={"neigh_type": ["swap", "inversion"], "n_iters": [20,30]},
              distances=distances)
@@ -26,15 +26,16 @@ class TSPGridSearch:
     src.algos.multistart_algorithm MultistartAlgorithm
     """
 
-    def solve(self,
-              algorithm: type[TSPAlgorithm],
-              params: dict,
-              distances: pd.DataFrame,
-              n_starts: int = 5,
-              only_best: bool = True,
-              verbose: bool = True,
-              n_jobs: int = 1
-              ) -> Union[Result, pd.DataFrame]:
+    def solve(
+        self,
+        algorithm: type[PFSPAlgorithm],
+        params: dict,
+        distances: pd.DataFrame,
+        n_starts: int = 5,
+        only_best: bool = True,
+        verbose: bool = True,
+        n_jobs: int = 1,
+    ) -> Union[Result, pd.DataFrame]:
 
         """
         Run solve method with all sets of parameters
@@ -45,8 +46,7 @@ class TSPGridSearch:
             params: dict
                 Dictionary of all algorithm params with its values
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
             n_starts int:
                 Number of starts
             only_best: bool
@@ -80,9 +80,10 @@ class TSPGridSearch:
                 n_starts=n_starts,
                 only_best=only_best,
                 n_jobs=n_jobs,
-                **param_set
+                **param_set,
             )
-            for param_set in search_grid]
+            for param_set in search_grid
+        ]
 
         if only_best:
             return max(results)

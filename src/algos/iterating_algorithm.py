@@ -1,24 +1,24 @@
 from abc import abstractmethod
 from typing import Union
 import pandas as pd
-from .heuristic_algorithm import TSPHeuristicAlgorithm
+from .heuristic_algorithm import PFSPHeuristicAlgorithm
 from ..utils import StopAlgorithm, Result, solve_it
 
 
-class IteratingAlgorithm(TSPHeuristicAlgorithm):
+class IteratingAlgorithm(PFSPHeuristicAlgorithm):
     """
     Solver for iterative approach to heuristic algorithms
-    for Traveling Salesman Problem (TSP)
+    for Permutation Flowshop Scheduling Problem (PFSP)
 
     Methods:
-        solve - used for solving TSP problem
+        solve - used for solving PFSP problem
 
     Attributes:
-        path_ - best path found by algorithm
+        path_ - best order found by algorithm
         history - list of accepted solutions during iteration process
 
     Interface is designed for heuristic algorithms, it inherits from
-    TSPHeuristicAlgorithm providing functionality for searching
+    PFSPHeuristicAlgorithm providing functionality for searching
     neighbouring solutions space.
 
     Developer note:
@@ -46,7 +46,7 @@ class IteratingAlgorithm(TSPHeuristicAlgorithm):
 
     src.utils.neighbourhood_type NeighbourhoodType
 
-    src.utils.heuristic_algorithm TSPHeuristicAlgorithm
+    src.utils.heuristic_algorithm PFSPHeuristicAlgorithm
 
     src.utils.tools StopAlgorithm
     """
@@ -90,7 +90,7 @@ class IteratingAlgorithm(TSPHeuristicAlgorithm):
             distances=distances, random_seed=random_seed, start_order=start_order
         )
         # distance of the path at the beginning
-        distance = self._get_path_distance(path=self._path, distances=distances)
+        distance = self._get_order_time(path=self._path, distances=distances)
         # list of distances at i iteration
         self._history = [distance]
 
@@ -114,8 +114,7 @@ class IteratingAlgorithm(TSPHeuristicAlgorithm):
 
         Params:
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
 
         Runs a loop with operations specific to an algorithm
 
@@ -138,8 +137,7 @@ class IteratingAlgorithm(TSPHeuristicAlgorithm):
 
         Params:
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
 
         It saves all information in attributes
         """
