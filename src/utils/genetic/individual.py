@@ -55,8 +55,7 @@ class Individual:
             path: list
                 Order of cities visited by the salesman
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
         """
         # what defines the solution
         # path - its chromosome

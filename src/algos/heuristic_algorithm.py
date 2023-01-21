@@ -80,8 +80,7 @@ class PFSPHeuristicAlgorithm(PFSPAlgorithm):
 
         Params:
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
             random_seed: int | None
                 Seed set for all random operations inside algorithm,
                 if None results won't be repeatable
@@ -100,8 +99,7 @@ class PFSPHeuristicAlgorithm(PFSPAlgorithm):
 
         Params:
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
 
         Specified NeighbourhoodType is instantiated based on elements
         in distance matrix indices saving all possible switches.
@@ -123,8 +121,7 @@ class PFSPHeuristicAlgorithm(PFSPAlgorithm):
 
         Params:
             distances: pd.DataFrame | None
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
             how: str
                 The way adjacent solution is chosen
             exclude: list | None

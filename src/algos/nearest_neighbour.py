@@ -94,8 +94,7 @@ class NearestNeighbour(PFSPAlgorithm):
                 Order from which algorithm starts solving problem,
                 if None, order will be chosen randomly
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
 
         Basic checks include:
             checking that start_path is not a list
@@ -118,7 +117,6 @@ class NearestNeighbour(PFSPAlgorithm):
 
         Params:
             distances: pd.DataFrame
-                Matrix of distances between cities,
-                cities numbers or id names as indices and columns
+                Matrix of set of jobs scheduled on a set of machines in a specific order
         """
         self._neigh = None
