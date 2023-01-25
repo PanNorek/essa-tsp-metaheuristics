@@ -85,7 +85,7 @@ class TSPGridSearch:
             for param_set in search_grid]
 
         if only_best:
-            return max(results)
+            return min(results)
 
         df_results = pd.concat(results, ignore_index=True)
         return df_results
